@@ -23,11 +23,12 @@ class Vector2D(object):
     def __truediv__(self, scalar: float) -> Self | None:
         return Vector2D(self.x / scalar, self.y / scalar) if scalar != 0 else None
 
-    def __eq__(self, other: Self) -> bool:
-        if abs(self.x - other.x) < self.thresh:
-            if abs(self.y - other.y) < self.thresh:
-                return True
-        return False
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, Vector2D):
+            return False
+        return (
+            abs(self.x - other.x) < self.thresh and abs(self.y - other.y) < self.thresh
+        )
 
     def magnitude_sq(self) -> float:
         return self.x**2 + self.y**2
