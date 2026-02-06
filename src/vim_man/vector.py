@@ -36,7 +36,7 @@ class Vector2D(object):
         return math.sqrt(self.magnitude_sq())
 
     def copy(self) -> Self:
-        return Self(self.x, self.y)
+        return Vector2D(self.x, self.y)
 
     def as_tuple(self) -> tuple[float, float]:
         return self.x, self.y
