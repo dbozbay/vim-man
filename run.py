@@ -19,7 +19,7 @@ class GameController(object):
         self.set_background()
         self.nodes = NodeGroup()
         self.nodes.setup_test_nodes()
-        self.pacman = Pacman()
+        self.pacman = Pacman(self.nodes.node_list[0])
 
     def update(self) -> None:
         dt = self.clock.tick(30) / 1000.0

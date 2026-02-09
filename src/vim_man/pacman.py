@@ -1,12 +1,13 @@
 import pygame
 from vim_man.vector import Vector2D
 from vim_man.constants import PACMAN, STOP, YELLOW, UP, DOWN, LEFT, RIGHT, TILEWIDTH
+from vim_man.nodes import Node
 
 
 class Pacman(object):
-    def __init__(self) -> None:
+    def __init__(self, node: Node) -> None:
         self.name = PACMAN
-        self.position = Vector2D(200, 400)
+        # self.position = Vector2D(200, 400)
         self.directions = {
             STOP: Vector2D(),
             UP: Vector2D(0, -1),
@@ -18,11 +19,33 @@ class Pacman(object):
         self.speed = 100 * TILEWIDTH / 16
         self.radius = 10
         self.color = YELLOW
+        self.node = node
+        self.set_position()
+
+    def set_position(self) -> None:
+        self.position = self.node.position.copy()
 
     def update(self, dt: float) -> None:
-        self.position += self.directions[self.direction] * self.speed * dt
+        # self.position += self.directions[self.direction] * self.speed * dt
         direction = self.get_valid_key()
         self.direction = direction
+        self.node = self.get_new_target(direction)
+        self.set_position()
+
+    # TODO: Maybe put this logic inside `get_new_target` to make type checker happy
+    def valid_direction(self, direction: int) -> bool:
+        if direction is not STOP:
+            if self.node.neighbors[direction] is not None:
+                return True
+        return False
+
+    # TODO: Currently duplicating the is None check twice. Fix this later
+    def get_new_target(self, direction: int) -> Node:
+        if self.valid_direction(direction):
+            neighbor = self.node.neighbors[direction]
+            if neighbor is not None:
+                return neighbor
+        return self.node
 
     def get_valid_key(self) -> int:
         key_pressed = pygame.key.get_pressed()
