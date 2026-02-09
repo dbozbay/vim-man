@@ -9,6 +9,8 @@ SCREENHEIGHT: int = NROWS * TILEHEIGHT
 SCREENSIZE: tuple[int, int] = (SCREENWIDTH, SCREENHEIGHT)
 BLACK: Color = (0, 0, 0)
 YELLOW: Color = (255, 255, 0)
+BLUE: Color = (0, 0, 255)
+
 
 STOP: int = 0
 UP: int = 1

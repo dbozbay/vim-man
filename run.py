@@ -1,5 +1,5 @@
 import pygame
-from vim_man.constants import SCREENSIZE, BLACK
+from vim_man.constants import SCREENSIZE, BLACK, BLUE
 from vim_man.pacman import Pacman
 
 
@@ -7,12 +7,12 @@ class GameController(object):
     def __init__(self) -> None:
         pygame.init()
         self.screen = pygame.display.set_mode(SCREENSIZE, 0, 32)
-        self.background = None
+        self.background = self.set_background()
         self.clock = pygame.time.Clock()
 
     def set_background(self) -> None:
         self.background = pygame.surface.Surface(SCREENSIZE).convert()
-        self.background.fill(BLACK)
+        self.background.fill(BLUE)  # TODO:
 
     def start_game(self) -> None:
         self.set_background()
