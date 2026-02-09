@@ -1,13 +1,12 @@
 import pygame
 from vim_man.vector import Vector2D
 from vim_man.constants import WHITE, RED, UP, DOWN, LEFT, RIGHT
-from typing import Self
 
 
 class Node(object):
     def __init__(self, x: float, y: float) -> None:
         self.position = Vector2D(x, y)
-        self.neighbors: dict[int, Self | None] = {
+        self.neighbors: dict[int, Node | None] = {
             UP: None,
             DOWN: None,
             LEFT: None,
