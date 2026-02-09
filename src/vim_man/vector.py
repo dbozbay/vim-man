@@ -30,11 +30,11 @@ class Vector2D(object):
             abs(self.x - other.x) < self.thresh and abs(self.y - other.y) < self.thresh
         )
 
-    def magnitude_sq(self) -> float:
+    def magnitude_squared(self) -> float:
         return self.x**2 + self.y**2
 
     def magnitude(self) -> float:
-        return math.sqrt(self.magnitude_sq())
+        return math.sqrt(self.magnitude_squared())
 
     def copy(self) -> Self:
         return Vector2D(self.x, self.y)
