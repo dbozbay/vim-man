@@ -1,5 +1,5 @@
 import pygame
-from vim_man.constants import SCREENSIZE, BLACK, BLUE
+from vim_man.constants import SCREENSIZE, BLUE
 from vim_man.pacman import Pacman
 
 

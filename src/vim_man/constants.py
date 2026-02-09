@@ -2,15 +2,14 @@ type Color = tuple[int, int, int]
 
 TILEWIDTH: int = 16
 TILEHEIGHT: int = 16
-NROWS: int = 26
-NCOLS: int = 36
+NROWS: int = 36
+NCOLS: int = 28
 SCREENWIDTH: int = NCOLS * TILEWIDTH
 SCREENHEIGHT: int = NROWS * TILEHEIGHT
 SCREENSIZE: tuple[int, int] = (SCREENWIDTH, SCREENHEIGHT)
 BLACK: Color = (0, 0, 0)
 YELLOW: Color = (255, 255, 0)
 BLUE: Color = (0, 0, 255)
-
 
 STOP: int = 0
 UP: int = 1
