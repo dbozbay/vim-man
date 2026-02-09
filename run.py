@@ -1,6 +1,7 @@
 import pygame
 from vim_man.constants import SCREENSIZE, BLUE
 from vim_man.pacman import Pacman
+from vim_man.nodes import NodeGroup
 
 
 class GameController(object):
@@ -16,6 +17,8 @@ class GameController(object):
 
     def start_game(self) -> None:
         self.set_background()
+        self.nodes = NodeGroup()
+        self.nodes.setup_test_nodes()
         self.pacman = Pacman()
 
     def update(self) -> None:
@@ -31,6 +34,7 @@ class GameController(object):
 
     def render(self) -> None:
         self.screen.blit(self.background, (0, 0))
+        self.nodes.render(self.screen)
         self.pacman.render(self.screen)
         pygame.display.update()
 
