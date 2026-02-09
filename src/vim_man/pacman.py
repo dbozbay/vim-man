@@ -7,7 +7,6 @@ from vim_man.nodes import Node
 class Pacman(object):
     def __init__(self, node: Node) -> None:
         self.name = PACMAN
-        # self.position = Vector2D(200, 400)
         self.directions = {
             STOP: Vector2D(),
             UP: Vector2D(0, -1),
@@ -21,16 +20,22 @@ class Pacman(object):
         self.color = YELLOW
         self.node = node
         self.set_position()
+        self.target = node
 
     def set_position(self) -> None:
         self.position = self.node.position.copy()
 
     def update(self, dt: float) -> None:
-        # self.position += self.directions[self.direction] * self.speed * dt
+        self.position += self.directions[self.direction] * self.speed * dt
         direction = self.get_valid_key()
-        self.direction = direction
-        self.node = self.get_new_target(direction)
-        self.set_position()
+        if self.overshot_target():
+            self.node = self.target
+            self.target = self.get_new_target(direction)
+            if self.target is not self.node:
+                self.direction = direction
+            else:
+                self.direction = STOP
+            self.set_position()
 
     # TODO: Maybe put this logic inside `get_new_target` to make type checker happy
     def valid_direction(self, direction: int) -> bool:
@@ -58,6 +63,15 @@ class Pacman(object):
         if key_pressed[pygame.K_l]:
             return RIGHT
         return STOP
+
+    def overshot_target(self) -> bool:
+        if self.target is not None:
+            vec1 = self.target.position - self.node.position
+            vec2 = self.position - self.node.position
+            node2target = vec1.magnitude_squared()
+            node2self = vec2.magnitude_squared()
+            return node2self >= node2target
+        return False
 
     def render(self, screen: pygame.SurfaceType) -> None:
         # Pygame does not like drawing circles with floats!
