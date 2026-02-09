@@ -17,5 +17,3 @@ LEFT: int = 2
 RIGHT: int = -2
 
 PACMAN: int = 0
-
-

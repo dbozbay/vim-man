@@ -26,13 +26,13 @@ class Pacman(object):
 
     def get_valid_key(self) -> int:
         key_pressed = pygame.key.get_pressed()
-        if key_pressed[pygame.K_UP]:
+        if key_pressed[pygame.K_k]:
             return UP
-        if key_pressed[pygame.K_DOWN]:
+        if key_pressed[pygame.K_j]:
             return DOWN
-        if key_pressed[pygame.K_LEFT]:
+        if key_pressed[pygame.K_h]:
             return LEFT
-        if key_pressed[pygame.K_RIGHT]:
+        if key_pressed[pygame.K_l]:
             return RIGHT
         return STOP
 
