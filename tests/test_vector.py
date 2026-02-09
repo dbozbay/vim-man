@@ -57,7 +57,7 @@ class TestVector2D:
 
     def test_magnitude_sq(self) -> None:
         v = Vector2D(10, 5)
-        assert v.magnitude_sq() == 125
+        assert v.magnitude_squared() == 125
 
     def test_magnitude(self) -> None:
         v = Vector2D(3, 4)
