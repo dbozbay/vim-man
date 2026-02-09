@@ -1,4 +1,4 @@
-from typing import Self
+from __future__ import annotations
 import math
 
 
@@ -8,19 +8,19 @@ class Vector2D(object):
         self.y = y
         self.thresh = 0.000001
 
-    def __add__(self, other: Self) -> Self:
+    def __add__(self, other: Vector2D) -> Vector2D:
         return Vector2D(self.x + other.x, self.y + other.y)
 
-    def __sub__(self, other: Self) -> Self:
+    def __sub__(self, other: Vector2D) -> Vector2D:
         return Vector2D(self.x - other.x, self.y - other.y)
 
-    def __neg__(self) -> Self:
+    def __neg__(self) -> Vector2D:
         return Vector2D(-self.x, -self.y)
 
-    def __mul__(self, scalar: float) -> Self:
+    def __mul__(self, scalar: float) -> Vector2D:
         return Vector2D(self.x * scalar, self.y * scalar)
 
-    def __truediv__(self, scalar: float) -> Self | None:
+    def __truediv__(self, scalar: float) -> Vector2D | None:
         return Vector2D(self.x / scalar, self.y / scalar) if scalar != 0 else None
 
     def __eq__(self, other: object) -> bool:
@@ -36,7 +36,7 @@ class Vector2D(object):
     def magnitude(self) -> float:
         return math.sqrt(self.magnitude_squared())
 
-    def copy(self) -> Self:
+    def copy(self) -> Vector2D:
         return Vector2D(self.x, self.y)
 
     def as_tuple(self) -> tuple[float, float]:
