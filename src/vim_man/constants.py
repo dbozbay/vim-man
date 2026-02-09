@@ -7,9 +7,12 @@ NCOLS: int = 28
 SCREENWIDTH: int = NCOLS * TILEWIDTH
 SCREENHEIGHT: int = NROWS * TILEHEIGHT
 SCREENSIZE: tuple[int, int] = (SCREENWIDTH, SCREENHEIGHT)
+
 BLACK: Color = (0, 0, 0)
 YELLOW: Color = (255, 255, 0)
 BLUE: Color = (0, 0, 255)
+WHITE: Color = (255, 255, 255)
+RED: Color = (255, 0, 0)
 
 STOP: int = 0
 UP: int = 1
