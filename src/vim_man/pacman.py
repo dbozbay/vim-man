@@ -28,14 +28,21 @@ class Pacman(object):
     def update(self, dt: float) -> None:
         self.position += self.directions[self.direction] * self.speed * dt
         direction = self.get_valid_key()
+
         if self.overshot_target():
             self.node = self.target
             self.target = self.get_new_target(direction)
             if self.target is not self.node:
                 self.direction = direction
             else:
+                self.target = self.get_new_target(self.direction)
+
+            if self.target is self.node:
                 self.direction = STOP
             self.set_position()
+        else:
+            if self.opposite_direction(direction):
+                self.reverse_direction()
 
     # TODO: Maybe put this logic inside `get_new_target` to make type checker happy
     def valid_direction(self, direction: int) -> bool:
@@ -71,6 +78,18 @@ class Pacman(object):
             node2target = vec1.magnitude_squared()
             node2self = vec2.magnitude_squared()
             return node2self >= node2target
+        return False
+
+    def reverse_direction(self) -> None:
+        self.direction *= -1
+        temp = self.node
+        self.node = self.target
+        self.target = temp
+
+    def opposite_direction(self, direction: int) -> bool:
+        if direction is not STOP:
+            if direction == self.direction * -1:
+                return True
         return False
 
     def render(self, screen: pygame.SurfaceType) -> None:
