@@ -56,18 +56,17 @@ class Pacman(object):
                 # If the player requests the opposite direction mid-tile, flip direction.
                 self.reverse_direction()
 
-    # TODO: Maybe put this logic inside `get_new_target` to make type checker happy
-    def valid_direction(self, direction: int) -> bool:
-        """Return whether the given direction leads to a valid neighboring node."""
-        if direction is not STOP:
-            if self.node.neighbors[direction] is not None:
-                return True
-        return False
+    # TODO: Refactored this check away into `get_new_target`. Delete if no other callers needed
+    # def valid_direction(self, direction: int) -> bool:
+    #     """Return whether the given direction leads to a valid neighboring node."""
+    #     if direction is not STOP:
+    #         if self.node.neighbors[direction] is not None:
+    #             return True
+    #     return False
 
-    # TODO: Currently duplicating the is None check twice. Fix this later
     def get_new_target(self, direction: int) -> Node:
         """Return the neighboring node for the given direction, or the current node if movement is not possible."""
-        if self.valid_direction(direction):
+        if direction is not STOP:
             neighbor = self.node.neighbors[direction]
             if neighbor is not None:
                 return neighbor
