@@ -122,6 +122,7 @@ class NodeGroup(object):
                     key = None
 
     def set_portal_pair(self, pair1: NodeKey, pair2: NodeKey) -> None:
+        """Set the portal neighbors for the two given node keys."""
         key1 = self.construct_key(*pair1)
         key2 = self.construct_key(*pair2)
         if key1 in self.nodes_LUT.keys() and key2 in self.nodes_LUT.keys():
