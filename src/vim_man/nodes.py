@@ -1,7 +1,18 @@
 import numpy as np
 import pygame
 
-from vim_man.constants import DOWN, LEFT, RED, RIGHT, TILEHEIGHT, TILEWIDTH, UP, WHITE
+from vim_man.constants import (
+    BLUE,
+    DOWN,
+    LEFT,
+    PORTAL,
+    RED,
+    RIGHT,
+    TILEHEIGHT,
+    TILEWIDTH,
+    UP,
+    WHITE,
+)
 from vim_man.vector import Vector2D
 
 type NodeKey = tuple[int, int]
@@ -17,15 +28,20 @@ class Node(object):
             DOWN: None,
             LEFT: None,
             RIGHT: None,
+            PORTAL: None,
         }
 
     def render(self, screen: pygame.SurfaceType) -> None:
         """Draw this node and connecting lines to its neighboring nodes on the screen."""
-        for neighbor in self.neighbors.values():
-            if neighbor is not None:
+        for neighbor, node in self.neighbors.items():
+            if node is not None:
                 line_start = self.position.as_tuple()
-                line_end = neighbor.position.as_tuple()
-                pygame.draw.line(screen, WHITE, line_start, line_end, 4)
+                line_end = node.position.as_tuple()
+                if neighbor == PORTAL:
+                    line_color = BLUE
+                else:
+                    line_color = WHITE
+                pygame.draw.line(screen, line_color, line_start, line_end, 4)
                 pygame.draw.circle(screen, RED, self.position.as_int(), 12)
 
 
@@ -104,6 +120,13 @@ class NodeGroup(object):
                 elif dataT[col][row] not in self.path_symbols:
                     # Hitting a wall or non-path tile breaks the current run.
                     key = None
+
+    def set_portal_pair(self, pair1: NodeKey, pair2: NodeKey) -> None:
+        key1 = self.construct_key(*pair1)
+        key2 = self.construct_key(*pair2)
+        if key1 in self.nodes_LUT.keys() and key2 in self.nodes_LUT.keys():
+            self.nodes_LUT[key1].neighbors[PORTAL] = self.nodes_LUT[key2]
+            self.nodes_LUT[key2].neighbors[PORTAL] = self.nodes_LUT[key1]
 
     def get_node_from_pixels(self, x_pixel: int, y_pixel: int) -> Node | None:
         """Return the node located at the given pixel coordinates, or `None` if none exists."""

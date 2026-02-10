@@ -19,8 +19,9 @@ class GameController(object):
 
     def start_game(self) -> None:
         """Initialize the maze and Pacman, and prepare the game to start."""
-        self.set_background()
+        # self.set_background() # TODO: Do we need this when background is set in init?
         self.nodes = NodeGroup("maze1.txt")
+        self.nodes.set_portal_pair((0, 17), (27, 17))
         self.pacman = Pacman(self.nodes.get_start_temp_node())
 
     def update(self) -> None:

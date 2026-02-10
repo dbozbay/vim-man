@@ -1,6 +1,16 @@
 import pygame
 
-from vim_man.constants import DOWN, LEFT, PACMAN, RIGHT, STOP, TILEWIDTH, UP, YELLOW
+from vim_man.constants import (
+    DOWN,
+    LEFT,
+    PACMAN,
+    PORTAL,
+    RIGHT,
+    STOP,
+    TILEWIDTH,
+    UP,
+    YELLOW,
+)
 from vim_man.nodes import Node
 from vim_man.vector import Vector2D
 
@@ -37,6 +47,12 @@ class Pacman(object):
         if self.overshot_target():
             # Snap Pacman to the center of the target node he just reached.
             self.node = self.target
+
+            # Check if the node has a portal neighbor and move to it if it does.
+            portal_node = self.node.neighbors[PORTAL]
+            if portal_node is not None:
+                self.node = portal_node
+
             # Try to move toward the newly requested direction from this node.
             self.target = self.get_new_target(direction)
             if self.target is not self.node:

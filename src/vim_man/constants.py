@@ -19,5 +19,6 @@ UP: int = 1
 DOWN: int = -1
 LEFT: int = 2
 RIGHT: int = -2
+PORTAL: int = 3
 
 PACMAN: int = 0
