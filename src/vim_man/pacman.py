@@ -1,7 +1,8 @@
 import pygame
-from vim_man.vector import Vector2D
-from vim_man.constants import PACMAN, STOP, YELLOW, UP, DOWN, LEFT, RIGHT, TILEWIDTH
+
+from vim_man.constants import DOWN, LEFT, PACMAN, RIGHT, STOP, TILEWIDTH, UP, YELLOW
 from vim_man.nodes import Node
+from vim_man.vector import Vector2D
 
 
 class Pacman(object):
@@ -28,22 +29,31 @@ class Pacman(object):
 
     def update(self, dt: float) -> None:
         """Update Pacman's movement, direction, and target node based on input and elapsed time."""
+        # Move Pacman in the current direction according to speed and elapsed time.
         self.position += self.directions[self.direction] * self.speed * dt
+        # Read the latest player input and translate it to a desired direction.
         direction = self.get_valid_key()
 
         if self.overshot_target():
+            # Snap Pacman to the center of the target node he just reached.
             self.node = self.target
+            # Try to move toward the newly requested direction from this node.
             self.target = self.get_new_target(direction)
             if self.target is not self.node:
+                # If that move is possible, commit to the new direction.
                 self.direction = direction
             else:
+                # Otherwise, keep moving in the current direction if possible.
                 self.target = self.get_new_target(self.direction)
 
             if self.target is self.node:
+                # If no movement is possible from this node, stop.
                 self.direction = STOP
+            # Reset position exactly on the current node center to avoid drift.
             self.set_position()
         else:
             if self.opposite_direction(direction):
+                # If the player requests the opposite direction mid-tile, flip direction.
                 self.reverse_direction()
 
     # TODO: Maybe put this logic inside `get_new_target` to make type checker happy
