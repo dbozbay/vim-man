@@ -1,25 +1,25 @@
 import pygame
-from vim_man.constants import SCREENSIZE, BLUE
-from vim_man.pacman import Pacman
+
+from vim_man.constants import BLACK, SCREENSIZE
 from vim_man.nodes import NodeGroup
+from vim_man.pacman import Pacman
 
 
 class GameController(object):
     def __init__(self) -> None:
         pygame.init()
         self.screen = pygame.display.set_mode(SCREENSIZE, 0, 32)
-        self.background = self.set_background()
+        self.set_background()
         self.clock = pygame.time.Clock()
 
-    def set_background(self) -> None:
-        self.background = pygame.surface.Surface(SCREENSIZE).convert()
-        self.background.fill(BLUE)  # TODO:
+    def set_background(self):
+        self.background = pygame.Surface(SCREENSIZE).convert()
+        self.background.fill(BLACK)
 
     def start_game(self) -> None:
         self.set_background()
-        self.nodes = NodeGroup()
-        self.nodes.setup_test_nodes()
-        self.pacman = Pacman(self.nodes.node_list[0])
+        self.nodes = NodeGroup("mazetest.txt")
+        self.pacman = Pacman(self.nodes.get_start_temp_node())
 
     def update(self) -> None:
         dt = self.clock.tick(30) / 1000.0

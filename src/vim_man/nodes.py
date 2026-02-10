@@ -1,6 +1,12 @@
+import numpy as np
 import pygame
+
+from vim_man.constants import DOWN, LEFT, RED, RIGHT, TILEHEIGHT, TILEWIDTH, UP, WHITE
 from vim_man.vector import Vector2D
-from vim_man.constants import WHITE, RED, UP, DOWN, LEFT, RIGHT
+
+NodeKey = tuple[int, int]
+NodesLUT = dict[NodeKey, "Node"]
+MazeArray = np.ndarray[NodeKey, np.dtype[np.str_]]
 
 
 class Node(object):
@@ -23,35 +29,79 @@ class Node(object):
 
 
 class NodeGroup(object):
-    def __init__(self) -> None:
-        self.node_list: list[Node] = []
+    def __init__(self, level: str) -> None:
+        self.level = level
+        self.nodes_LUT: NodesLUT = {}
+        self.node_symbols = ["+"]
+        self.path_symbols = ["."]
+        data = self.read_maze_file(level)
+        self.create_node_table(data)
+        self.connect_horizontally(data)
+        self.connect_vertically(data)
 
-    def setup_test_nodes(self) -> None:
-        nodeA = Node(80, 80)
-        nodeB = Node(160, 80)
-        nodeC = Node(80, 160)
-        nodeD = Node(160, 160)
-        nodeE = Node(208, 160)
-        nodeF = Node(80, 320)
-        nodeG = Node(208, 320)
-        nodeA.neighbors[RIGHT] = nodeB
-        nodeA.neighbors[DOWN] = nodeC
-        nodeB.neighbors[LEFT] = nodeA
-        nodeB.neighbors[DOWN] = nodeD
-        nodeC.neighbors[UP] = nodeA
-        nodeC.neighbors[RIGHT] = nodeD
-        nodeC.neighbors[DOWN] = nodeF
-        nodeD.neighbors[UP] = nodeB
-        nodeD.neighbors[LEFT] = nodeC
-        nodeD.neighbors[RIGHT] = nodeE
-        nodeE.neighbors[LEFT] = nodeD
-        nodeE.neighbors[DOWN] = nodeG
-        nodeF.neighbors[UP] = nodeC
-        nodeF.neighbors[RIGHT] = nodeG
-        nodeG.neighbors[LEFT] = nodeF
-        nodeG.neighbors[UP] = nodeE
-        self.node_list = [nodeA, nodeB, nodeC, nodeD, nodeE, nodeF, nodeG]
+    def read_maze_file(self, textfile: str) -> MazeArray:
+        return np.loadtxt(textfile, dtype="<U1")
+
+    def create_node_table(
+        self, data: MazeArray, x_offset: int = 0, y_offset: int = 0
+    ) -> None:
+        for row in list(range(data.shape[0])):
+            for col in list(range(data.shape[1])):
+                if data[row][col] in self.node_symbols:
+                    x, y = self.construct_key(col + x_offset, row + y_offset)
+                    self.nodes_LUT[(x, y)] = Node(x, y)
+
+    def construct_key(self, x: int, y: int) -> NodeKey:
+        return x * TILEWIDTH, y * TILEHEIGHT
+
+    def connect_horizontally(
+        self, data: MazeArray, x_offset: int = 0, y_offset: int = 0
+    ) -> None:
+        for row in list(range(data.shape[0])):
+            key: NodeKey | None = None
+            for col in list(range(data.shape[1])):
+                if data[row][col] in self.node_symbols:
+                    if key is None:
+                        key = self.construct_key(col + x_offset, row + y_offset)
+                    else:
+                        otherkey = self.construct_key(col + x_offset, row + y_offset)
+                        self.nodes_LUT[key].neighbors[RIGHT] = self.nodes_LUT[otherkey]
+                        self.nodes_LUT[otherkey].neighbors[LEFT] = self.nodes_LUT[key]
+                        key = otherkey
+                elif data[row][col] not in self.path_symbols:
+                    key = None
+
+    def connect_vertically(
+        self, data: MazeArray, x_offset: int = 0, y_offset: int = 0
+    ) -> None:
+        dataT = data.transpose()  # (row, col) -> (col, row)
+        for col in list(range(dataT.shape[0])):
+            key: NodeKey | None = None
+            for row in list(range(dataT.shape[1])):
+                if dataT[col][row] in self.node_symbols:
+                    if key is None:
+                        key = self.construct_key(col + x_offset, row + y_offset)
+                    else:
+                        otherkey = self.construct_key(col + x_offset, row + y_offset)
+                        self.nodes_LUT[key].neighbors[DOWN] = self.nodes_LUT[otherkey]
+                        self.nodes_LUT[otherkey].neighbors[UP] = self.nodes_LUT[key]
+                        key = otherkey
+                elif dataT[col][row] not in self.path_symbols:
+                    key = None
+
+    def get_node_from_pixels(self, x_pixel: int, y_pixel: int) -> Node | None:
+        return self.nodes_LUT.get((x_pixel, y_pixel))
+
+    def get_node_from_tiles(self, col: int, row: int) -> Node | None:
+        x, y = self.construct_key(col, row)
+        return self.get_node_from_pixels(x, y)
+
+    def get_start_temp_node(self) -> Node:
+        """Return the node from which Pacman starts on."""
+        # TODO: For now this will be the first node in the lookup stable. Change later on.
+        nodes = list(self.nodes_LUT.values())
+        return nodes[0]
 
     def render(self, screen: pygame.SurfaceType) -> None:
-        for node in self.node_list:
+        for node in self.nodes_LUT.values():
             node.render(screen)
