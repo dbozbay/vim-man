@@ -4,9 +4,9 @@ import pygame
 from vim_man.constants import DOWN, LEFT, RED, RIGHT, TILEHEIGHT, TILEWIDTH, UP, WHITE
 from vim_man.vector import Vector2D
 
-NodeKey = tuple[int, int]
-NodesLUT = dict[NodeKey, "Node"]
-MazeArray = np.ndarray[NodeKey, np.dtype[np.str_]]
+type NodeKey = tuple[int, int]
+type NodesLUT = dict[NodeKey, "Node"]
+type MazeArray = np.ndarray[NodeKey, np.dtype[np.str_]]
 
 
 class Node(object):
