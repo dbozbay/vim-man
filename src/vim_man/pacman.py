@@ -77,13 +77,14 @@ class Pacman(object):
         key_pressed = pygame.key.get_pressed()
         if key_pressed[pygame.K_k]:
             return UP
-        if key_pressed[pygame.K_j]:
+        elif key_pressed[pygame.K_j]:
             return DOWN
-        if key_pressed[pygame.K_h]:
+        elif key_pressed[pygame.K_h]:
             return LEFT
-        if key_pressed[pygame.K_l]:
+        elif key_pressed[pygame.K_l]:
             return RIGHT
-        return STOP
+        else:
+            return STOP
 
     def overshot_target(self) -> bool:
         """Return True if Pacman has moved past the center of the target node."""
