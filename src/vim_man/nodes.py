@@ -62,37 +62,47 @@ class NodeGroup(object):
         self, data: MazeArray, x_offset: int = 0, y_offset: int = 0
     ) -> None:
         """Connect horizontally adjacent node tiles as left and right neighbors."""
+        # Walk each row from left to right, remembering the last node we saw.
         for row in list(range(data.shape[0])):
-            key: NodeKey | None = None
+            key: NodeKey | None = None  # Start with no active node in this row.
             for col in list(range(data.shape[1])):
                 if data[row][col] in self.node_symbols:
                     if key is None:
+                        # First node in a new horizontal run; just record its key.
                         key = self.construct_key(col + x_offset, row + y_offset)
                     else:
+                        # We have a previous node in this run, so connect it to this one.
                         otherkey = self.construct_key(col + x_offset, row + y_offset)
                         self.nodes_LUT[key].neighbors[RIGHT] = self.nodes_LUT[otherkey]
                         self.nodes_LUT[otherkey].neighbors[LEFT] = self.nodes_LUT[key]
+                        # This node becomes the new "previous" node for the run.
                         key = otherkey
                 elif data[row][col] not in self.path_symbols:
+                    # Hitting a wall or non-path tile breaks the current run.
                     key = None
 
     def connect_vertically(
         self, data: MazeArray, x_offset: int = 0, y_offset: int = 0
     ) -> None:
         """Connect vertically adjacent node tiles as up and down neighbors."""
+        # Transpose so we can reuse the same "scan along rows" logic for columns.
         dataT = data.transpose()  # (row, col) -> (col, row)
         for col in list(range(dataT.shape[0])):
-            key: NodeKey | None = None
+            key: NodeKey | None = None  # Start with no active node in this column.
             for row in list(range(dataT.shape[1])):
                 if dataT[col][row] in self.node_symbols:
                     if key is None:
+                        # First node in a new vertical run; just record its key.
                         key = self.construct_key(col + x_offset, row + y_offset)
                     else:
+                        # We have a previous node in this column, so connect it to this one.
                         otherkey = self.construct_key(col + x_offset, row + y_offset)
                         self.nodes_LUT[key].neighbors[DOWN] = self.nodes_LUT[otherkey]
                         self.nodes_LUT[otherkey].neighbors[UP] = self.nodes_LUT[key]
+                        # This node becomes the new "previous" node for the run.
                         key = otherkey
                 elif dataT[col][row] not in self.path_symbols:
+                    # Hitting a wall or non-path tile breaks the current run.
                     key = None
 
     def get_node_from_pixels(self, x_pixel: int, y_pixel: int) -> Node | None:
