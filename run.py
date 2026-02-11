@@ -3,6 +3,7 @@ import pygame
 from vim_man.constants import BLACK, SCREENSIZE
 from vim_man.nodes import NodeGroup
 from vim_man.pacman import Pacman
+from vim_man.pellets import PelletGroup
 
 
 class GameController(object):
@@ -25,11 +26,13 @@ class GameController(object):
         self.nodes = NodeGroup("maze1.txt")
         self.nodes.set_portal_pair((0, 17), (27, 17))
         self.pacman = Pacman(self.nodes.get_start_temp_node())
+        self.pellets = PelletGroup("maze1.txt")
 
     def update(self) -> None:
         """Advance the game state by one frame, handling logic and rendering."""
         dt = self.clock.tick(30) / 1000.0
         self.pacman.update(dt)
+        self.pellets.update(dt)
         self.check_events()
         self.render()
 
@@ -43,6 +46,7 @@ class GameController(object):
         """Draw the current game state, including maze and Pacman, to the screen."""
         self.screen.blit(self.background, (0, 0))
         self.nodes.render(self.screen)
+        self.pellets.render(self.screen)
         self.pacman.render(self.screen)
         pygame.display.update()
 

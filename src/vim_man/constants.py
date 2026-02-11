@@ -22,3 +22,5 @@ RIGHT: int = -2
 PORTAL: int = 3
 
 PACMAN: int = 0
+PELLET: int = 1
+POWERPELLET: int = 2
