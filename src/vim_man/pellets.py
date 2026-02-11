@@ -2,7 +2,7 @@ import numpy as np
 import pygame
 
 from vim_man.constants import BLUE, PELLET, POWERPELLET, TILEHEIGHT, TILEWIDTH
-from vim_man.nodes import MazeArray
+from vim_man.types import MazeArray
 from vim_man.vector import Vector2D
 
 
