@@ -21,6 +21,8 @@ type MazeArray = np.ndarray[NodeKey, np.dtype[np.str_]]
 
 
 class Node(object):
+    """Node represents a maze junction with links to its neighboring nodes."""
+
     def __init__(self, x: float, y: float) -> None:
         self.position = Vector2D(x, y)
         self.neighbors: dict[int, Node | None] = {
@@ -46,6 +48,8 @@ class Node(object):
 
 
 class NodeGroup(object):
+    """NodeGroup loads a maze layout and manages the network of connected nodes."""
+
     def __init__(self, level: str) -> None:
         self.level = level
         self.nodes_LUT: NodesLUT = {}

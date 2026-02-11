@@ -16,6 +16,8 @@ from vim_man.vector import Vector2D
 
 
 class Pacman(object):
+    """Pacman controls the player character's movement and interaction with the maze graph."""
+
     def __init__(self, node: Node) -> None:
         self.name = PACMAN
         self.directions = {

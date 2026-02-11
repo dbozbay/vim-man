@@ -4,6 +4,8 @@ import math
 
 
 class Vector2D(object):
+    """Vector2D represents a 2D vector with basic arithmetic and utility operations."""
+
     def __init__(self, x: float = 0, y: float = 0) -> None:
         self.x = x
         self.y = y

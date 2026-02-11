@@ -6,6 +6,8 @@ from vim_man.pacman import Pacman
 
 
 class GameController(object):
+    """GameController initializes and runs the main game loop for Vim-Man."""
+
     def __init__(self) -> None:
         pygame.init()
         self.screen = pygame.display.set_mode(SCREENSIZE, 0, 32)
