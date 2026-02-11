@@ -21,7 +21,7 @@ class GameController(object):
         self.background.fill(BLACK)
 
     def start_game(self) -> None:
-        """Initialize the maze and Pacman, and prepare the game to start."""
+        """Initialize the maze, Pacman, pellets, and prepare the game to start."""
         # self.set_background() # TODO: Do we need this when background is set in init?
         self.nodes = NodeGroup("maze1.txt")
         self.nodes.set_portal_pair((0, 17), (27, 17))
@@ -43,7 +43,7 @@ class GameController(object):
                 exit()
 
     def render(self) -> None:
-        """Draw the current game state, including maze and Pacman, to the screen."""
+        """Draw the current game state (incl. maze, Pacman and pellets) to the screen."""
         self.screen.blit(self.background, (0, 0))
         self.nodes.render(self.screen)
         self.pellets.render(self.screen)
