@@ -28,11 +28,18 @@ class GameController(object):
         self.pacman = Pacman(self.nodes.get_start_temp_node())
         self.pellets = PelletGroup("maze1.txt")
 
+    def check_pellet_events(self) -> None:
+        pellet = self.pacman.eat_pellets(self.pellets.pellet_list)
+        if pellet:
+            self.pellets.num_eaten += 1
+            self.pellets.pellet_list.remove(pellet)
+
     def update(self) -> None:
         """Advance the game state by one frame, handling logic and rendering."""
         dt = self.clock.tick(30) / 1000.0
         self.pacman.update(dt)
         self.pellets.update(dt)
+        self.check_pellet_events()
         self.check_events()
         self.render()
 

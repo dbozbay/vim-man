@@ -12,6 +12,7 @@ from vim_man.constants import (
     YELLOW,
 )
 from vim_man.nodes import Node
+from vim_man.pellets import Pellet
 from vim_man.vector import Vector2D
 
 
@@ -34,6 +35,7 @@ class Pacman(object):
         self.node = node
         self.set_position()
         self.target = node
+        self.collide_radius = 5  # TODO: make the same as radius?
 
     def set_position(self) -> None:
         """Align Pacman's position with the current node's position."""
@@ -127,6 +129,15 @@ class Pacman(object):
             if direction == self.direction * -1:
                 return True
         return False
+
+    def eat_pellets(self, pellet_list: list[Pellet]) -> Pellet | None:
+        for pellet in pellet_list:
+            d = self.position - pellet.position
+            d_squared = d.magnitude_squared()
+            r_squared = (pellet.radius + self.collide_radius) ** 2
+            if d_squared <= r_squared:
+                return pellet
+        return None
 
     def render(self, screen: pygame.SurfaceType) -> None:
         """Draw Pacman as a filled circle at his current position on the screen."""
