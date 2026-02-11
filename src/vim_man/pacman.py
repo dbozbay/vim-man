@@ -131,6 +131,7 @@ class Pacman(object):
         return False
 
     def eat_pellets(self, pellet_list: list[Pellet]) -> Pellet | None:
+        """Return the first pellet colliding with Pacman, or `None` if no collision occurs."""
         for pellet in pellet_list:
             d = self.position - pellet.position
             d_squared = d.magnitude_squared()

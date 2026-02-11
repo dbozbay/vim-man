@@ -29,6 +29,7 @@ class GameController(object):
         self.pellets = PelletGroup("maze1.txt")
 
     def check_pellet_events(self) -> None:
+        """Update pellet state when Pacman eats a pellet."""
         pellet = self.pacman.eat_pellets(self.pellets.pellet_list)
         if pellet:
             self.pellets.num_eaten += 1
