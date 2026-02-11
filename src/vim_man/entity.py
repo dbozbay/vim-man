@@ -17,7 +17,10 @@ from vim_man.vector import Vector2D
 
 
 class Entity(object):
+    """Base moving game entity that travels between nodes on the maze and renders as a circle."""
+
     def __init__(self, node: Node) -> None:
+        """Initialize an entity at the given node with default movement, appearance, and targeting state."""
         self.name: int | None = None
         self.directions = {
             STOP: Vector2D(),
