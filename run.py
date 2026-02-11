@@ -28,7 +28,7 @@ class GameController(object):
         self.nodes.set_portal_pair((0, 17), (27, 17))
         self.pacman = Pacman(self.nodes.get_start_temp_node())
         self.pellets = PelletGroup("maze1.txt")
-        self.ghost = Ghost(self.nodes.get_start_temp_node())
+        self.ghost = Ghost(self.nodes.get_last_node())
 
     def check_pellet_events(self) -> None:
         """Update pellet state when Pacman eats a pellet."""

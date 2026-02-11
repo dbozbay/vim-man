@@ -147,6 +147,10 @@ class NodeGroup(object):
         nodes = list(self.nodes_LUT.values())
         return nodes[0]
 
+    def get_last_node(self) -> Node:
+        nodes = list(self.nodes_LUT.values())
+        return nodes[-1]
+
     def render(self, screen: pygame.SurfaceType) -> None:
         """Render all nodes in the node group to the screen."""
         for node in self.nodes_LUT.values():

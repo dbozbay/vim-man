@@ -37,6 +37,8 @@ class Entity(object):
         self.target = node
         self.visible = True
         self.disable_portal = False
+        self.goal: Vector2D | None = None
+        self.direction_method = self.random_direction
 
     def set_position(self) -> None:
         """Align entity's position with the current node's position."""
@@ -111,9 +113,9 @@ class Entity(object):
             # Update the current node to the target we’ve just reached.
             self.node = self.target
 
-            # Choose a random direction from the available valid movement directions.
+            # Choose a direction from the available valid directions based on the entity's direction method.
             directions = self.valid_directions()
-            direction = self.random_direction(directions)
+            direction = self.direction_method(directions)
 
             # If portals are enabled and this node has a portal neighbor, teleport to that portal node.
             if not self.disable_portal:
