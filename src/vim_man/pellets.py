@@ -7,7 +7,10 @@ from vim_man.vector import Vector2D
 
 
 class Pellet(object):
+    """Pellet represents a standard dot that Pacman can eat for points."""
+
     def __init__(self, row: int, column: int) -> None:
+        """Create a standard pellet at the given maze row and column."""
         self.name = PELLET
         self.position = Vector2D(column * TILEWIDTH, row * TILEHEIGHT)
         self.color = BLUE
@@ -16,13 +19,17 @@ class Pellet(object):
         self.visible = True
 
     def render(self, screen: pygame.Surface) -> None:
+        """Draw the pellet to the screen if it is currently visible."""
         if self.visible:
             pos = self.position.as_int()
             pygame.draw.circle(screen, self.color, pos, self.radius)
 
 
 class PowerPellet(Pellet):
+    """PowerPellet is a larger, flashing pellet that grants bonus points and power effects."""
+
     def __init__(self, row: int, column: int) -> None:
+        """Create a power pellet at the given maze row and column."""
         Pellet.__init__(self, row, column)
         self.name = POWERPELLET
         self.radius = int(8 * TILEWIDTH / 16)
@@ -31,6 +38,7 @@ class PowerPellet(Pellet):
         self.timer = 0.0
 
     def update(self, dt: float) -> None:
+        """Toggle power pellet visibility over time to create a flashing effect."""
         self.timer += dt
         if self.timer >= self.flash_time:
             self.visible = not self.visible
@@ -38,7 +46,10 @@ class PowerPellet(Pellet):
 
 
 class PelletGroup(object):
+    """PelletGroup manages all pellets and power pellets for a level."""
+
     def __init__(self, pelletfile: str) -> None:
+        """Load all pellets and power pellets for the level from the given layout file."""
         self.pellet_symbols = ["+", "."]
         self.powerpellet_symbols = ["P", "p"]
         self.pellet_list: list[Pellet] = []
@@ -47,10 +58,12 @@ class PelletGroup(object):
         self.num_eaten = 0
 
     def update(self, dt: float) -> None:
+        """Update all power pellets in the group."""
         for powerpellet in self.powerpellet_list:
             powerpellet.update(dt)
 
     def create_pellet_list(self, pelletfile: str) -> None:
+        """Parse the pellet layout file and populate the pellet and power pellet lists."""
         data = self.read_pellet_file(pelletfile)
         for row in list(range(data.shape[0])):
             for col in list(range(data.shape[1])):
@@ -62,17 +75,14 @@ class PelletGroup(object):
                     self.powerpellet_list.append(pp)
 
     def read_pellet_file(self, textfile: str) -> MazeArray:
+        """Load the pellet layout from a text file into a NumPy array."""
         return np.loadtxt(textfile, dtype="<U1")
 
     def is_empty(self) -> bool:
+        """Return True if there are no pellets left in the level."""
         return len(self.pellet_list) == 0
 
     def render(self, screen: pygame.Surface) -> None:
+        """Render all pellets in the group to the screen."""
         for pellet in self.pellet_list:
             pellet.render(screen)
-
-
-if __name__ == "__main__":
-    pellets = PelletGroup("maze1.txt").pellet_list
-    for p in pellets:
-        print(p.position)
