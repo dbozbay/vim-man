@@ -1,4 +1,3 @@
-from vim_man.ghosts import Ghost
 import pygame
 
 from vim_man.constants import (
@@ -73,7 +72,7 @@ class Pacman(Entity):
         else:
             return STOP
 
-    def collide_ghost(self, ghost: Ghost) -> bool:
+    def collide_ghost(self, ghost: Entity) -> bool:
         return self.collide_check(ghost)
 
     def collide_check(self, other: Entity | Pellet) -> bool:
