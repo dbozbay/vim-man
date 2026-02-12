@@ -1,3 +1,4 @@
+from vim_man.ghosts import Ghost
 import pygame
 
 from vim_man.constants import (
@@ -72,12 +73,18 @@ class Pacman(Entity):
         else:
             return STOP
 
+    def collide_ghost(self, ghost: Ghost) -> bool:
+        return self.collide_check(ghost)
+
+    def collide_check(self, other: Entity | Pellet) -> bool:
+        d = self.position - other.position
+        d_squared = d.magnitude_squared()
+        r_squared = (self.collide_radius + other.collide_radius) ** 2
+        return d_squared <= r_squared
+
     def eat_pellets(self, pellet_list: list[Pellet]) -> Pellet | None:
         """Return the first pellet colliding with Pacman, or `None` if no collision occurs."""
         for pellet in pellet_list:
-            d = self.position - pellet.position
-            d_squared = d.magnitude_squared()
-            r_squared = (pellet.radius + self.collide_radius) ** 2
-            if d_squared <= r_squared:
+            if self.collide_check(pellet):
                 return pellet
         return None

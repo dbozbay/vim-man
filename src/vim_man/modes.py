@@ -1,4 +1,4 @@
-from vim_man.constants import FREIGHT
+from vim_man.constants import FREIGHT, SPAWN
 from vim_man.constants import SCATTER, CHASE
 from vim_man.entity import Entity
 
@@ -47,8 +47,18 @@ class ModeController(object):
                     self.time = None
                     self.entity.normal_mode()  # pyrefly: ignore
                     self.current = self.mainmode.mode
-        else:
+
+        elif self.current in [SCATTER, CHASE]:
             self.current = self.mainmode.mode
+
+        if self.current is SPAWN:
+            if self.entity.node == self.entity.spawn_node:
+                self.entity.normal_mode()
+                self.current = self.mainmode.mode
+
+    def set_spawn_mode(self) -> None:
+        if self.current is FREIGHT:
+            self.current = SPAWN
 
     def set_freight_mode(self) -> None:
         # If ghost is in either SCATTER or CHASE mode, set to FREIGHT mode for 7 seconds.

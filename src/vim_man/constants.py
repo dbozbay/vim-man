@@ -29,4 +29,4 @@ GHOST: int = 3
 SCATTER: int = 0
 CHASE: int = 1
 FREIGHT: int = 2
-SPWAWN: int = 3
+SPAWN: int = 3

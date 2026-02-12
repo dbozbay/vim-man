@@ -1,3 +1,4 @@
+from vim_man.constants import FREIGHT
 from vim_man.constants import POWERPELLET
 import pygame
 
@@ -30,6 +31,7 @@ class GameController(object):
         self.pacman = Pacman(self.nodes.get_start_temp_node())
         self.pellets = PelletGroup("maze1.txt")
         self.ghost = Ghost(self.nodes.get_last_node(), self.pacman)
+        self.ghost.set_spawn_node(self.nodes.get_last_node())
 
     def check_pellet_events(self) -> None:
         """Update pellet state when Pacman eats a pellet."""
@@ -40,6 +42,11 @@ class GameController(object):
             if pellet.name == POWERPELLET:
                 self.ghost.start_freight()
 
+    def check_ghost_events(self):
+        if self.pacman.collide_ghost(self.ghost):
+            if self.ghost.mode.current is FREIGHT:
+                self.ghost.start_spawn()
+
     def update(self) -> None:
         """Advance the game state by one frame, handling logic and rendering."""
         dt = self.clock.tick(30) / 1000.0
@@ -47,6 +54,7 @@ class GameController(object):
         self.ghost.update(dt)
         self.pellets.update(dt)
         self.check_pellet_events()
+        self.check_ghost_events()
         self.check_events()
         self.render()
 
