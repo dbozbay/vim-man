@@ -2,14 +2,13 @@ from vim_man.constants import SCATTER, CHASE, SPAWN, FREIGHT, GHOST
 from vim_man.entity import Entity
 from vim_man.nodes import Node
 from vim_man.vector import Vector2D
-from vim_man.pacman import Pacman
 from vim_man.modes import ModeController
 
 
 class Ghost(Entity):
     """Ghost entity that moves like an Entity but chooses directions based on a goal position."""
 
-    def __init__(self, node: Node, pacman: Pacman | None = None) -> None:
+    def __init__(self, node: Node, pacman: Entity | None = None) -> None:
         """Initialize a ghost at the given starting node with scoring and goal-tracking behavior."""
         Entity.__init__(self, node)
         self.name = GHOST
