@@ -25,3 +25,8 @@ PACMAN: int = 0
 PELLET: int = 1
 POWERPELLET: int = 2
 GHOST: int = 3
+
+SCATTER: int = 0
+CHASE: int = 1
+FREIGHT: int = 2
+SPWAWN: int = 3

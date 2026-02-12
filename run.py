@@ -16,7 +16,7 @@ class GameController(object):
         self.set_background()
         self.clock = pygame.time.Clock()
 
-    def set_background(self):
+    def set_background(self) -> None:
         """Create and fill the background surface for the game screen."""
         self.background = pygame.Surface(SCREENSIZE).convert()
         self.background.fill(BLACK)
@@ -28,7 +28,7 @@ class GameController(object):
         self.nodes.set_portal_pair((0, 17), (27, 17))
         self.pacman = Pacman(self.nodes.get_start_temp_node())
         self.pellets = PelletGroup("maze1.txt")
-        self.ghost = Ghost(self.nodes.get_last_node())
+        self.ghost = Ghost(self.nodes.get_last_node(), self.pacman)
 
     def check_pellet_events(self) -> None:
         """Update pellet state when Pacman eats a pellet."""
