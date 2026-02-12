@@ -1,3 +1,4 @@
+from vim_man.constants import POWERPELLET
 import pygame
 
 from vim_man.constants import BLACK, SCREENSIZE
@@ -36,6 +37,8 @@ class GameController(object):
         if pellet:
             self.pellets.num_eaten += 1
             self.pellets.pellet_list.remove(pellet)
+            if pellet.name == POWERPELLET:
+                self.ghost.start_freight()
 
     def update(self) -> None:
         """Advance the game state by one frame, handling logic and rendering."""

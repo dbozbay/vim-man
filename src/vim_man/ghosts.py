@@ -1,3 +1,4 @@
+from vim_man.constants import FREIGHT
 from vim_man.constants import SCATTER, CHASE
 from vim_man.constants import GHOST, TILEWIDTH
 from vim_man.entity import Entity
@@ -33,6 +34,16 @@ class Ghost(Entity):
 
     def chase(self) -> None:
         self.goal = self.pacman.position
+
+    def start_freight(self) -> None:
+        self.mode.set_freight_mode()
+        if self.mode.current == FREIGHT:
+            self.set_speed(50)
+            self.direction_method = self.random_direction
+
+    def normal_mode(self) -> None:
+        self.set_speed(100)
+        self.direction_method = self.goal_direction
 
     def goal_direction(self, directions: list[int]) -> int:
         """Return the direction that makes a one-tile step from the current node land closest to the goal."""
