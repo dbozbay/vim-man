@@ -67,21 +67,23 @@ uv run game.py
 ```
 vim-man/
 ├── src/vim_man/
-│   ├── constants.py      # Game-wide constants (screen size, colors, modes, direction vectors)
-│   ├── vector.py         # 2D vector math
-│   ├── nodes.py          # Maze graph: node parsing, connection, and portal linking
-│   ├── entity.py         # Base class for all moving entities (movement, targeting, rendering)
-│   ├── pacman.py         # Player-controlled entity; handles keyboard input and pellet collision
-│   ├── ghosts.py         # Ghost entity; Chase, Scatter, Freight, and Spawn mode logic
-│   ├── modes.py          # Ghost mode state machine (MainMode + ModeController)
-│   ├── pellets.py        # Pellet and PowerPellet entities + group management
-│   └── types.py          # Type aliases (MazeArray, TilePos, PixelCoord)
+│   ├── data/
+│   │   ├── maze1.txt         # Main level layout (nodes, paths, portals)
+│   │   └── mazetest.txt      # Minimal maze used in testing
+│   ├── constants.py          # Game-wide constants (screen size, colors, modes, direction vectors)
+│   ├── utils.py              # Shared utilities: maze path resolution and file loading
+│   ├── vector.py             # 2D vector math
+│   ├── nodes.py              # Maze graph: node parsing, connection, and portal linking
+│   ├── entity.py             # Base class for all moving entities (movement, targeting, rendering)
+│   ├── pacman.py             # Player-controlled entity; handles keyboard input and pellet collision
+│   ├── ghosts.py             # Ghost entity; Chase, Scatter, Freight, and Spawn mode logic
+│   ├── modes.py              # Ghost mode state machine (MainMode + ModeController)
+│   ├── pellets.py            # Pellet and PowerPellet entities + group management
+│   └── types.py              # Type aliases (MazeArray, TilePos, PixelCoord)
 ├── tests/
-│   └── test_vector.py    # Unit tests for Vector2D
-├── maze1.txt             # Main level layout (nodes, paths, portals)
-├── mazetest.txt          # Minimal maze used in testing
-├── game.py               # Game entry point and main loop
-└── pyproject.toml
+│   └── test_vector.py        # Unit tests for Vector2D
+├── game.py                   # Game entry point and main loop
+└── pyproject.tomll
 ```
 
 ### Maze File Format
@@ -114,7 +116,7 @@ uv run ruff check .
 uv run ruff format .
 
 # Type check
-uv run pyrefly check
+uv run pyrefly check .
 
 # Test
 uv run pytest
