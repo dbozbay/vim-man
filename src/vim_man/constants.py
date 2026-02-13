@@ -30,3 +30,5 @@ SCATTER: int = 0
 CHASE: int = 1
 FREIGHT: int = 2
 SPAWN: int = 3
+
+MAZE: str = "maze1.txt"

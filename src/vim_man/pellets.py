@@ -1,8 +1,8 @@
-import numpy as np
 import pygame
 
 from vim_man.constants import BLUE, PELLET, POWERPELLET, TILEHEIGHT, TILEWIDTH
 from vim_man.types import MazeArray
+from vim_man.utils import read_maze_file
 from vim_man.vector import Vector2D
 
 
@@ -77,7 +77,7 @@ class PelletGroup(object):
 
     def read_pellet_file(self, textfile: str) -> MazeArray:
         """Load the pellet layout from a text file into a NumPy array."""
-        return np.loadtxt(textfile, dtype="<U1")
+        return read_maze_file(textfile)
 
     def is_empty(self) -> bool:
         """Return True if there are no pellets left in the level."""
