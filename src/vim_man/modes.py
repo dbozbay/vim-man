@@ -1,6 +1,11 @@
-from vim_man.constants import FREIGHT, SPAWN
-from vim_man.constants import SCATTER, CHASE
-from vim_man.entity import Entity
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+from vim_man.constants import CHASE, FREIGHT, SCATTER, SPAWN
+
+if TYPE_CHECKING:
+    from vim_man.ghosts import Ghost
 
 
 class MainMode(object):
@@ -31,12 +36,12 @@ class MainMode(object):
 
 
 class ModeController(object):
-    def __init__(self, entity: Entity) -> None:
+    def __init__(self, ghost: Ghost) -> None:
         self.timer = 0.0
         self.time = None
         self.mainmode = MainMode()
         self.current = self.mainmode.mode
-        self.entity = entity
+        self.ghost = ghost
 
     def update(self, dt: float) -> None:
         self.mainmode.update(dt)
@@ -45,15 +50,15 @@ class ModeController(object):
             if self.time is not None:
                 if self.timer >= self.time:
                     self.time = None
-                    self.entity.normal_mode()  # pyrefly: ignore
+                    self.ghost.normal_mode()
                     self.current = self.mainmode.mode
 
         elif self.current in [SCATTER, CHASE]:
             self.current = self.mainmode.mode
 
         if self.current is SPAWN:
-            if self.entity.node == self.entity.spawn_node:
-                self.entity.normal_mode()
+            if self.ghost.node == self.ghost.spawn_node:
+                self.ghost.normal_mode()
                 self.current = self.mainmode.mode
 
     def set_spawn_mode(self) -> None:
