@@ -9,6 +9,7 @@ if TYPE_CHECKING:
 
 
 class MainMode(object):
+    # TODO: Write docstrings
     def __init__(self) -> None:
         self.timer = 0.0
         self.time = None

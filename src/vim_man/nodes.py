@@ -49,7 +49,8 @@ class Node(object):
 class NodeGroup(object):
     """NodeGroup loads a maze layout and manages the network of connected nodes."""
 
-    def __init__(self, level: str = "vim_man") -> None:
+    def __init__(self, level: str) -> None:
+        # TODO: Write docstring
         self.level = level
         self.nodes_LUT: NodesLUT = {}
         self.node_symbols = ["+", "P", "n"]
@@ -70,11 +71,14 @@ class NodeGroup(object):
         for row in list(range(data.shape[0])):
             for col in list(range(data.shape[1])):
                 if data[row][col] in self.node_symbols:
-                    x, y = self.tile_to_pixel(col + x_offset, row + y_offset)
+                    x, y = self.construct_key(col + x_offset, row + y_offset)
                     self.nodes_LUT[(x, y)] = Node(x, y)
 
-    def tile_to_pixel(self, col: int, row: int) -> PixelCoord:
-        """Return the pixel coordinates of the top-left corner of the given tile (col, row)."""
+    def construct_key(self, col: int, row: int) -> PixelCoord:
+        """
+        Return the pixel coordinates of the top-left corner of the given tile (col, row).
+        This will be the node's key in the node lookup table.
+        """
         return col * TILEWIDTH, row * TILEHEIGHT
 
     def connect_horizontally(
@@ -88,10 +92,10 @@ class NodeGroup(object):
                 if data[row][col] in self.node_symbols:
                     if key is None:
                         # First node in a new horizontal run; just record its key.
-                        key = self.tile_to_pixel(col + x_offset, row + y_offset)
+                        key = self.construct_key(col + x_offset, row + y_offset)
                     else:
                         # We have a previous node in this run, so connect it to this one.
-                        otherkey = self.tile_to_pixel(col + x_offset, row + y_offset)
+                        otherkey = self.construct_key(col + x_offset, row + y_offset)
                         self.nodes_LUT[key].neighbors[RIGHT] = self.nodes_LUT[otherkey]
                         self.nodes_LUT[otherkey].neighbors[LEFT] = self.nodes_LUT[key]
                         # This node becomes the new "previous" node for the run.
@@ -112,10 +116,10 @@ class NodeGroup(object):
                 if dataT[col][row] in self.node_symbols:
                     if key is None:
                         # First node in a new vertical run; just record its key.
-                        key = self.tile_to_pixel(col + x_offset, row + y_offset)
+                        key = self.construct_key(col + x_offset, row + y_offset)
                     else:
                         # We have a previous node in this column, so connect it to this one.
-                        otherkey = self.tile_to_pixel(col + x_offset, row + y_offset)
+                        otherkey = self.construct_key(col + x_offset, row + y_offset)
                         self.nodes_LUT[key].neighbors[DOWN] = self.nodes_LUT[otherkey]
                         self.nodes_LUT[otherkey].neighbors[UP] = self.nodes_LUT[key]
                         # This node becomes the new "previous" node for the run.
@@ -126,8 +130,8 @@ class NodeGroup(object):
 
     def set_portal_pair(self, pair1: TilePos, pair2: TilePos) -> None:
         """Set the portal neighbors for the two given tile coordinates."""
-        key1 = self.tile_to_pixel(*pair1)
-        key2 = self.tile_to_pixel(*pair2)
+        key1 = self.construct_key(*pair1)
+        key2 = self.construct_key(*pair2)
         if key1 in self.nodes_LUT.keys() and key2 in self.nodes_LUT.keys():
             self.nodes_LUT[key1].neighbors[PORTAL] = self.nodes_LUT[key2]
             self.nodes_LUT[key2].neighbors[PORTAL] = self.nodes_LUT[key1]
@@ -138,7 +142,7 @@ class NodeGroup(object):
 
     def get_node_from_tiles(self, col: int, row: int) -> Node | None:
         """Return the node at the given tile coordinates, or `None` if none exists."""
-        x, y = self.tile_to_pixel(col, row)
+        x, y = self.construct_key(col, row)
         return self.get_node_from_pixels(x, y)
 
     def get_start_temp_node(self) -> Node:
@@ -148,6 +152,7 @@ class NodeGroup(object):
         return nodes[0]
 
     def get_last_node(self) -> Node:
+        """Return the last node in the nodes lookup table."""
         nodes = list(self.nodes_LUT.values())
         return nodes[-1]
 

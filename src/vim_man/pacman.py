@@ -73,9 +73,11 @@ class Pacman(Entity):
             return STOP
 
     def collide_ghost(self, ghost: Entity) -> bool:
+        # TODO: Write docstring
         return self.collide_check(ghost)
 
     def collide_check(self, other: Entity | Pellet) -> bool:
+        # TODO: Write docstring
         d = self.position - other.position
         d_squared = d.magnitude_squared()
         r_squared = (self.collide_radius + other.collide_radius) ** 2
