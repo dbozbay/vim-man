@@ -15,6 +15,10 @@ YELLOW: Color = (255, 255, 0)
 BLUE: Color = (0, 0, 255)
 WHITE: Color = (255, 255, 255)
 RED: Color = (255, 0, 0)
+PINK: Color = (255, 100, 150)
+TEAL: Color = (100, 255, 255)
+ORANGE: Color = (230, 190, 40)
+
 
 SCATTER_TIME: float = 7.0
 CHASE_TIME: float = 20.0
@@ -37,6 +41,10 @@ class EntityID(IntEnum):
     PELLET = 1
     POWERPELLET = 2
     GHOST = 3
+    BLINKY = 4
+    PINKY = 5
+    INKY = 6
+    CLYDE = 7
 
 
 class GhostMode(IntEnum):

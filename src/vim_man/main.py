@@ -1,7 +1,7 @@
 import pygame
 
 from vim_man.constants import BLACK, MAZE, SCREENSIZE, EntityID, GhostMode
-from vim_man.ghosts import Ghost
+from vim_man.ghosts import GhostGroup
 from vim_man.level import MazeLevel
 from vim_man.nodes import NodeGroup
 from vim_man.pacman import Pacman
@@ -21,7 +21,7 @@ class GameController:
         self.nodes: NodeGroup
         self.pacman: Pacman
         self.pellets: PelletGroup
-        self.ghost: Ghost
+        self.ghosts: GhostGroup
 
     def set_background(self) -> None:
         """Create and fill the background surface for the game screen."""
@@ -36,8 +36,8 @@ class GameController:
         self.nodes.set_portal_pair((0, 17), (27, 17))
         self.pacman = Pacman(self.nodes.get_start_node())
         self.pellets = PelletGroup(self.level)
-        self.ghost = Ghost(self.nodes.get_last_node(), self.pacman)
-        self.ghost.set_spawn_node(self.nodes.get_last_node())
+        self.ghosts = GhostGroup(self.nodes.get_start_node(), self.pacman)
+        self.ghosts.set_spawn_node(self.nodes.get_start_node())
 
     def check_pellet_events(self) -> None:
         """Update pellet state when Pacman eats a pellet."""
@@ -46,18 +46,19 @@ class GameController:
             self.pellets.num_eaten += 1
             self.pellets.pellet_list.remove(pellet)
             if pellet.name == EntityID.POWERPELLET:
-                self.ghost.start_freight()
+                self.ghosts.start_freight()
 
     def check_ghost_events(self):
-        if self.pacman.collide_check(self.ghost):
-            if self.ghost.mode.current is GhostMode.FREIGHT:
-                self.ghost.start_spawn()
+        for ghost in self.ghosts:
+            if self.pacman.collide_check(ghost):
+                if ghost.mode.current is GhostMode.FREIGHT:
+                    ghost.start_spawn()
 
     def update(self) -> None:
         """Advance the game state by one frame, handling logic and rendering."""
         dt = self.clock.tick(30) / 1000.0
         self.pacman.update(dt)
-        self.ghost.update(dt)
+        self.ghosts.update(dt)
         self.pellets.update(dt)
         self.check_pellet_events()
         self.check_ghost_events()
@@ -76,7 +77,7 @@ class GameController:
         self.nodes.render(self.screen)
         self.pellets.render(self.screen)
         self.pacman.render(self.screen)
-        self.ghost.render(self.screen)
+        self.ghosts.render(self.screen)
         pygame.display.update()
 
 
