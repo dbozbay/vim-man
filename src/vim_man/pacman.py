@@ -67,17 +67,6 @@ class Pacman(Entity):
         else:
             return Direction.STOP
 
-    def collide_ghost(self, ghost: Entity) -> bool:
-        # TODO: Write docstring
-        return self.collide_check(ghost)
-
-    def collide_check(self, other: Entity | Pellet) -> bool:
-        # TODO: Write docstring
-        d = self.position - other.position
-        d_squared = d.magnitude_squared()
-        r_squared = (self.collide_radius + other.collide_radius) ** 2
-        return d_squared <= r_squared
-
     def eat_pellets(self, pellet_list: list[Pellet]) -> Pellet | None:
         """Return the first pellet colliding with Pacman, or `None` if no collision occurs."""
         for pellet in pellet_list:

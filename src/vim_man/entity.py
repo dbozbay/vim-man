@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from random import choice
 
 import pygame
@@ -8,6 +10,7 @@ from vim_man.constants import (
     Direction,
 )
 from vim_man.nodes import Node
+from vim_man.pellets import Pellet
 from vim_man.vector import Vector2D
 
 
@@ -163,3 +166,10 @@ class Entity(object):
         if self.visible:
             pos = self.position.as_int()
             pygame.draw.circle(screen, self.color, pos, self.radius)
+
+    def collide_check(self, other: Entity | Pellet) -> bool:
+        """Return True if this entity collides with another entity."""
+        d = self.position - other.position
+        d_squared = d.magnitude_squared()
+        r_squared = (self.collide_radius + other.collide_radius) ** 2
+        return d_squared <= r_squared

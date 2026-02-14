@@ -43,7 +43,7 @@ class GameController(object):
                 self.ghost.start_freight()
 
     def check_ghost_events(self):
-        if self.pacman.collide_ghost(self.ghost):
+        if self.pacman.collide_check(self.ghost):
             if self.ghost.mode.current is GhostMode.FREIGHT:
                 self.ghost.start_spawn()
 
