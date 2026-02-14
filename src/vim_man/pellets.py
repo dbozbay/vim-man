@@ -1,6 +1,6 @@
 import pygame
 
-from vim_man.constants import BLUE, TILEHEIGHT, TILEWIDTH, EntityID
+from vim_man.constants import WHITE, TILEHEIGHT, TILEWIDTH, EntityID
 from vim_man.level import MazeArray, MazeLevel
 from vim_man.vector import Vector2D
 
@@ -12,7 +12,7 @@ class Pellet(object):
         """Create a standard pellet at the given maze row and column."""
         self.name = EntityID.PELLET
         self.position = Vector2D(column * TILEWIDTH, row * TILEHEIGHT)
-        self.color = BLUE
+        self.color = WHITE
         self.radius = int(4 * TILEWIDTH / 16)
         self.collide_radius = int(4 * TILEWIDTH / 16)
         self.points = 10
