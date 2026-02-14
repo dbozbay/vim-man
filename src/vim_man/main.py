@@ -72,8 +72,12 @@ class GameController(object):
         pygame.display.update()
 
 
-if __name__ == "__main__":
+def main() -> None:
     game = GameController()
     game.start_game()
     while True:
         game.update()
+
+
+if __name__ == "__main__":
+    main()

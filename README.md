@@ -46,7 +46,7 @@ uv sync --locked --all-extras --dev
 ## Running the Game
 
 ```bash
-uv run game.py
+uv run vim-man
 ```
 
 ---
@@ -70,6 +70,7 @@ vim-man/
 │   ├── data/
 │   │   ├── maze1.txt         # Main level layout (nodes, paths, portals)
 │   │   └── mazetest.txt      # Minimal maze used in testing
+│   ├── main.py               # Game entry point and main loop
 │   ├── constants.py          # Game-wide constants (screen size, colors, modes, direction vectors)
 │   ├── utils.py              # Shared utilities: maze path resolution and file loading
 │   ├── vector.py             # 2D vector math
@@ -82,8 +83,6 @@ vim-man/
 │   └── types.py              # Type aliases (MazeArray, TilePos, PixelCoord)
 ├── tests/
 │   └── test_vector.py        # Unit tests for Vector2D
-├── game.py                   # Game entry point and main loop
-└── pyproject.tomll
 ```
 
 ### Maze File Format
@@ -164,4 +163,3 @@ CI runs automatically on every push and pull request to `main` via GitHub Action
 ## License
 
 MIT
-
