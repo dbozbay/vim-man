@@ -8,7 +8,7 @@ from vim_man.pacman import Pacman
 from vim_man.pellets import PelletGroup
 
 
-class GameController(object):
+class GameController:
     """GameController initializes and runs the main game loop for Vim-Man."""
 
     def __init__(self) -> None:

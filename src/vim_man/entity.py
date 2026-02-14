@@ -14,7 +14,7 @@ from vim_man.pellets import Pellet
 from vim_man.vector import Vector2D
 
 
-class Entity(object):
+class Entity:
     """Base moving game entity that travels between nodes on the maze and renders as a circle."""
 
     def __init__(self, node: Node) -> None:

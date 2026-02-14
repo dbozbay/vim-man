@@ -15,7 +15,7 @@ from vim_man.vector import Vector2D
 type NodesLUT = dict[tuple[int, int], "Node"]
 
 
-class Node(object):
+class Node:
     """Node represents a maze junction with links to its neighboring nodes."""
 
     def __init__(self, x: float, y: float) -> None:
@@ -42,7 +42,7 @@ class Node(object):
                 pygame.draw.circle(screen, RED, self.position.as_int(), 12)
 
 
-class NodeGroup(object):
+class NodeGroup:
     """NodeGroup loads a maze layout and manages the network of connected nodes."""
 
     def __init__(self, level: MazeLevel) -> None:
@@ -61,8 +61,8 @@ class NodeGroup(object):
         self, data: MazeArray, x_offset: int = 0, y_offset: int = 0
     ) -> None:
         """Create `Node` instances for all node symbols in the maze data and store them in the lookup table."""
-        for row in list(range(data.shape[0])):
-            for col in list(range(data.shape[1])):
+        for row in range(data.shape[0]):
+            for col in range(data.shape[1]):
                 if data[row][col] in self.node_symbols:
                     x, y = self.construct_key(col + x_offset, row + y_offset)
                     new_node = Node(x, y)
@@ -82,9 +82,9 @@ class NodeGroup(object):
     ) -> None:
         """Connect horizontally adjacent node tiles as left and right neighbors."""
         # Walk each row from left to right, remembering the last node we saw.
-        for row in list(range(data.shape[0])):
+        for row in range(data.shape[0]):
             key: tuple[int, int] | None = None  # Start with no active node in this row.
-            for col in list(range(data.shape[1])):
+            for col in range(data.shape[1]):
                 if data[row][col] in self.node_symbols:
                     if key is None:
                         # First node in a new horizontal run; just record its key.
@@ -110,11 +110,11 @@ class NodeGroup(object):
         """Connect vertically adjacent node tiles as up and down neighbors."""
         # Transpose so we can reuse the same "scan along rows" logic for columns.
         dataT = data.transpose()  # (row, col) -> (col, row)
-        for col in list(range(dataT.shape[0])):
+        for col in range(dataT.shape[0]):
             key: tuple[int, int] | None = (
                 None  # Start with no active node in this column.
             )
-            for row in list(range(dataT.shape[1])):
+            for row in range(dataT.shape[1]):
                 if dataT[col][row] in self.node_symbols:
                     if key is None:
                         # First node in a new vertical run; just record its key.
@@ -138,7 +138,7 @@ class NodeGroup(object):
         """Set the portal neighbors for the two given tile coordinates."""
         key1 = self.construct_key(*pair1)
         key2 = self.construct_key(*pair2)
-        if key1 in self.nodes_LUT.keys() and key2 in self.nodes_LUT.keys():
+        if key1 in self.nodes_LUT and key2 in self.nodes_LUT:
             self.nodes_LUT[key1].neighbors[Direction.PORTAL] = self.nodes_LUT[key2]
             self.nodes_LUT[key2].neighbors[Direction.PORTAL] = self.nodes_LUT[key1]
 

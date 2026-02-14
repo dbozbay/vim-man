@@ -11,7 +11,7 @@ class Ghost(Entity):
     # TODO: Write docstrings for class methods
     def __init__(self, node: Node, pacman: Entity | None = None) -> None:
         """Initialize a ghost at the given starting node with scoring and goal-tracking behavior."""
-        Entity.__init__(self, node)
+        super().__init__(node)
         self.name = EntityID.GHOST
         self.points = 200
         self.goal = Vector2D(0, 0)
@@ -25,7 +25,7 @@ class Ghost(Entity):
             self.scatter()
         elif self.mode.current is GhostMode.CHASE:
             self.chase()
-        Entity.update(self, dt)
+        super().update(dt)
 
     def scatter(self) -> None:
         self.goal = Vector2D(0, 0)
