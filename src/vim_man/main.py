@@ -17,6 +17,12 @@ class GameController:
         self.set_background()
         self.clock = pygame.time.Clock()
 
+        self.level: MazeLevel
+        self.nodes: NodeGroup
+        self.pacman: Pacman
+        self.pellets: PelletGroup
+        self.ghost: Ghost
+
     def set_background(self) -> None:
         """Create and fill the background surface for the game screen."""
         self.background = pygame.Surface(SCREENSIZE).convert()

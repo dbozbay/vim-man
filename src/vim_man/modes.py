@@ -11,9 +11,9 @@ if TYPE_CHECKING:
 class MainMode(object):
     # TODO: Write docstrings
     def __init__(self) -> None:
-        self.timer = 0.0
-        self.time = None
-        self.mode = None
+        self.timer: float = 0.0
+        self.time: float | None = None
+        self.mode: GhostMode | None = None
         self.scatter()
 
     def update(self, dt: float) -> None:
@@ -38,11 +38,11 @@ class MainMode(object):
 
 class ModeController(object):
     def __init__(self, ghost: Ghost) -> None:
-        self.timer = 0.0
-        self.time = None
-        self.mainmode = MainMode()
-        self.current = self.mainmode.mode
-        self.ghost = ghost
+        self.timer: float = 0.0
+        self.time: float | None = None
+        self.mainmode: MainMode = MainMode()
+        self.current: GhostMode | None = self.mainmode.mode
+        self.ghost: Ghost = ghost
 
     def update(self, dt: float) -> None:
         self.mainmode.update(dt)

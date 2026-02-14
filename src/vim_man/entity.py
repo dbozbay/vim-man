@@ -8,6 +8,7 @@ from vim_man.constants import (
     TILEWIDTH,
     WHITE,
     Direction,
+    EntityID,
 )
 from vim_man.nodes import Node
 from vim_man.pellets import Pellet
@@ -19,7 +20,7 @@ class Entity:
 
     def __init__(self, node: Node) -> None:
         """Initialize an entity at the given node with default movement, appearance, and targeting state."""
-        self.name = None
+        self.name: EntityID | None = None
         self.directions = {
             Direction.STOP: Vector2D(),
             Direction.UP: Vector2D(0, -1),
@@ -38,7 +39,7 @@ class Entity:
         self.target = node
         self.visible = True
         self.disable_portal = False
-        self.goal = None
+        self.goal: Vector2D | None = None
         self.direction_method = self.goal_direction
 
     def set_position(self) -> None:
@@ -161,7 +162,7 @@ class Entity:
             ).magnitude_squared(),
         )
 
-    def render(self, screen: pygame.SurfaceType) -> None:
+    def render(self, screen: pygame.Surface) -> None:
         """Draw entity as a filled circle at his current position on the screen."""
         if self.visible:
             pos = self.position.as_int()

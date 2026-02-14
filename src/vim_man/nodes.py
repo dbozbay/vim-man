@@ -28,7 +28,7 @@ class Node:
             Direction.PORTAL: None,
         }
 
-    def render(self, screen: pygame.SurfaceType) -> None:
+    def render(self, screen: pygame.Surface) -> None:
         """Draw this node and connecting lines to its neighboring nodes on the screen."""
         for neighbor, node in self.neighbors.items():
             if node is not None:

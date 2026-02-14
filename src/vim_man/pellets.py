@@ -30,7 +30,7 @@ class PowerPellet(Pellet):
 
     def __init__(self, row: int, column: int) -> None:
         """Create a power pellet at the given maze row and column."""
-        Pellet.__init__(self, row, column)
+        super().__init__(row, column)
         self.name = EntityID.POWERPELLET
         self.radius = int(8 * TILEWIDTH / 16)
         self.points = 50
@@ -65,8 +65,8 @@ class PelletGroup(object):
 
     def create_pellet_list(self, data: MazeArray) -> None:
         """Parse the pellet layout file and populate the pellet and power pellet lists."""
-        for row in list(range(data.shape[0])):
-            for col in list(range(data.shape[1])):
+        for row in range(data.shape[0]):
+            for col in range(data.shape[1]):
                 if data[row][col] in self.pellet_symbols:
                     self.pellet_list.append(Pellet(row, col))
                 elif data[row][col] in self.powerpellet_symbols:

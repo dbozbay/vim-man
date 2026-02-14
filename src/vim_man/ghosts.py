@@ -18,6 +18,7 @@ class Ghost(Entity):
         # self.direction_method = self.goal_direction  # Override random directon
         self.pacman = pacman
         self.mode = ModeController(self)
+        self.spawn_node: Node | None = None
 
     def update(self, dt: float) -> None:
         self.mode.update(dt)
@@ -35,7 +36,8 @@ class Ghost(Entity):
             self.goal = self.pacman.position
 
     def spawn(self) -> None:
-        self.goal = self.spawn_node.position
+        if self.spawn_node is not None:
+            self.goal = self.spawn_node.position
 
     def set_spawn_node(self, node: Node) -> None:
         self.spawn_node = node

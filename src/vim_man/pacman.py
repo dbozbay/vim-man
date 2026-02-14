@@ -14,7 +14,7 @@ class Pacman(Entity):
     """Pacman controls the player character's movement and interaction with the maze graph."""
 
     def __init__(self, node: Node) -> None:
-        Entity.__init__(self, node)
+        super().__init__(node)
         self.name = EntityID.PACMAN
         self.color = YELLOW
 
