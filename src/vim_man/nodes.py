@@ -9,10 +9,10 @@ from vim_man.constants import (
     Direction,
 )
 from vim_man.level import MazeLevel
-from vim_man.types import MazeArray, PixelCoord, TilePos
+from vim_man.types import MazeArray
 from vim_man.vector import Vector2D
 
-type NodesLUT = dict[PixelCoord, "Node"]
+type NodesLUT = dict[tuple[int, int], "Node"]
 
 
 class Node(object):
@@ -70,7 +70,7 @@ class NodeGroup(object):
                     if data[row][col] == "S":
                         self.start_node = new_node
 
-    def construct_key(self, col: int, row: int) -> PixelCoord:
+    def construct_key(self, col: int, row: int) -> tuple[int, int]:
         """
         Return the pixel coordinates of the top-left corner of the given tile (col, row).
         This will be the node's key in the node lookup table.
@@ -83,7 +83,7 @@ class NodeGroup(object):
         """Connect horizontally adjacent node tiles as left and right neighbors."""
         # Walk each row from left to right, remembering the last node we saw.
         for row in list(range(data.shape[0])):
-            key: PixelCoord | None = None  # Start with no active node in this row.
+            key: tuple[int, int] | None = None  # Start with no active node in this row.
             for col in list(range(data.shape[1])):
                 if data[row][col] in self.node_symbols:
                     if key is None:
@@ -111,7 +111,9 @@ class NodeGroup(object):
         # Transpose so we can reuse the same "scan along rows" logic for columns.
         dataT = data.transpose()  # (row, col) -> (col, row)
         for col in list(range(dataT.shape[0])):
-            key: PixelCoord | None = None  # Start with no active node in this column.
+            key: tuple[int, int] | None = (
+                None  # Start with no active node in this column.
+            )
             for row in list(range(dataT.shape[1])):
                 if dataT[col][row] in self.node_symbols:
                     if key is None:
@@ -132,7 +134,7 @@ class NodeGroup(object):
                     # Hitting a wall or non-path tile breaks the current run.
                     key = None
 
-    def set_portal_pair(self, pair1: TilePos, pair2: TilePos) -> None:
+    def set_portal_pair(self, pair1: tuple[int, int], pair2: tuple[int, int]) -> None:
         """Set the portal neighbors for the two given tile coordinates."""
         key1 = self.construct_key(*pair1)
         key2 = self.construct_key(*pair2)
