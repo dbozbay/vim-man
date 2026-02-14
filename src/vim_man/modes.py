@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from vim_man.constants import GhostMode
+from vim_man.constants import CHASE_TIME, FREIGHT_TIME, SCATTER_TIME, GhostMode
 
 if TYPE_CHECKING:
     from vim_man.ghosts import Ghost
@@ -27,12 +27,12 @@ class MainMode(object):
 
     def scatter(self) -> None:
         self.mode = GhostMode.SCATTER
-        self.time = 7.0
+        self.time = SCATTER_TIME
         self.timer = 0.0
 
     def chase(self) -> None:
         self.mode = GhostMode.CHASE
-        self.time = 20.0
+        self.time = CHASE_TIME
         self.timer = 0.0
 
 
@@ -71,7 +71,7 @@ class ModeController(object):
         # If ghost is already in FREIGHT mode, reset the timer to 0.
         if self.current in [GhostMode.SCATTER, GhostMode.CHASE]:
             self.timer = 0
-            self.time = 7.0
+            self.time = FREIGHT_TIME
             self.current = GhostMode.FREIGHT
         elif self.current is GhostMode.FREIGHT:
             self.timer = 0

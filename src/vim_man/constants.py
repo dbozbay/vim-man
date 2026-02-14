@@ -16,6 +16,12 @@ BLUE: Color = (0, 0, 255)
 WHITE: Color = (255, 255, 255)
 RED: Color = (255, 0, 0)
 
+SCATTER_TIME: float = 7.0
+CHASE_TIME: float = 20.0
+FREIGHT_TIME: float = 7.0
+
+MAZE: str = "maze1.txt"
+
 
 class Direction(IntEnum):
     STOP = 0
@@ -38,6 +44,3 @@ class GhostMode(IntEnum):
     CHASE = 1
     FREIGHT = 2
     SPAWN = 3
-
-
-MAZE: str = "maze1.txt"
