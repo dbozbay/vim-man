@@ -49,8 +49,9 @@ class NodeGroup(object):
         # TODO: Write docstring
         self.level = level
         self.nodes_LUT: NodesLUT = {}
-        self.node_symbols = ["+", "P", "n"]
+        self.node_symbols = ["+", "P", "n", "S"]
         self.path_symbols = [".", "-", "|", "p"]
+        self.start_node: Node | None = None
         data = self.level.data
         self.create_node_table(data)
         self.connect_horizontally(data)
@@ -64,7 +65,10 @@ class NodeGroup(object):
             for col in list(range(data.shape[1])):
                 if data[row][col] in self.node_symbols:
                     x, y = self.construct_key(col + x_offset, row + y_offset)
-                    self.nodes_LUT[(x, y)] = Node(x, y)
+                    new_node = Node(x, y)
+                    self.nodes_LUT[(x, y)] = new_node
+                    if data[row][col] == "S":
+                        self.start_node = new_node
 
     def construct_key(self, col: int, row: int) -> PixelCoord:
         """
@@ -145,11 +149,12 @@ class NodeGroup(object):
         x, y = self.construct_key(col, row)
         return self.get_node_from_pixels(x, y)
 
-    def get_start_temp_node(self) -> Node:
-        """Return the temporary starting node for Pacman from the node lookup table."""
-        # TODO: For now this will be the first node in the lookup stable. Change later on.
-        nodes = list(self.nodes_LUT.values())
-        return nodes[0]
+    def get_start_node(self) -> Node:
+        """Return the starting node for Pacman."""
+        if self.start_node is None:
+            # Fallback if no S node found, though arguably check should happen at load time
+            return list(self.nodes_LUT.values())[0]
+        return self.start_node
 
     def get_last_node(self) -> Node:
         """Return the last node in the nodes lookup table."""

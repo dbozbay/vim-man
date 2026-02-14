@@ -28,7 +28,7 @@ class GameController(object):
         self.level = MazeLevel(MAZE)
         self.nodes = NodeGroup(self.level)
         self.nodes.set_portal_pair((0, 17), (27, 17))
-        self.pacman = Pacman(self.nodes.get_start_temp_node())
+        self.pacman = Pacman(self.nodes.get_start_node())
         self.pellets = PelletGroup(self.level)
         self.ghost = Ghost(self.nodes.get_last_node(), self.pacman)
         self.ghost.set_spawn_node(self.nodes.get_last_node())
