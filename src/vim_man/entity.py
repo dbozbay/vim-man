@@ -1,16 +1,11 @@
-from random import randint
+from random import choice
 
 import pygame
 
 from vim_man.constants import (
-    DOWN,
-    LEFT,
-    PORTAL,
-    RIGHT,
-    STOP,
     TILEWIDTH,
-    UP,
     WHITE,
+    Direction,
 )
 from vim_man.nodes import Node
 from vim_man.vector import Vector2D
@@ -23,14 +18,14 @@ class Entity(object):
         """Initialize an entity at the given node with default movement, appearance, and targeting state."""
         self.name = None
         self.directions = {
-            STOP: Vector2D(),
-            UP: Vector2D(0, -1),
-            DOWN: Vector2D(0, 1),
-            LEFT: Vector2D(-1, 0),
-            RIGHT: Vector2D(1, 0),
+            Direction.STOP: Vector2D(),
+            Direction.UP: Vector2D(0, -1),
+            Direction.DOWN: Vector2D(0, 1),
+            Direction.LEFT: Vector2D(-1, 0),
+            Direction.RIGHT: Vector2D(1, 0),
         }
 
-        self.direction = STOP
+        self.direction = Direction.STOP
         self.set_speed(100)
         self.radius = 10
         self.collide_radius = 5
@@ -62,7 +57,7 @@ class Entity(object):
 
             # If portals are enabled and this node has a portal neighbor, teleport to that portal node.
             if not self.disable_portal:
-                portal_node = self.node.neighbors[PORTAL]
+                portal_node = self.node.neighbors[Direction.PORTAL]
                 if portal_node is not None:
                     self.node = portal_node
 
@@ -79,31 +74,31 @@ class Entity(object):
             # After choosing a new target (and handling portals), snap position to the new node’s center.
             self.set_position()
 
-    def valid_direction(self, direction: int) -> bool:
+    def valid_direction(self, direction: Direction) -> bool:
         """Return True if entity has a neighboring node in the given direction."""
-        if direction is not STOP:
+        if direction is not Direction.STOP:
             if self.node.neighbors[direction] is not None:
                 return True
         return False
 
-    def valid_directions(self) -> list[int]:
+    def valid_directions(self) -> list[Direction]:
         """Return a list of valid directions for the entity to move in."""
         # We only only want to move in the opposite direction if there are no other valid directions.
         directions = []
-        for d in [UP, DOWN, LEFT, RIGHT]:
+        for d in [Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT]:
             if self.valid_direction(d):
-                if d != self.direction * -1:
+                if d != Direction(self.direction * -1):
                     directions.append(d)
         if len(directions) == 0:
-            directions.append(self.direction * -1)
+            directions.append(Direction(self.direction * -1))
         return directions
 
-    def random_direction(self, directions: list[int]) -> int:
+    def random_direction(self, directions: list[Direction]) -> Direction:
         """Return a random direction from the given list of valid directions."""
-        return directions[randint(0, len(directions) - 1)]
+        return choice(directions)
 
     # TODO: we are checking is None twice
-    def get_new_target(self, direction: int) -> Node:
+    def get_new_target(self, direction: Direction) -> Node:
         """Return the neighboring node for the given direction, or the current node if movement is not possible."""
         if self.valid_direction(direction):
             neighbor = self.node.neighbors[direction]
@@ -123,15 +118,15 @@ class Entity(object):
 
     def reverse_direction(self) -> None:
         """Reverse entity's movement direction and swap the current node with the target node."""
-        self.direction *= -1
+        self.direction = Direction(self.direction * -1)
         temp = self.node
         self.node = self.target
         self.target = temp
 
-    def opposite_direction(self, direction: int) -> bool:
+    def opposite_direction(self, direction: Direction) -> bool:
         """Return True if the given direction is opposite to entity's current direction."""
-        if direction is not STOP:
-            if direction == self.direction * -1:
+        if direction is not Direction.STOP:
+            if direction == Direction(self.direction * -1):
                 return True
         return False
 
@@ -139,7 +134,7 @@ class Entity(object):
         """Set the entity's movement speed in pixels per second based on a tile-relative value."""
         self.speed = speed * TILEWIDTH / 16
 
-    def goal_direction(self, directions: list[int]) -> int:
+    def goal_direction(self, directions: list[Direction]) -> Direction:
         """Return the direction that makes a one-tile step from the current node land closest to the goal."""
         # If no goal has been set, fall back to Entity's random-direction logic.
         if self.goal is None:

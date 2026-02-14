@@ -1,6 +1,6 @@
 import pygame
 
-from vim_man.constants import BLUE, PELLET, POWERPELLET, TILEHEIGHT, TILEWIDTH
+from vim_man.constants import BLUE, TILEHEIGHT, TILEWIDTH, EntityID
 from vim_man.types import MazeArray
 from vim_man.utils import read_maze_file
 from vim_man.vector import Vector2D
@@ -11,7 +11,7 @@ class Pellet(object):
 
     def __init__(self, row: int, column: int) -> None:
         """Create a standard pellet at the given maze row and column."""
-        self.name = PELLET
+        self.name = EntityID.PELLET
         self.position = Vector2D(column * TILEWIDTH, row * TILEHEIGHT)
         self.color = BLUE
         self.radius = int(4 * TILEWIDTH / 16)
@@ -32,7 +32,7 @@ class PowerPellet(Pellet):
     def __init__(self, row: int, column: int) -> None:
         """Create a power pellet at the given maze row and column."""
         Pellet.__init__(self, row, column)
-        self.name = POWERPELLET
+        self.name = EntityID.POWERPELLET
         self.radius = int(8 * TILEWIDTH / 16)
         self.points = 50
         self.flash_time = 0.2

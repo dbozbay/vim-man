@@ -1,6 +1,6 @@
 import pygame
 
-from vim_man.constants import BLACK, FREIGHT, MAZE, POWERPELLET, SCREENSIZE
+from vim_man.constants import BLACK, MAZE, SCREENSIZE, EntityID, GhostMode
 from vim_man.ghosts import Ghost
 from vim_man.nodes import NodeGroup
 from vim_man.pacman import Pacman
@@ -37,12 +37,12 @@ class GameController(object):
         if pellet:
             self.pellets.num_eaten += 1
             self.pellets.pellet_list.remove(pellet)
-            if pellet.name == POWERPELLET:
+            if pellet.name == EntityID.POWERPELLET:
                 self.ghost.start_freight()
 
     def check_ghost_events(self):
         if self.pacman.collide_ghost(self.ghost):
-            if self.ghost.mode.current is FREIGHT:
+            if self.ghost.mode.current is GhostMode.FREIGHT:
                 self.ghost.start_spawn()
 
     def update(self) -> None:

@@ -1,3 +1,5 @@
+from enum import IntEnum
+
 type Color = tuple[int, int, int]
 
 TILEWIDTH: int = 16
@@ -14,21 +16,28 @@ BLUE: Color = (0, 0, 255)
 WHITE: Color = (255, 255, 255)
 RED: Color = (255, 0, 0)
 
-STOP: int = 0
-UP: int = 1
-DOWN: int = -1
-LEFT: int = 2
-RIGHT: int = -2
-PORTAL: int = 3
 
-PACMAN: int = 0
-PELLET: int = 1
-POWERPELLET: int = 2
-GHOST: int = 3
+class Direction(IntEnum):
+    STOP = 0
+    UP = 1
+    DOWN = -1
+    LEFT = 2
+    RIGHT = -2
+    PORTAL = 3
 
-SCATTER: int = 0
-CHASE: int = 1
-FREIGHT: int = 2
-SPAWN: int = 3
+
+class EntityID(IntEnum):
+    PACMAN = 0
+    PELLET = 1
+    POWERPELLET = 2
+    GHOST = 3
+
+
+class GhostMode(IntEnum):
+    SCATTER = 0
+    CHASE = 1
+    FREIGHT = 2
+    SPAWN = 3
+
 
 MAZE: str = "maze1.txt"

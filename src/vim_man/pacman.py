@@ -1,14 +1,9 @@
 import pygame
 
 from vim_man.constants import (
-    DOWN,
-    LEFT,
-    PACMAN,
-    PORTAL,
-    RIGHT,
-    STOP,
-    UP,
     YELLOW,
+    Direction,
+    EntityID,
 )
 from vim_man.entity import Entity
 from vim_man.nodes import Node
@@ -20,7 +15,7 @@ class Pacman(Entity):
 
     def __init__(self, node: Node) -> None:
         Entity.__init__(self, node)
-        self.name = PACMAN
+        self.name = EntityID.PACMAN
         self.color = YELLOW
 
     def update(self, dt: float) -> None:
@@ -35,7 +30,7 @@ class Pacman(Entity):
             self.node = self.target
 
             # Check if the node has a portal neighbor and move to it if it does.
-            portal_node = self.node.neighbors[PORTAL]
+            portal_node = self.node.neighbors[Direction.PORTAL]
             if portal_node is not None:
                 self.node = portal_node
 
@@ -50,7 +45,7 @@ class Pacman(Entity):
 
             if self.target is self.node:
                 # If no movement is possible from this node, stop.
-                self.direction = STOP
+                self.direction = Direction.STOP
             # Reset position exactly on the current node center to avoid drift.
             self.set_position()
         else:
@@ -58,19 +53,19 @@ class Pacman(Entity):
                 # If the player requests the opposite direction mid-tile, flip direction.
                 self.reverse_direction()
 
-    def get_valid_key(self) -> int:
+    def get_valid_key(self) -> Direction:
         """Read the keyboard and return the corresponding movement direction constant."""
         key_pressed = pygame.key.get_pressed()
         if key_pressed[pygame.K_k]:
-            return UP
+            return Direction.UP
         elif key_pressed[pygame.K_j]:
-            return DOWN
+            return Direction.DOWN
         elif key_pressed[pygame.K_h]:
-            return LEFT
+            return Direction.LEFT
         elif key_pressed[pygame.K_l]:
-            return RIGHT
+            return Direction.RIGHT
         else:
-            return STOP
+            return Direction.STOP
 
     def collide_ghost(self, ghost: Entity) -> bool:
         # TODO: Write docstring

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from vim_man.constants import CHASE, FREIGHT, SCATTER, SPAWN
+from vim_man.constants import GhostMode
 
 if TYPE_CHECKING:
     from vim_man.ghosts import Ghost
@@ -20,18 +20,18 @@ class MainMode(object):
         self.timer += dt
         if self.time is not None:
             if self.timer >= self.time:
-                if self.mode is SCATTER:
+                if self.mode is GhostMode.SCATTER:
                     self.chase()
-                elif self.mode is CHASE:
+                elif self.mode is GhostMode.CHASE:
                     self.scatter()
 
     def scatter(self) -> None:
-        self.mode = SCATTER
+        self.mode = GhostMode.SCATTER
         self.time = 7.0
         self.timer = 0.0
 
     def chase(self) -> None:
-        self.mode = CHASE
+        self.mode = GhostMode.CHASE
         self.time = 20.0
         self.timer = 0.0
 
@@ -46,7 +46,7 @@ class ModeController(object):
 
     def update(self, dt: float) -> None:
         self.mainmode.update(dt)
-        if self.current is FREIGHT:
+        if self.current is GhostMode.FREIGHT:
             self.timer += dt
             if self.time is not None:
                 if self.timer >= self.time:
@@ -54,24 +54,24 @@ class ModeController(object):
                     self.ghost.normal_mode()
                     self.current = self.mainmode.mode
 
-        elif self.current in [SCATTER, CHASE]:
+        elif self.current in [GhostMode.SCATTER, GhostMode.CHASE]:
             self.current = self.mainmode.mode
 
-        if self.current is SPAWN:
+        if self.current is GhostMode.SPAWN:
             if self.ghost.node == self.ghost.spawn_node:
                 self.ghost.normal_mode()
                 self.current = self.mainmode.mode
 
     def set_spawn_mode(self) -> None:
-        if self.current is FREIGHT:
-            self.current = SPAWN
+        if self.current is GhostMode.FREIGHT:
+            self.current = GhostMode.SPAWN
 
     def set_freight_mode(self) -> None:
         # If ghost is in either SCATTER or CHASE mode, set to FREIGHT mode for 7 seconds.
         # If ghost is already in FREIGHT mode, reset the timer to 0.
-        if self.current in [SCATTER, CHASE]:
+        if self.current in [GhostMode.SCATTER, GhostMode.CHASE]:
             self.timer = 0
             self.time = 7.0
-            self.current = FREIGHT
-        elif self.current is FREIGHT:
+            self.current = GhostMode.FREIGHT
+        elif self.current is GhostMode.FREIGHT:
             self.timer = 0

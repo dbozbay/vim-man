@@ -2,15 +2,11 @@ import pygame
 
 from vim_man.constants import (
     BLUE,
-    DOWN,
-    LEFT,
-    PORTAL,
     RED,
-    RIGHT,
     TILEHEIGHT,
     TILEWIDTH,
-    UP,
     WHITE,
+    Direction,
 )
 from vim_man.types import MazeArray, PixelCoord, TilePos
 from vim_man.utils import read_maze_file
@@ -24,12 +20,12 @@ class Node(object):
 
     def __init__(self, x: float, y: float) -> None:
         self.position = Vector2D(x, y)
-        self.neighbors: dict[int, Node | None] = {
-            UP: None,
-            DOWN: None,
-            LEFT: None,
-            RIGHT: None,
-            PORTAL: None,
+        self.neighbors: dict[Direction, Node | None] = {
+            Direction.UP: None,
+            Direction.DOWN: None,
+            Direction.LEFT: None,
+            Direction.RIGHT: None,
+            Direction.PORTAL: None,
         }
 
     def render(self, screen: pygame.SurfaceType) -> None:
@@ -38,7 +34,7 @@ class Node(object):
             if node is not None:
                 line_start = self.position.as_tuple()
                 line_end = node.position.as_tuple()
-                if neighbor == PORTAL:
+                if neighbor == Direction.PORTAL:
                     line_color = BLUE
                 else:
                     line_color = WHITE
@@ -96,8 +92,12 @@ class NodeGroup(object):
                     else:
                         # We have a previous node in this run, so connect it to this one.
                         otherkey = self.construct_key(col + x_offset, row + y_offset)
-                        self.nodes_LUT[key].neighbors[RIGHT] = self.nodes_LUT[otherkey]
-                        self.nodes_LUT[otherkey].neighbors[LEFT] = self.nodes_LUT[key]
+                        self.nodes_LUT[key].neighbors[Direction.RIGHT] = self.nodes_LUT[
+                            otherkey
+                        ]
+                        self.nodes_LUT[otherkey].neighbors[Direction.LEFT] = (
+                            self.nodes_LUT[key]
+                        )
                         # This node becomes the new "previous" node for the run.
                         key = otherkey
                 elif data[row][col] not in self.path_symbols:
@@ -120,8 +120,12 @@ class NodeGroup(object):
                     else:
                         # We have a previous node in this column, so connect it to this one.
                         otherkey = self.construct_key(col + x_offset, row + y_offset)
-                        self.nodes_LUT[key].neighbors[DOWN] = self.nodes_LUT[otherkey]
-                        self.nodes_LUT[otherkey].neighbors[UP] = self.nodes_LUT[key]
+                        self.nodes_LUT[key].neighbors[Direction.DOWN] = self.nodes_LUT[
+                            otherkey
+                        ]
+                        self.nodes_LUT[otherkey].neighbors[Direction.UP] = (
+                            self.nodes_LUT[key]
+                        )
                         # This node becomes the new "previous" node for the run.
                         key = otherkey
                 elif dataT[col][row] not in self.path_symbols:
@@ -133,8 +137,8 @@ class NodeGroup(object):
         key1 = self.construct_key(*pair1)
         key2 = self.construct_key(*pair2)
         if key1 in self.nodes_LUT.keys() and key2 in self.nodes_LUT.keys():
-            self.nodes_LUT[key1].neighbors[PORTAL] = self.nodes_LUT[key2]
-            self.nodes_LUT[key2].neighbors[PORTAL] = self.nodes_LUT[key1]
+            self.nodes_LUT[key1].neighbors[Direction.PORTAL] = self.nodes_LUT[key2]
+            self.nodes_LUT[key2].neighbors[Direction.PORTAL] = self.nodes_LUT[key1]
 
     def get_node_from_pixels(self, x_pixel: int, y_pixel: int) -> Node | None:
         """Return the node located at the given pixel coordinates, or `None` if none exists."""

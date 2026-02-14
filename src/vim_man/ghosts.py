@@ -1,4 +1,4 @@
-from vim_man.constants import CHASE, FREIGHT, GHOST, SCATTER, SPAWN
+from vim_man.constants import EntityID, GhostMode
 from vim_man.entity import Entity
 from vim_man.modes import ModeController
 from vim_man.nodes import Node
@@ -12,7 +12,7 @@ class Ghost(Entity):
     def __init__(self, node: Node, pacman: Entity | None = None) -> None:
         """Initialize a ghost at the given starting node with scoring and goal-tracking behavior."""
         Entity.__init__(self, node)
-        self.name = GHOST
+        self.name = EntityID.GHOST
         self.points = 200
         self.goal = Vector2D(0, 0)
         # self.direction_method = self.goal_direction  # Override random directon
@@ -21,9 +21,9 @@ class Ghost(Entity):
 
     def update(self, dt: float) -> None:
         self.mode.update(dt)
-        if self.mode.current is SCATTER:
+        if self.mode.current is GhostMode.SCATTER:
             self.scatter()
-        elif self.mode.current is CHASE:
+        elif self.mode.current is GhostMode.CHASE:
             self.chase()
         Entity.update(self, dt)
 
@@ -42,14 +42,14 @@ class Ghost(Entity):
 
     def start_spawn(self) -> None:
         self.mode.set_spawn_mode()
-        if self.mode.current == SPAWN:
+        if self.mode.current == GhostMode.SPAWN:
             self.set_speed(150)
             self.direction_method = self.goal_direction
             self.spawn()
 
     def start_freight(self) -> None:
         self.mode.set_freight_mode()
-        if self.mode.current == FREIGHT:
+        if self.mode.current == GhostMode.FREIGHT:
             self.set_speed(50)
             self.direction_method = self.random_direction
 
