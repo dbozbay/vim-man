@@ -27,9 +27,9 @@ class Vector2D(object):
         """Return a new vector scaled by the given scalar."""
         return Vector2D(self.x * scalar, self.y * scalar)
 
-    def __truediv__(self, scalar: float) -> Vector2D | None:
-        """Return a new vector divided by the given scalar, or None if the scalar is zero."""
-        return Vector2D(self.x / scalar, self.y / scalar) if scalar != 0 else None
+    def __truediv__(self, scalar: float) -> Vector2D:
+        """Return a new vector divided by the given scalar."""
+        return Vector2D(self.x / scalar, self.y / scalar)
 
     def __eq__(self, other: object) -> bool:
         """Return True if the other vector is approximately equal within the configured threshold."""

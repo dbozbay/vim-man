@@ -1,3 +1,5 @@
+import pytest
+
 from vim_man.vector import Vector2D
 
 
@@ -36,9 +38,9 @@ class TestVector2D:
         assert result.y == 1
 
     def test_division_by_zero(self) -> None:
-        v = Vector2D(5, 5)
-        result = v / 0
-        assert result is None
+        with pytest.raises(ZeroDivisionError):
+            v = Vector2D(5, 5)
+            _ = v / 0
 
     def test_equality(self) -> None:
         v1 = Vector2D(10, 5)
