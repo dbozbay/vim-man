@@ -2,6 +2,7 @@ import pygame
 
 from vim_man.constants import BLACK, MAZE, SCREENSIZE, EntityID, GhostMode
 from vim_man.ghosts import Ghost
+from vim_man.level import MazeLevel
 from vim_man.nodes import NodeGroup
 from vim_man.pacman import Pacman
 from vim_man.pellets import PelletGroup
@@ -24,10 +25,11 @@ class GameController(object):
     def start_game(self) -> None:
         """Initialize the maze, Pacman, pellets, and prepare the game to start."""
         # self.set_background() # TODO: Do we need this when background is set in init?
-        self.nodes = NodeGroup(MAZE)
+        self.level = MazeLevel(MAZE)
+        self.nodes = NodeGroup(self.level)
         self.nodes.set_portal_pair((0, 17), (27, 17))
         self.pacman = Pacman(self.nodes.get_start_temp_node())
-        self.pellets = PelletGroup(MAZE)
+        self.pellets = PelletGroup(self.level)
         self.ghost = Ghost(self.nodes.get_last_node(), self.pacman)
         self.ghost.set_spawn_node(self.nodes.get_last_node())
 

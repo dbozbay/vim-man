@@ -1,8 +1,7 @@
 import pygame
 
 from vim_man.constants import BLUE, TILEHEIGHT, TILEWIDTH, EntityID
-from vim_man.types import MazeArray
-from vim_man.utils import read_maze_file
+from vim_man.level import MazeArray, MazeLevel
 from vim_man.vector import Vector2D
 
 
@@ -49,13 +48,14 @@ class PowerPellet(Pellet):
 class PelletGroup(object):
     """PelletGroup manages all pellets and power pellets for a level."""
 
-    def __init__(self, pelletfile: str) -> None:
+    def __init__(self, level: MazeLevel) -> None:
         """Load all pellets and power pellets for the level from the given layout file."""
+        self.level = level
         self.pellet_symbols = ["+", "."]
         self.powerpellet_symbols = ["P", "p"]
         self.pellet_list: list[Pellet] = []
         self.powerpellet_list: list[PowerPellet] = []
-        self.create_pellet_list(pelletfile)
+        self.create_pellet_list(self.level.data)
         self.num_eaten = 0
 
     def update(self, dt: float) -> None:
@@ -63,9 +63,8 @@ class PelletGroup(object):
         for powerpellet in self.powerpellet_list:
             powerpellet.update(dt)
 
-    def create_pellet_list(self, pelletfile: str) -> None:
+    def create_pellet_list(self, data: MazeArray) -> None:
         """Parse the pellet layout file and populate the pellet and power pellet lists."""
-        data = self.read_pellet_file(pelletfile)
         for row in list(range(data.shape[0])):
             for col in list(range(data.shape[1])):
                 if data[row][col] in self.pellet_symbols:
@@ -74,10 +73,6 @@ class PelletGroup(object):
                     pp = PowerPellet(row, col)
                     self.pellet_list.append(pp)
                     self.powerpellet_list.append(pp)
-
-    def read_pellet_file(self, textfile: str) -> MazeArray:
-        """Load the pellet layout from a text file into a NumPy array."""
-        return read_maze_file(textfile)
 
     def is_empty(self) -> bool:
         """Return True if there are no pellets left in the level."""

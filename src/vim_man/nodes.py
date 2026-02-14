@@ -8,8 +8,8 @@ from vim_man.constants import (
     WHITE,
     Direction,
 )
+from vim_man.level import MazeLevel
 from vim_man.types import MazeArray, PixelCoord, TilePos
-from vim_man.utils import read_maze_file
 from vim_man.vector import Vector2D
 
 type NodesLUT = dict[PixelCoord, "Node"]
@@ -45,20 +45,16 @@ class Node(object):
 class NodeGroup(object):
     """NodeGroup loads a maze layout and manages the network of connected nodes."""
 
-    def __init__(self, level: str) -> None:
+    def __init__(self, level: MazeLevel) -> None:
         # TODO: Write docstring
         self.level = level
         self.nodes_LUT: NodesLUT = {}
         self.node_symbols = ["+", "P", "n"]
         self.path_symbols = [".", "-", "|", "p"]
-        data = self.read_maze_file(level)
+        data = self.level.data
         self.create_node_table(data)
         self.connect_horizontally(data)
         self.connect_vertically(data)
-
-    def read_maze_file(self, textfile: str) -> MazeArray:
-        """Load the maze layout from a text file into a NumPy array."""
-        return read_maze_file(textfile)
 
     def create_node_table(
         self, data: MazeArray, x_offset: int = 0, y_offset: int = 0
