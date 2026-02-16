@@ -137,15 +137,15 @@ CI runs automatically on every push and pull request to `main` via GitHub Action
 - [x] Vim-motion player controls
 - [x] Pellet and power pellet rendering with flashing effect
 - [x] Pellet consumption and tracking
-- [x] Ghost AI with **Scatter**, **Chase**, **Freight**, and **Spawn** mode state machine
-- [x] Goal-directed ghost movement (minimise distance to target in each mode)
-- [x] Ghost–Pacman collision detection
-- [x] Power pellet triggering Freight mode; eating ghost in Freight triggers Spawn
+- [x] Ghosts with their own individual targeting personalities (**Scatter**, **Chase**, **Freight**, and **Spawn** modes)
+- [x] Power pellet triggering Ghost Freight mode; eating ghost in Freight triggers Spawn
+- [x] Merging Ghost home into node graph
+- [x] Proper Pacman and Ghost start positions 
+
 
 ### 🚧 In Progress / Planned
 
-- [ ] **Proper Pacman start position** — currently uses the first node in the lookup table; should be driven by a dedicated start symbol in the maze file
-- [ ] **Multiple ghosts** — Blinky, Pinky, Inky, and Clyde, each with their own targeting personality
+- [ ] **Ghost–Pacman collision detection** - currently no collision detection.
 - [ ] **Scoring system** — points display, pellet scoring (10pts), power pellet scoring (50pts), ghost scoring (200/400/800/1600pts chain)
 - [ ] **Lives system** — death animation, life counter, and game-over state
 - [ ] **Win condition** — detect when all pellets are eaten and advance to the next level
