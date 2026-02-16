@@ -1,13 +1,12 @@
-from vim_man.constants import Direction
 import pygame
 
-from vim_man.constants import BLACK, MAZE, SCREENSIZE, EntityID, GhostMode
+from vim_man.constants import BLACK, MAZE, SCREENSIZE, Direction, EntityID, GhostMode
+from vim_man.fruits import Fruit
 from vim_man.ghosts import GhostGroup
 from vim_man.level import MazeLevel
 from vim_man.nodes import NodeGroup
 from vim_man.pacman import Pacman
 from vim_man.pellets import PelletGroup
-from vim_man.fruits import Fruit
 
 
 class GameController:
@@ -17,15 +16,14 @@ class GameController:
         pygame.init()
         self.screen = pygame.display.set_mode(SCREENSIZE, 0, 32)
         self.clock = pygame.time.Clock()
-        self.background = None
-        self.fruit = None
+        self.background: pygame.Surface | None = None
+        self.fruit: Fruit | None = None
 
         self.level: MazeLevel
         self.nodes: NodeGroup
         self.pacman: Pacman
         self.pellets: PelletGroup
         self.ghosts: GhostGroup
-        self.fruit: Fruit
 
     def set_background(self) -> None:
         """Create and fill the background surface for the game screen."""
@@ -41,22 +39,14 @@ class GameController:
         homekey = self.nodes.create_home_nodes(11.5, 14)
         self.nodes.connect_home_nodes(homekey, (12, 14), Direction.LEFT)
         self.nodes.connect_home_nodes(homekey, (15, 14), Direction.RIGHT)
-        self.pacman = Pacman(self.nodes.get_node_from_tiles(15, 26))
+        self.pacman = Pacman(self.nodes.get_node(15, 26))
         self.pellets = PelletGroup(self.level)
         self.ghosts = GhostGroup(self.nodes.get_start_temp_node(), self.pacman)
-        self.ghosts.blinky.set_start_node(
-            self.nodes.get_node_from_tiles(2 + 11.5, 0 + 14)
-        )
-        self.ghosts.pinky.set_start_node(
-            self.nodes.get_node_from_tiles(2 + 11.5, 3 + 14)
-        )
-        self.ghosts.inky.set_start_node(
-            self.nodes.get_node_from_tiles(0 + 11.5, 3 + 14)
-        )
-        self.ghosts.clyde.set_start_node(
-            self.nodes.get_node_from_tiles(4 + 11.5, 3 + 14)
-        )
-        self.ghosts.set_spawn_node(self.nodes.get_node_from_tiles(2 + 11.5, 3 + 14))
+        self.ghosts.blinky.set_start_node(self.nodes.get_node(2 + 11.5, 0 + 14))
+        self.ghosts.pinky.set_start_node(self.nodes.get_node(2 + 11.5, 3 + 14))
+        self.ghosts.inky.set_start_node(self.nodes.get_node(0 + 11.5, 3 + 14))
+        self.ghosts.clyde.set_start_node(self.nodes.get_node(4 + 11.5, 3 + 14))
+        self.ghosts.set_spawn_node(self.nodes.get_node(2 + 11.5, 3 + 14))
 
     def check_pellet_events(self) -> None:
         """Update pellet state when Pacman eats a pellet."""
@@ -76,7 +66,7 @@ class GameController:
     def check_fruit_events(self):
         if self.pellets.num_eaten == 50 or self.pellets.num_eaten == 140:
             if self.fruit is None:
-                self.fruit = Fruit(self.nodes.get_node_from_tiles(9, 20))
+                self.fruit = Fruit(self.nodes.get_node(9, 20))
 
         if self.fruit is not None:
             if self.pacman.collide_check(self.fruit):
@@ -106,7 +96,8 @@ class GameController:
 
     def render(self) -> None:
         """Draw the current game state (incl. maze, Pacman, Ghosts and pellets) to the screen."""
-        self.screen.blit(self.background, (0, 0))
+        if self.background:
+            self.screen.blit(self.background, (0, 0))
         self.nodes.render(self.screen)
         self.pellets.render(self.screen)
         if self.fruit is not None:

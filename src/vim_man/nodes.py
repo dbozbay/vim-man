@@ -182,6 +182,16 @@ class NodeGroup:
         x, y = self.construct_key(col, row)
         return self.nodes_LUT.get((x, y))
 
+    def get_node(self, col: float, row: float) -> Node:
+        """
+        Return the node at the given tile coordinates.
+        Raises ValueError if no node exists at these coordinates.
+        """
+        node = self.get_node_from_tiles(col, row)
+        if node is None:
+            raise ValueError(f"No node found at tile coordinates ({col}, {row})")
+        return node
+
     def get_start_temp_node(self) -> Node:
         nodes = list(self.nodes_LUT.values())
         return nodes[0]
