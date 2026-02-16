@@ -6,8 +6,8 @@ from vim_man.ghosts import GhostGroup
 from vim_man.level import Maze
 from vim_man.nodes import NodeGroup
 from vim_man.pacman import Pacman
-from vim_man.pellets import PelletGroup
 from vim_man.pauser import Pause
+from vim_man.pellets import PelletGroup
 
 
 class GameController:
@@ -135,18 +135,21 @@ class GameController:
                         self.hide_entities()
 
     def show_entities(self) -> None:
+        """Make Pacman and all ghosts visible on the screen."""
         if self.pacman is not None:
             self.pacman.visible = True
         if self.ghosts is not None:
             self.ghosts.show()
 
     def hide_entities(self) -> None:
+        """Make Pacman and all ghosts invisible on the screen."""
         if self.pacman is not None:
             self.pacman.visible = False
         if self.ghosts is not None:
             self.ghosts.hide()
 
     def next_level(self) -> None:
+        """Reset the game state and advance to the next level of the maze."""
         self.show_entities()
         self.level += 1
         self.pause.paused = True
