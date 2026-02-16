@@ -38,13 +38,22 @@ class GameController:
         homekey = self.nodes.create_home_nodes(11.5, 14)
         self.nodes.connect_home_nodes(homekey, (12, 14), Direction.LEFT)
         self.nodes.connect_home_nodes(homekey, (15, 14), Direction.RIGHT)
-        self.pacman = Pacman(self.nodes.get_start_temp_node())
+        self.pacman = Pacman(self.nodes.get_node_from_tiles(15, 26))
         self.pellets = PelletGroup(self.level)
         self.ghosts = GhostGroup(self.nodes.get_start_temp_node(), self.pacman)
-
-        ghost_spawn_node = self.nodes.get_node_from_tiles(2 + 11.5, 3 + 14)
-        if ghost_spawn_node is not None:
-            self.ghosts.set_spawn_node(ghost_spawn_node)
+        self.ghosts.blinky.set_start_node(
+            self.nodes.get_node_from_tiles(2 + 11.5, 0 + 14)
+        )
+        self.ghosts.pinky.set_start_node(
+            self.nodes.get_node_from_tiles(2 + 11.5, 3 + 14)
+        )
+        self.ghosts.inky.set_start_node(
+            self.nodes.get_node_from_tiles(0 + 11.5, 3 + 14)
+        )
+        self.ghosts.clyde.set_start_node(
+            self.nodes.get_node_from_tiles(4 + 11.5, 3 + 14)
+        )
+        self.ghosts.set_spawn_node(self.nodes.get_node_from_tiles(2 + 11.5, 3 + 14))
 
     def check_pellet_events(self) -> None:
         """Update pellet state when Pacman eats a pellet."""

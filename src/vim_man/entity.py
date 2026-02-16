@@ -34,13 +34,17 @@ class Entity:
         self.radius = 10
         self.collide_radius = 5
         self.color = WHITE
-        self.node = node
-        self.set_position()
-        self.target = node
         self.visible = True
         self.disable_portal = False
         self.goal: Vector2D | None = None
-        self.direction_method = self.goal_direction
+        self.direction_method = self.random_direction
+        self.set_start_node(node)
+
+    def set_start_node(self, node: Node) -> None:
+        self.node = node
+        self.start_node = node
+        self.target = node
+        self.set_position()
 
     def set_position(self) -> None:
         """Align entity's position with the current node's position."""
