@@ -9,14 +9,17 @@ if TYPE_CHECKING:
 
 
 class MainMode(object):
-    # TODO: Write docstrings
+    """Controller for the global ghost behaviors of scattering and chasing."""
+
     def __init__(self) -> None:
+        """Initialize the main mode state with scatter as the default behavioral mode."""
         self.timer: float = 0.0
         self.time: float | None = None
         self.mode: GhostMode | None = None
         self.scatter()
 
     def update(self, dt: float) -> None:
+        """Advance the behavioral timer and toggle between scatter and chase modes."""
         self.timer += dt
         if self.time is not None:
             if self.timer >= self.time:
@@ -26,18 +29,23 @@ class MainMode(object):
                     self.scatter()
 
     def scatter(self) -> None:
+        """Set the current mode to scatter and reset the behavioral timer."""
         self.mode = GhostMode.SCATTER
         self.time = SCATTER_TIME
         self.timer = 0.0
 
     def chase(self) -> None:
+        """Set the current mode to chase and reset the behavioral timer."""
         self.mode = GhostMode.CHASE
         self.time = CHASE_TIME
         self.timer = 0.0
 
 
 class ModeController(object):
+    """Manages the behavior state transitions for an individual ghost entity."""
+
     def __init__(self, ghost: Ghost) -> None:
+        """Initialize the controller with a reference to its ghost and the global main mode."""
         self.timer: float = 0.0
         self.time: float | None = None
         self.mainmode: MainMode = MainMode()
@@ -45,6 +53,7 @@ class ModeController(object):
         self.ghost: Ghost = ghost
 
     def update(self, dt: float) -> None:
+        """Update the ghost's behavioral state based on global mode and freight timers."""
         self.mainmode.update(dt)
         if self.current is GhostMode.FREIGHT:
             self.timer += dt
@@ -63,12 +72,12 @@ class ModeController(object):
                 self.current = self.mainmode.mode
 
     def set_spawn_mode(self) -> None:
+        """Transition the ghost to spawn mode if it is currently in freight mode."""
         if self.current is GhostMode.FREIGHT:
             self.current = GhostMode.SPAWN
 
     def set_freight_mode(self) -> None:
-        # If ghost is in either SCATTER or CHASE mode, set to FREIGHT mode for 7 seconds.
-        # If ghost is already in FREIGHT mode, reset the timer to 0.
+        """Transition the ghost to freight mode for a set duration."""
         if self.current in [GhostMode.SCATTER, GhostMode.CHASE]:
             self.timer = 0
             self.time = FREIGHT_TIME

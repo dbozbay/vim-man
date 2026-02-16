@@ -7,6 +7,7 @@ class Vector2D(object):
     """Vector2D represents a 2D vector with basic arithmetic and utility operations."""
 
     def __init__(self, x: float = 0, y: float = 0) -> None:
+        """Initialize a 2D vector with optional x and y components."""
         self.x = x
         self.y = y
         self.thresh = 0.000001

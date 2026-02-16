@@ -41,6 +41,7 @@ class Entity:
         self.set_start_node(node)
 
     def set_start_node(self, node: Node) -> None:
+        """Set the initial node and position for the entity."""
         self.node = node
         self.start_node = node
         self.target = node
@@ -51,6 +52,7 @@ class Entity:
         self.position = self.node.position.copy()
 
     def set_between_nodes(self, direction: Direction) -> None:
+        """Position the entity halfway between its current node and a neighboring node."""
         neighbor = self.node.neighbors[direction]
         if neighbor is not None:
             self.target = neighbor

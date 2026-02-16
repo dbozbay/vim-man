@@ -29,6 +29,8 @@ MAZE: str = "maze1.txt"
 
 
 class Direction(IntEnum):
+    """Enumeration of possible movement directions including portal transitions."""
+
     STOP = 0
     UP = 1
     DOWN = -1
@@ -38,6 +40,8 @@ class Direction(IntEnum):
 
 
 class EntityID(IntEnum):
+    """Enumeration of unique identifiers for all game entities and items."""
+
     PACMAN = 0
     PELLET = 1
     POWERPELLET = 2
@@ -50,6 +54,8 @@ class EntityID(IntEnum):
 
 
 class GhostMode(IntEnum):
+    """Enumeration of possible behavioral states for ghosts."""
+
     SCATTER = 0
     CHASE = 1
     FREIGHT = 2

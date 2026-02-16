@@ -13,6 +13,7 @@ class GameController:
     """GameController initializes and runs the main game loop for Vim-Man."""
 
     def __init__(self) -> None:
+        """Initialize the game environment, display, and controller state."""
         pygame.init()
         self.screen = pygame.display.set_mode(SCREENSIZE, 0, 32)
         self.clock = pygame.time.Clock()
@@ -58,12 +59,14 @@ class GameController:
                 self.ghosts.start_freight()
 
     def check_ghost_events(self):
+        """Check for and handle collisions between Pacman and the ghosts."""
         for ghost in self.ghosts:
             if self.pacman.collide_check(ghost):
                 if ghost.mode.current is GhostMode.FREIGHT:
                     ghost.start_spawn()
 
     def check_fruit_events(self):
+        """Check for and handle fruit appearance and consumption based on pellets eaten."""
         if self.pellets.num_eaten == 50 or self.pellets.num_eaten == 140:
             if self.fruit is None:
                 self.fruit = Fruit(self.nodes.get_node(9, 20))
@@ -108,6 +111,7 @@ class GameController:
 
 
 def main() -> None:
+    """Initialize the game controller and start the primary game loop."""
     game = GameController()
     game.start_game()
     while True:
