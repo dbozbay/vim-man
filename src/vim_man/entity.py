@@ -30,6 +30,7 @@ class Entity:
         }
 
         self.direction = Direction.STOP
+        self.speed: float = 0.0
         self.set_speed(100)
         self.radius = 10
         self.collide_radius = 5
@@ -38,6 +39,11 @@ class Entity:
         self.disable_portal = False
         self.goal: Vector2D | None = None
         self.direction_method = self.random_direction
+
+        self.node: Node
+        self.start_node: Node
+        self.target: Node
+        self.position: Vector2D
         self.set_start_node(node)
 
     def set_start_node(self, node: Node) -> None:
