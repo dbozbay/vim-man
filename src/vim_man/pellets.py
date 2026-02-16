@@ -5,7 +5,7 @@ from vim_man.level import MazeArray, MazeLevel
 from vim_man.vector import Vector2D
 
 
-class Pellet(object):
+class Pellet:
     """Pellet represents a standard dot that Pacman can eat for points."""
 
     def __init__(self, row: int, column: int) -> None:
