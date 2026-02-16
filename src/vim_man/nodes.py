@@ -34,11 +34,7 @@ class Node:
             if node is not None:
                 line_start = self.position.as_tuple()
                 line_end = node.position.as_tuple()
-                if neighbor == Direction.PORTAL:
-                    line_color = BLUE
-                else:
-                    line_color = WHITE
-                pygame.draw.line(screen, line_color, line_start, line_end, 4)
+                pygame.draw.line(screen, WHITE, line_start, line_end, 4)
                 pygame.draw.circle(screen, RED, self.position.as_int(), 12)
 
 
