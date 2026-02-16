@@ -57,7 +57,6 @@ class Ghost(Entity):
         self.goal = self.spawn_node.position
 
     def set_spawn_node(self, node: Node) -> None:
-        print(node.position)
         self.spawn_node = node
 
     def start_spawn(self) -> None:

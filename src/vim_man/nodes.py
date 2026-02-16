@@ -1,7 +1,6 @@
 import pygame
 
 from vim_man.constants import (
-    BLUE,
     RED,
     TILEHEIGHT,
     TILEWIDTH,
@@ -11,8 +10,9 @@ from vim_man.constants import (
 from vim_man.level import MazeLevel
 from vim_man.types import MazeArray
 from vim_man.vector import Vector2D
+import numpy as np
 
-type NodesLUT = dict[tuple[int, int], "Node"]
+type NodesLUT = dict[tuple[float, float], "Node"]
 
 
 class Node:
@@ -51,9 +51,46 @@ class NodeGroup:
         self.create_node_table(data)
         self.connect_horizontally(data)
         self.connect_vertically(data)
+        self.homekey = None
+
+    def create_home_nodes(
+        self, x_offset: float, y_offset: float
+    ) -> tuple[float, float]:
+        homedata = np.array(
+            [
+                ["X", "X", "+", "X", "X"],
+                ["X", "X", ".", "X", "X"],
+                ["+", "X", ".", "X", "+"],
+                ["+", ".", "+", ".", "+"],
+                ["+", "X", "X", "X", "+"],
+            ]
+        )
+
+        self.create_node_table(homedata, x_offset, y_offset)
+        self.connect_horizontally(homedata, x_offset, y_offset)
+        self.connect_vertically(homedata, x_offset, y_offset)
+
+        # We want to return the key to the top node of `homedata`.
+        # So we have to add 2 because the offset describes where to position the
+        # top left corner of the array.
+        self.homekey = self.construct_key(x_offset + 2, y_offset)
+
+        return self.homekey
+
+    def connect_home_nodes(
+        self,
+        homekey: tuple[float, float],
+        otherkey: tuple[float, float],
+        direction: Direction,
+    ) -> None:
+        key = self.construct_key(*otherkey)
+        self.nodes_LUT[homekey].neighbors[direction] = self.nodes_LUT[key]
+        self.nodes_LUT[key].neighbors[Direction(direction * -1)] = self.nodes_LUT[
+            homekey
+        ]
 
     def create_node_table(
-        self, data: MazeArray, x_offset: int = 0, y_offset: int = 0
+        self, data: MazeArray, x_offset: float = 0, y_offset: float = 0
     ) -> None:
         """Create `Node` instances for all node symbols in the maze data and store them in the lookup table."""
         for row in range(data.shape[0]):
@@ -62,7 +99,7 @@ class NodeGroup:
                     x, y = self.construct_key(col + x_offset, row + y_offset)
                     self.nodes_LUT[(x, y)] = Node(x, y)
 
-    def construct_key(self, col: int, row: int) -> tuple[int, int]:
+    def construct_key(self, col: float, row: float) -> tuple[float, float]:
         """
         Return the pixel coordinates of the top-left corner of the given tile (col, row).
         This will be the node's key in the node lookup table.
@@ -70,12 +107,14 @@ class NodeGroup:
         return col * TILEWIDTH, row * TILEHEIGHT
 
     def connect_horizontally(
-        self, data: MazeArray, x_offset: int = 0, y_offset: int = 0
+        self, data: MazeArray, x_offset: float = 0, y_offset: float = 0
     ) -> None:
         """Connect horizontally adjacent node tiles as left and right neighbors."""
         # Walk each row from left to right, remembering the last node we saw.
         for row in range(data.shape[0]):
-            key: tuple[int, int] | None = None  # Start with no active node in this row.
+            key: tuple[float, float] | None = (
+                None  # Start with no active node in this row.
+            )
             for col in range(data.shape[1]):
                 if data[row][col] in self.node_symbols:
                     if key is None:
@@ -97,13 +136,13 @@ class NodeGroup:
                     key = None
 
     def connect_vertically(
-        self, data: MazeArray, x_offset: int = 0, y_offset: int = 0
+        self, data: MazeArray, x_offset: float = 0, y_offset: float = 0
     ) -> None:
         """Connect vertically adjacent node tiles as up and down neighbors."""
         # Transpose so we can reuse the same "scan along rows" logic for columns.
         dataT = data.transpose()  # (row, col) -> (col, row)
         for col in range(dataT.shape[0]):
-            key: tuple[int, int] | None = (
+            key: tuple[float, float] | None = (
                 None  # Start with no active node in this column.
             )
             for row in range(dataT.shape[1]):
