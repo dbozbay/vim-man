@@ -7,6 +7,7 @@ from vim_man.level import MazeLevel
 from vim_man.nodes import NodeGroup
 from vim_man.pacman import Pacman
 from vim_man.pellets import PelletGroup
+from vim_man.pauser import Pause
 
 
 class GameController:
@@ -17,6 +18,7 @@ class GameController:
         pygame.init()
         self.screen = pygame.display.set_mode(SCREENSIZE, 0, 32)
         self.clock = pygame.time.Clock()
+        self.pause = Pause(True)
 
         self.background: pygame.Surface | None = None
         self.level: MazeLevel | None = None
@@ -69,6 +71,9 @@ class GameController:
         for ghost in self.ghosts:
             if self.pacman.collide_check(ghost):
                 if ghost.mode.current is GhostMode.FREIGHT:
+                    self.pacman.visible = False
+                    ghost.visible = False
+                    self.pause.set_pause(pause_time=1, func=self.show_entities)
                     ghost.start_spawn()
 
     def check_fruit_events(self) -> None:
@@ -90,18 +95,24 @@ class GameController:
         """Advance the game state by one frame, handling logic and rendering."""
         dt = self.clock.tick(30) / 1000.0
 
-        if self.pacman is not None:
-            self.pacman.update(dt)
-        if self.ghosts is not None:
-            self.ghosts.update(dt)
-        if self.pellets is not None:
-            self.pellets.update(dt)
-        if self.fruit is not None:
-            self.fruit.update(dt)
+        if not self.pause.paused:
+            if self.pacman is not None:
+                self.pacman.update(dt)
+            if self.ghosts is not None:
+                self.ghosts.update(dt)
+            if self.pellets is not None:
+                self.pellets.update(dt)
+            if self.fruit is not None:
+                self.fruit.update(dt)
 
-        self.check_pellet_events()
-        self.check_ghost_events()
-        self.check_fruit_events()
+            self.check_pellet_events()
+            self.check_ghost_events()
+            self.check_fruit_events()
+
+        after_pause_method = self.pause.update(dt)
+        if after_pause_method is not None:
+            after_pause_method()
+
         self.check_events()
         self.render()
 
@@ -110,6 +121,25 @@ class GameController:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 exit()
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_ESCAPE:
+                    self.pause.set_pause(player_paused=True)
+                    if not self.pause.paused:
+                        self.show_entities()
+                    else:
+                        self.hide_entities()
+
+    def show_entities(self) -> None:
+        if self.pacman is not None:
+            self.pacman.visible = True
+        if self.ghosts is not None:
+            self.ghosts.show()
+
+    def hide_entities(self) -> None:
+        if self.pacman is not None:
+            self.pacman.visible = False
+        if self.ghosts is not None:
+            self.ghosts.hide()
 
     def render(self) -> None:
         """Draw the current game state (incl. maze, Pacman, Ghosts and pellets) to the screen."""
