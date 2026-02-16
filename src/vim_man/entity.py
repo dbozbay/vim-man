@@ -50,6 +50,12 @@ class Entity:
         """Align entity's position with the current node's position."""
         self.position = self.node.position.copy()
 
+    def set_between_nodes(self, direction: Direction) -> None:
+        neighbor = self.node.neighbors[direction]
+        if neighbor is not None:
+            self.target = neighbor
+            self.position = (self.node.position + self.target.position) / 2.0
+
     def update(self, dt: float) -> None:
         """Advance the entity in its current direction by its speed*dt and handle node transitions (direction changes, portals)."""
         self.position += self.directions[self.direction] * self.speed * dt

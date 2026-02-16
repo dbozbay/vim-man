@@ -18,6 +18,7 @@ class Pacman(Entity):
         self.name = EntityID.PACMAN
         self.color = YELLOW
         self.direction = Direction.LEFT
+        self.set_between_nodes(Direction.LEFT)
 
     def update(self, dt: float) -> None:
         """Update Pacman's movement, direction, and target node based on input and elapsed time."""
