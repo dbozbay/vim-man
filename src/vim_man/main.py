@@ -41,7 +41,7 @@ class GameController:
         self.pacman = Pacman(self.nodes.get_start_temp_node())
         self.pellets = PelletGroup(self.level)
         self.ghosts = GhostGroup(self.nodes.get_start_temp_node(), self.pacman)
-        self.ghosts.set_spawn_node(self.nodes.get_node_from_tiles(15, 14))
+        self.ghosts.set_spawn_node(self.nodes.get_node_from_tiles(2+11.5, 3+14))
 
     def check_pellet_events(self) -> None:
         """Update pellet state when Pacman eats a pellet."""

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from vim_man.constants import ORANGE
 from vim_man.constants import NROWS
 from vim_man.constants import RED
@@ -18,15 +20,19 @@ class Ghost(Entity):
     """Ghost entity that moves like an Entity but chooses directions based on a goal position."""
 
     # TODO: Write docstrings for class methods
-    def __init__(self, node: Node, pacman: Pacman | None = None) -> None:
+    def __init__(
+        self, node: Node, pacman: Pacman | None = None, blinky: Blinky | None = None
+    ) -> None:
         """Initialize a ghost at the given starting node with scoring and goal-tracking behavior."""
         super().__init__(node)
         self.name = EntityID.GHOST
         self.points = 200
         self.goal = Vector2D()
+        self.direction_method = self.goal_direction
         self.pacman = pacman
-        # self.direction_method = self.goal_direction
         self.mode = ModeController(self)
+        self.blinky = blinky
+        self.homenode = node
 
     def update(self, dt: float) -> None:
         self.mode.update(dt)
@@ -37,6 +43,7 @@ class Ghost(Entity):
         super().update(dt)
 
     def scatter(self) -> None:
+        """Scatter to the upper left corner of the maze."""
         self.goal = Vector2D()
 
     def chase(self) -> None:
@@ -68,20 +75,24 @@ class Ghost(Entity):
 
 
 class Blinky(Ghost):
-    def __init__(self, node: Node, pacman: Pacman | None = None) -> None:
-        super().__init__(node, pacman)
+    def __init__(
+        self, node: Node, pacman: Pacman | None = None, blinky: Blinky | None = None
+    ) -> None:
+        super().__init__(node, pacman, blinky)
         self.name = EntityID.BLINKY
         self.color = RED
 
 
 class Pinky(Ghost):
-    def __init__(self, node: Node, pacman: Pacman | None = None) -> None:
-        super().__init__(node, pacman)
+    def __init__(
+        self, node: Node, pacman: Pacman | None = None, blinky: Blinky | None = None
+    ) -> None:
+        super().__init__(node, pacman, blinky)
         self.name = EntityID.PINKY
         self.color = PINK
 
     def scatter(self) -> None:
-        """Scatter to the upper right corner."""
+        """Scatter to the upper right corner of the maze."""
         self.goal = Vector2D(TILEWIDTH * NCOLS, 0)
 
     def chase(self) -> None:
@@ -94,14 +105,26 @@ class Pinky(Ghost):
 
 
 class Inky(Ghost):
-    def __init__(self, node: Node, pacman: Pacman | None = None) -> None:
-        super().__init__(node, pacman)
+    def __init__(
+        self, node: Node, pacman: Pacman | None = None, blinky: Blinky | None = None
+    ) -> None:
+        super().__init__(node, pacman, blinky)
         self.name = EntityID.INKY
         self.color = TEAL
 
     def scatter(self) -> None:
-        """Scatter to the bottom left corner."""
-        self.goal = Vector2D(0, TILEHEIGHT * NROWS)
+        """Scatter to the bottom right corner of the maze."""
+        self.goal = Vector2D(TILEWIDTH * NCOLS, TILEHEIGHT * NROWS)
+
+    def chase(self) -> None:
+        """Find the position that's 2 tiles in front of Pacman, substruct Blinky's position and multiply the result by 2."""
+        if self.pacman is not None and self.blinky is not None:
+            vec1 = (
+                self.pacman.position
+                + self.pacman.directions[self.pacman.direction] * TILEWIDTH * 2
+            )
+            vec2 = (vec1 - self.blinky.position) * 2
+            self.goal = self.blinky.position + vec2
 
 
 class Clyde(Ghost):
@@ -111,8 +134,24 @@ class Clyde(Ghost):
         self.color = ORANGE
 
     def scatter(self) -> None:
-        """Scatter to the bottom left corner."""
-        self.goal = Vector2D(TILEWIDTH * NCOLS, TILEHEIGHT * NROWS)
+        """Scatter to the bottom left corner of the maze."""
+        self.goal = Vector2D(0, TILEHEIGHT * NROWS)
+
+    def chase(self) -> None:
+        """
+        If Clyde is less than 8 tiles away from Pacman, retreat to scatter goal.
+        Otherwise, act like Pinky.
+        """
+        if self.pacman is not None:
+            d = self.pacman.position
+            d_squared = d.magnitude_squared()
+            if d_squared <= (TILEWIDTH * 8) ** 2:
+                self.scatter()
+            else:
+                self.goal = (
+                    self.pacman.position
+                    + self.pacman.directions[self.pacman.direction] * TILEWIDTH * 4
+                )
 
 
 class GhostGroup:
