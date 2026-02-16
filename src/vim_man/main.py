@@ -19,6 +19,7 @@ class GameController:
         self.screen = pygame.display.set_mode(SCREENSIZE, 0, 32)
         self.clock = pygame.time.Clock()
         self.pause = Pause(True)
+        self.level = 0
 
         self.background: pygame.Surface | None = None
         self.maze: Maze | None = None
@@ -62,6 +63,10 @@ class GameController:
             self.pellets.pellet_list.remove(pellet)
             if pellet.name == EntityID.POWERPELLET:
                 self.ghosts.start_freight()
+
+            if self.pellets.is_empty():
+                self.hide_entities()
+                self.pause.set_pause(pause_time=3, func=self.next_level)
 
     def check_ghost_events(self) -> None:
         """Check for and handle collisions between Pacman and the ghosts."""
@@ -140,6 +145,12 @@ class GameController:
             self.pacman.visible = False
         if self.ghosts is not None:
             self.ghosts.hide()
+
+    def next_level(self) -> None:
+        self.show_entities()
+        self.level += 1
+        self.pause.paused = True
+        self.start_game()
 
     def render(self) -> None:
         """Draw the current game state (incl. maze, Pacman, Ghosts and pellets) to the screen."""
