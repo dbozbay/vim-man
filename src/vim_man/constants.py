@@ -18,6 +18,7 @@ RED: Color = (255, 0, 0)
 PINK: Color = (255, 100, 150)
 TEAL: Color = (100, 255, 255)
 ORANGE: Color = (230, 190, 40)
+GREEN: Color = (0, 255, 0)
 
 
 SCATTER_TIME: float = 7.0
@@ -45,6 +46,7 @@ class EntityID(IntEnum):
     PINKY = 5
     INKY = 6
     CLYDE = 7
+    FRUIT = 8
 
 
 class GhostMode(IntEnum):

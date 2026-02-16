@@ -7,6 +7,7 @@ from vim_man.level import MazeLevel
 from vim_man.nodes import NodeGroup
 from vim_man.pacman import Pacman
 from vim_man.pellets import PelletGroup
+from vim_man.fruits import Fruit
 
 
 class GameController:
@@ -23,6 +24,7 @@ class GameController:
         self.pacman: Pacman
         self.pellets: PelletGroup
         self.ghosts: GhostGroup
+        self.fruit: Fruit
 
     def set_background(self) -> None:
         """Create and fill the background surface for the game screen."""
@@ -54,6 +56,7 @@ class GameController:
             self.nodes.get_node_from_tiles(4 + 11.5, 3 + 14)
         )
         self.ghosts.set_spawn_node(self.nodes.get_node_from_tiles(2 + 11.5, 3 + 14))
+        self.fruit = Fruit(self.nodes.get_node_from_tiles(9, 20))
 
     def check_pellet_events(self) -> None:
         """Update pellet state when Pacman eats a pellet."""
@@ -76,6 +79,7 @@ class GameController:
         self.pacman.update(dt)
         self.ghosts.update(dt)
         self.pellets.update(dt)
+        self.fruit.update(dt)
         self.check_pellet_events()
         self.check_ghost_events()
         self.check_events()
@@ -94,6 +98,7 @@ class GameController:
         self.pellets.render(self.screen)
         self.pacman.render(self.screen)
         self.ghosts.render(self.screen)
+        self.fruit.render(self.screen)
         pygame.display.update()
 
 
