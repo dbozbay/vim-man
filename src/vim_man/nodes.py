@@ -173,11 +173,11 @@ class NodeGroup:
             self.nodes_LUT[key1].neighbors[Direction.PORTAL] = self.nodes_LUT[key2]
             self.nodes_LUT[key2].neighbors[Direction.PORTAL] = self.nodes_LUT[key1]
 
-    def get_node_from_pixels(self, x_pixel: int, y_pixel: int) -> Node | None:
+    def get_node_from_pixels(self, x_pixel: float, y_pixel: float) -> Node | None:
         """Return the node located at the given pixel coordinates, or `None` if none exists."""
         return self.nodes_LUT.get((x_pixel, y_pixel))
 
-    def get_node_from_tiles(self, col: int, row: int) -> Node | None:
+    def get_node_from_tiles(self, col: float, row: float) -> Node | None:
         """Return the node at the given tile coordinates, or `None` if none exists."""
         x, y = self.construct_key(col, row)
         return self.nodes_LUT.get((x, y))
