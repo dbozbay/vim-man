@@ -21,7 +21,7 @@ class GameController:
         self.pause = Pause(True)
 
         self.background: pygame.Surface | None = None
-        self.level: Maze | None = None
+        self.maze: Maze | None = None
         self.nodes: NodeGroup | None = None
         self.pacman: Pacman | None = None
         self.pellets: PelletGroup | None = None
@@ -36,14 +36,14 @@ class GameController:
     def start_game(self) -> None:
         """Initialize the maze, Pacman, pellets, and prepare the game to start."""
         self.set_background()
-        self.level = Maze(MAZE)
-        self.nodes = NodeGroup(self.level)
+        self.maze = Maze(MAZE)
+        self.nodes = NodeGroup(self.maze)
         self.nodes.set_portal_pair((0, 17), (27, 17))
         homekey = self.nodes.create_home_nodes(11.5, 14)
         self.nodes.connect_home_nodes(homekey, (12, 14), Direction.LEFT)
         self.nodes.connect_home_nodes(homekey, (15, 14), Direction.RIGHT)
         self.pacman = Pacman(self.nodes.get_node(15, 26))
-        self.pellets = PelletGroup(self.level)
+        self.pellets = PelletGroup(self.maze)
         self.ghosts = GhostGroup(self.nodes.get_start_temp_node(), self.pacman)
         self.ghosts.blinky.set_start_node(self.nodes.get_node(2 + 11.5, 0 + 14))
         self.ghosts.pinky.set_start_node(self.nodes.get_node(2 + 11.5, 3 + 14))
