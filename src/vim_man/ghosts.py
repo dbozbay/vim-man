@@ -37,7 +37,7 @@ class Ghost(Entity):
         self.mode = ModeController(self)
         self.blinky = blinky
         self.homenode = node
-        self.spawn_node: Node
+        self.spawn_node: Node | None = None
 
     def update(self, dt: float) -> None:
         """Update the ghost's behavior mode and position based on elapsed time."""
@@ -71,7 +71,8 @@ class Ghost(Entity):
 
     def spawn(self) -> None:
         """Set the ghost's goal to its spawn node position."""
-        self.goal = self.spawn_node.position
+        if self.spawn_node is not None:
+            self.goal = self.spawn_node.position
 
     def set_spawn_node(self, node: Node) -> None:
         """Assign the designated spawn node for the ghost."""

@@ -30,21 +30,19 @@ class Entity:
         }
 
         self.direction = Direction.STOP
-        self.speed: float = 0.0
-        self.set_speed(100)
         self.radius = 10
         self.collide_radius = 5
         self.color = WHITE
         self.visible = True
         self.disable_portal = False
+        self.speed: float = 100
+        self.node: Node = node
+        self.start_node: Node = node
+        self.target: Node = node
+        self.position: Vector2D = node.position.copy()
+
         self.goal: Vector2D | None = None
         self.direction_method = self.random_direction
-
-        self.node: Node
-        self.start_node: Node
-        self.target: Node
-        self.position: Vector2D
-        self.set_start_node(node)
 
     def set_start_node(self, node: Node) -> None:
         """Set the initial node and position for the entity."""
