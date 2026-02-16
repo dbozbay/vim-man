@@ -34,10 +34,10 @@ class GameController:
         self.level = MazeLevel(MAZE)
         self.nodes = NodeGroup(self.level)
         self.nodes.set_portal_pair((0, 17), (27, 17))
-        self.pacman = Pacman(self.nodes.get_start_node())
+        self.pacman = Pacman(self.nodes.get_start_temp_node())
         self.pellets = PelletGroup(self.level)
-        self.ghosts = GhostGroup(self.nodes.get_start_node(), self.pacman)
-        self.ghosts.set_spawn_node(self.nodes.get_start_node())
+        self.ghosts = GhostGroup(self.nodes.get_start_temp_node(), self.pacman)
+        self.ghosts.set_spawn_node(self.nodes.get_node_from_tiles(15,14))
 
     def check_pellet_events(self) -> None:
         """Update pellet state when Pacman eats a pellet."""

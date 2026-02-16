@@ -45,9 +45,8 @@ class NodeGroup:
         # TODO: Write docstring
         self.level = level
         self.nodes_LUT: NodesLUT = {}
-        self.node_symbols = ["+", "P", "n", "S"]
+        self.node_symbols = ["+", "P", "n"]
         self.path_symbols = [".", "-", "|", "p"]
-        self.start_node: Node | None = None
         data = self.level.data
         self.create_node_table(data)
         self.connect_horizontally(data)
@@ -61,10 +60,7 @@ class NodeGroup:
             for col in range(data.shape[1]):
                 if data[row][col] in self.node_symbols:
                     x, y = self.construct_key(col + x_offset, row + y_offset)
-                    new_node = Node(x, y)
-                    self.nodes_LUT[(x, y)] = new_node
-                    if data[row][col] == "S":
-                        self.start_node = new_node
+                    self.nodes_LUT[(x, y)] = Node(x, y)
 
     def construct_key(self, col: int, row: int) -> tuple[int, int]:
         """
@@ -145,14 +141,11 @@ class NodeGroup:
     def get_node_from_tiles(self, col: int, row: int) -> Node | None:
         """Return the node at the given tile coordinates, or `None` if none exists."""
         x, y = self.construct_key(col, row)
-        return self.get_node_from_pixels(x, y)
+        return self.nodes_LUT.get((x, y))
 
-    def get_start_node(self) -> Node:
-        """Return the starting node for Pacman."""
-        if self.start_node is None:
-            # Fallback if no S node found, though arguably check should happen at load time
-            return list(self.nodes_LUT.values())[0]
-        return self.start_node
+    def get_start_temp_node(self) -> Node:
+        nodes = list(self.nodes_LUT.values())
+        return nodes[0]
 
     def get_last_node(self) -> Node:
         """Return the last node in the nodes lookup table."""

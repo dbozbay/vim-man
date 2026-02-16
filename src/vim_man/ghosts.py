@@ -23,12 +23,10 @@ class Ghost(Entity):
         super().__init__(node)
         self.name = EntityID.GHOST
         self.points = 200
-        self.goal = Vector2D(0, 0)
+        self.goal = Vector2D()
         self.pacman = pacman
         # self.direction_method = self.goal_direction
         self.mode = ModeController(self)
-        self.spawn_node: Node | None = None
-        self.home_node = node
 
     def update(self, dt: float) -> None:
         self.mode.update(dt)
@@ -39,25 +37,11 @@ class Ghost(Entity):
         super().update(dt)
 
     def scatter(self) -> None:
-        self.goal = Vector2D(0, 0)
+        self.goal = Vector2D()
 
     def chase(self) -> None:
         if self.pacman is not None:
             self.goal = self.pacman.position
-
-    def spawn(self) -> None:
-        if self.spawn_node is not None:
-            self.goal = self.spawn_node.position
-
-    def set_spawn_node(self, node: Node) -> None:
-        self.spawn_node = node
-
-    def start_spawn(self) -> None:
-        self.mode.set_spawn_mode()
-        if self.mode.current == GhostMode.SPAWN:
-            self.set_speed(150)
-            self.direction_method = self.goal_direction
-            self.spawn()
 
     def start_freight(self) -> None:
         self.mode.set_freight_mode()
@@ -68,6 +52,20 @@ class Ghost(Entity):
     def normal_mode(self) -> None:
         self.set_speed(100)
         self.direction_method = self.goal_direction
+
+    def spawn(self) -> None:
+        self.goal = self.spawn_node.position
+
+    def set_spawn_node(self, node: Node) -> None:
+        print(node.position)
+        self.spawn_node = node
+
+    def start_spawn(self) -> None:
+        self.mode.set_spawn_mode()
+        if self.mode.current == GhostMode.SPAWN:
+            self.set_speed(150)
+            self.direction_method = self.goal_direction
+            self.spawn()
 
 
 class Blinky(Ghost):
