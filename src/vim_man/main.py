@@ -3,7 +3,7 @@ import pygame
 from vim_man.constants import BLACK, MAZE, SCREENSIZE, Direction, EntityID, GhostMode
 from vim_man.fruits import Fruit
 from vim_man.ghosts import GhostGroup
-from vim_man.level import MazeLevel
+from vim_man.level import Maze
 from vim_man.nodes import NodeGroup
 from vim_man.pacman import Pacman
 from vim_man.pellets import PelletGroup
@@ -21,7 +21,7 @@ class GameController:
         self.pause = Pause(True)
 
         self.background: pygame.Surface | None = None
-        self.level: MazeLevel | None = None
+        self.level: Maze | None = None
         self.nodes: NodeGroup | None = None
         self.pacman: Pacman | None = None
         self.pellets: PelletGroup | None = None
@@ -36,7 +36,7 @@ class GameController:
     def start_game(self) -> None:
         """Initialize the maze, Pacman, pellets, and prepare the game to start."""
         self.set_background()
-        self.level = MazeLevel(MAZE)
+        self.level = Maze(MAZE)
         self.nodes = NodeGroup(self.level)
         self.nodes.set_portal_pair((0, 17), (27, 17))
         homekey = self.nodes.create_home_nodes(11.5, 14)

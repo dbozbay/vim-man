@@ -8,7 +8,7 @@ from vim_man.constants import (
     WHITE,
     Direction,
 )
-from vim_man.level import MazeLevel
+from vim_man.level import Maze
 from vim_man.types import MazeArray
 from vim_man.vector import Vector2D
 
@@ -42,13 +42,13 @@ class Node:
 class NodeGroup:
     """Manages the creation and organization of the network of maze nodes."""
 
-    def __init__(self, level: MazeLevel) -> None:
-        """Initialize the node group by parsing the level data and creating links."""
-        self.level = level
+    def __init__(self, maze: Maze) -> None:
+        """Initialize the node group by parsing the maze data and creating links."""
+        self.maze = maze
         self.nodes_LUT: NodesLUT = {}
         self.node_symbols = ["+", "P", "n"]
         self.path_symbols = [".", "-", "|", "p"]
-        data = self.level.data
+        data = self.maze.data
         self.create_node_table(data)
         self.connect_horizontally(data)
         self.connect_vertically(data)

@@ -1,7 +1,7 @@
 import pygame
 
 from vim_man.constants import TILEHEIGHT, TILEWIDTH, WHITE, EntityID
-from vim_man.level import MazeArray, MazeLevel
+from vim_man.level import MazeArray, Maze
 from vim_man.vector import Vector2D
 
 
@@ -48,7 +48,7 @@ class PowerPellet(Pellet):
 class PelletGroup(object):
     """Manages the creation and lifecycle of the pellets and power pellets."""
 
-    def __init__(self, level: MazeLevel) -> None:
+    def __init__(self, level: Maze) -> None:
         """Initialize the group by parsing the level's layout data and populating pellet lists."""
         self.level = level
         self.pellet_symbols = ["+", "."]
