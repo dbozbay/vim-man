@@ -40,10 +40,11 @@ class Entity:
         self.node: Node
         self.start_node: Node
         self.target: Node
-        self.speed: float
         self.goal: Vector2D
+        self.speed: float
 
         self.set_start_node(node)
+        self.set_speed(100)
 
     def reset(self) -> None:
         self.set_start_node(self.start_node)
