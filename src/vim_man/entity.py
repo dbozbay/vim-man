@@ -28,21 +28,22 @@ class Entity:
             Direction.LEFT: Vector2D(-1, 0),
             Direction.RIGHT: Vector2D(1, 0),
         }
-
         self.direction = Direction.STOP
         self.radius = 10
         self.collide_radius = 5
         self.color = WHITE
         self.visible = True
         self.disable_portal = False
-        self.speed: float = 100
-        self.node: Node = node
-        self.start_node: Node = node
-        self.target: Node = node
-        self.position: Vector2D = node.position.copy()
+        self.position = node.position.copy()
+        self.direction_method = self.goal_direction
 
-        self.goal: Vector2D | None = None
-        self.direction_method = self.random_direction
+        self.node: Node
+        self.start_node: Node
+        self.target: Node
+        self.speed: float
+        self.goal: Vector2D
+
+        self.set_start_node(node)
 
     def reset(self) -> None:
         self.set_start_node(self.start_node)
