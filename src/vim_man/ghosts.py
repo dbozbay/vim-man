@@ -11,6 +11,7 @@ from vim_man.constants import (
     TEAL,
     TILEHEIGHT,
     TILEWIDTH,
+    Direction,
     EntityID,
     GhostMode,
 )
@@ -66,6 +67,7 @@ class Ghost(Entity):
         """Reset the ghost to its standard speed and goal-seeking behavior."""
         self.set_speed(100)
         self.direction_method = self.goal_direction
+        self.homenode.deny_access(Direction.DOWN, self)
 
     def spawn(self) -> None:
         """Set the ghost's goal to its spawn node position."""

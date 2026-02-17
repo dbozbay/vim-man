@@ -64,6 +64,10 @@ class GameController:
         self.nodes.deny_access_list(2 + 11.5, 3 + 14, Direction.RIGHT, self.ghosts)
         self.ghosts.inky.start_node.deny_access(Direction.RIGHT, self.ghosts.inky)
         self.ghosts.clyde.start_node.deny_access(Direction.LEFT, self.ghosts.clyde)
+        self.nodes.deny_access_list(12, 14, Direction.UP, self.ghosts)
+        self.nodes.deny_access_list(15, 14, Direction.UP, self.ghosts)
+        self.nodes.deny_access_list(12, 26, Direction.UP, self.ghosts)
+        self.nodes.deny_access_list(15, 26, Direction.UP, self.ghosts)
 
     def restart_game(self) -> None:
         self.lives = 3
@@ -88,6 +92,10 @@ class GameController:
         pellet = self.pacman.eat_pellets(self.pellets.pellet_list)
         if pellet:
             self.pellets.num_eaten += 1
+            if self.pellets.num_eaten == 30:
+                self.ghosts.inky.start_node.allow_access(Direction.RIGHT, self.ghosts.inky)
+            if self.pellets.num_eaten == 70:
+                self.ghosts.clyde.start_node.allow_access(Direction.LEFT, self.ghosts.clyde)
             self.pellets.pellet_list.remove(pellet)
             if pellet.name == EntityID.POWERPELLET:
                 self.ghosts.start_freight()
@@ -108,6 +116,7 @@ class GameController:
                     ghost.visible = False
                     self.pause.set_pause(pause_time=1, func=self.show_entities)
                     ghost.start_spawn()
+                    self.nodes.allow_home_access(ghost)
                 elif ghost.mode.current is not GhostMode.SPAWN:
                     if self.pacman.alive:
                         self.lives -= 1

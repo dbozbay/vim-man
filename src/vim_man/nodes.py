@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 import numpy as np
 import pygame
 
@@ -11,10 +13,12 @@ from vim_man.constants import (
     Direction,
     EntityID,
 )
-from vim_man.entity import Entity
 from vim_man.level import Maze
 from vim_man.types import MazeArray
 from vim_man.vector import Vector2D
+
+if TYPE_CHECKING:
+    from vim_man.entity import Entity
 
 type NodesLUT = dict[tuple[float, float], "Node"]
 
@@ -74,7 +78,7 @@ class Node:
 
     def allow_access(self, direction: Direction, entity: Entity) -> None:
         name = entity.name
-        if name is not None and name in self.access[direction]:
+        if name is not None and name not in self.access[direction]:
             self.access[direction].append(name)
 
     def render(self, screen: pygame.Surface) -> None:
@@ -210,14 +214,12 @@ class NodeGroup:
         return nodes[-1]
 
     def allow_access(self, col: float, row: float, direction: Direction, entity: Entity) -> None:
-        node = self.get_node_from_tiles(col, row)
-        if node is not None:
-            node.allow_access(direction, entity)
+        node = self.get_node(col, row)
+        node.allow_access(direction, entity)
 
     def deny_access(self, col: float, row: float, direction: Direction, entity: Entity) -> None:
-        node = self.get_node_from_tiles(col, row)
-        if node is not None:
-            node.deny_access(direction, entity)
+        node = self.get_node(col, row)
+        node.deny_access(direction, entity)
 
     def allow_access_list(self, col: float, row: float, direction: Direction, entities: list[Entity]) -> None:
         for entity in entities:
