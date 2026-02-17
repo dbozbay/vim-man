@@ -101,10 +101,12 @@ class Entity:
             self.set_position()
 
     def valid_direction(self, direction: Direction) -> bool:
+        # TODO: Update docstring to account for access
         """Return True if entity has a neighboring node in the given direction."""
         if direction is not Direction.STOP:
-            if self.node.neighbors[direction] is not None:
-                return True
+            if self.name in self.node.access[direction]:
+                if self.node.neighbors[direction] is not None:
+                    return True
         return False
 
     def valid_directions(self) -> list[Direction]:

@@ -38,12 +38,16 @@ class GameController:
     def start_game(self) -> None:
         """Initialize the maze, Pacman, pellets, and prepare the game to start."""
         self.set_background()
+
+        # Initialize maze / nodes
         self.maze = Maze(MAZE)
         self.nodes = NodeGroup(self.maze)
         self.nodes.set_portal_pair((0, 17), (27, 17))
         homekey = self.nodes.create_home_nodes(11.5, 14)
         self.nodes.connect_home_nodes(homekey, (12, 14), Direction.LEFT)
         self.nodes.connect_home_nodes(homekey, (15, 14), Direction.RIGHT)
+
+        # Initialize Entities (Pacman, Ghosts, Pellets)
         self.pacman = Pacman(self.nodes.get_node(15, 26))
         self.pellets = PelletGroup(self.maze)
         self.ghosts = GhostGroup(self.nodes.get_start_temp_node(), self.pacman)
@@ -52,6 +56,14 @@ class GameController:
         self.ghosts.inky.set_start_node(self.nodes.get_node(0 + 11.5, 3 + 14))
         self.ghosts.clyde.set_start_node(self.nodes.get_node(4 + 11.5, 3 + 14))
         self.ghosts.set_spawn_node(self.nodes.get_node(2 + 11.5, 3 + 14))
+
+        # Initialize access rights to nodes
+        self.nodes.deny_home_access(self.pacman)
+        self.nodes.deny_home_access_list(self.ghosts)
+        self.nodes.deny_access_list(2 + 11.5, 3 + 14, Direction.LEFT, self.ghosts)
+        self.nodes.deny_access_list(2 + 11.5, 3 + 14, Direction.RIGHT, self.ghosts)
+        self.ghosts.inky.start_node.deny_access(Direction.RIGHT, self.ghosts.inky)
+        self.ghosts.clyde.start_node.deny_access(Direction.LEFT, self.ghosts.clyde)
 
     def restart_game(self) -> None:
         self.lives = 3

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import numpy as np
 import pygame
 
@@ -7,7 +9,9 @@ from vim_man.constants import (
     TILEWIDTH,
     WHITE,
     Direction,
+    EntityID,
 )
+from vim_man.entity import Entity
 from vim_man.level import Maze
 from vim_man.types import MazeArray
 from vim_man.vector import Vector2D
@@ -28,6 +32,50 @@ class Node:
             Direction.RIGHT: None,
             Direction.PORTAL: None,
         }
+        self.access: dict[Direction, list[EntityID]] = {
+            Direction.UP: [
+                EntityID.PACMAN,
+                EntityID.BLINKY,
+                EntityID.PINKY,
+                EntityID.INKY,
+                EntityID.CLYDE,
+                EntityID.FRUIT,
+            ],
+            Direction.DOWN: [
+                EntityID.PACMAN,
+                EntityID.BLINKY,
+                EntityID.PINKY,
+                EntityID.INKY,
+                EntityID.CLYDE,
+                EntityID.FRUIT,
+            ],
+            Direction.LEFT: [
+                EntityID.PACMAN,
+                EntityID.BLINKY,
+                EntityID.PINKY,
+                EntityID.INKY,
+                EntityID.CLYDE,
+                EntityID.FRUIT,
+            ],
+            Direction.RIGHT: [
+                EntityID.PACMAN,
+                EntityID.BLINKY,
+                EntityID.PINKY,
+                EntityID.INKY,
+                EntityID.CLYDE,
+                EntityID.FRUIT,
+            ],
+        }
+
+    def deny_access(self, direction: Direction, entity: Entity) -> None:
+        name = entity.name
+        if name is not None and name in self.access[direction]:
+            self.access[direction].remove(name)
+
+    def allow_access(self, direction: Direction, entity: Entity) -> None:
+        name = entity.name
+        if name is not None and name in self.access[direction]:
+            self.access[direction].append(name)
 
     def render(self, screen: pygame.Surface) -> None:
         """Draw the node and its connections to neighbors on the screen."""
@@ -160,6 +208,40 @@ class NodeGroup:
         """Return the last node created in the lookup table."""
         nodes = list(self.nodes_LUT.values())
         return nodes[-1]
+
+    def allow_access(self, col: float, row: float, direction: Direction, entity: Entity) -> None:
+        node = self.get_node_from_tiles(col, row)
+        if node is not None:
+            node.allow_access(direction, entity)
+
+    def deny_access(self, col: float, row: float, direction: Direction, entity: Entity) -> None:
+        node = self.get_node_from_tiles(col, row)
+        if node is not None:
+            node.deny_access(direction, entity)
+
+    def allow_access_list(self, col: float, row: float, direction: Direction, entities: list[Entity]) -> None:
+        for entity in entities:
+            self.allow_access(col, row, direction, entity)
+
+    def deny_access_list(self, col: float, row: float, direction: Direction, entities: list[Entity]) -> None:
+        for entity in entities:
+            self.deny_access(col, row, direction, entity)
+
+    def allow_home_access(self, entity: Entity) -> None:
+        if self.homekey is not None:
+            self.nodes_LUT[self.homekey].allow_access(Direction.DOWN, entity)
+
+    def deny_home_access(self, entity: Entity) -> None:
+        if self.homekey is not None:
+            self.nodes_LUT[self.homekey].deny_access(Direction.DOWN, entity)
+
+    def allow_home_access_list(self, entities: list[Entity]) -> None:
+        for entity in entities:
+            self.allow_home_access(entity)
+
+    def deny_home_access_list(self, entities: list[Entity]) -> None:
+        for entity in entities:
+            self.deny_home_access(entity)
 
     def render(self, screen: pygame.Surface) -> None:
         """Render all nodes and their connections in the group to the screen."""
