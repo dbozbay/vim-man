@@ -84,6 +84,11 @@ class Ghost(Entity):
             self.direction_method = self.goal_direction
             self.spawn()
 
+    def reset(self) -> None:
+        super().reset()
+        self.points = 200
+        self.direction_method = self.goal_direction
+
 
 class Blinky(Ghost):
     """Red ghost that aggressively chases Pacman directly."""
@@ -209,6 +214,10 @@ class GhostGroup:
         """Make all ghosts in the group visible on the screen."""
         for ghost in self:
             ghost.visible = True
+
+    def reset(self) -> None:
+        for ghost in self:
+            ghost.reset()
 
     def render(self, screen: pygame.Surface) -> None:
         """Draw all ghosts in the group to the screen."""

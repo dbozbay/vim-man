@@ -44,6 +44,12 @@ class Entity:
         self.goal: Vector2D | None = None
         self.direction_method = self.random_direction
 
+    def reset(self) -> None:
+        self.set_start_node(self.start_node)
+        self.direction = Direction.STOP
+        self.speed = 100
+        self.visible = True
+
     def set_start_node(self, node: Node) -> None:
         """Set the initial node and position for the entity."""
         self.node = node

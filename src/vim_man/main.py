@@ -20,6 +20,7 @@ class GameController:
         self.clock = pygame.time.Clock()
         self.pause = Pause(True)
         self.level = 0
+        self.lives = 3
 
         self.background: pygame.Surface | None = None
         self.maze: Maze | None = None
@@ -52,6 +53,21 @@ class GameController:
         self.ghosts.clyde.set_start_node(self.nodes.get_node(4 + 11.5, 3 + 14))
         self.ghosts.set_spawn_node(self.nodes.get_node(2 + 11.5, 3 + 14))
 
+    def restart_game(self) -> None:
+        self.lives = 3
+        self.level = 0
+        self.pause.paused = True
+        self.fruit = None
+        self.start_game()
+
+    def reset_level(self) -> None:
+        self.pause.paused = True
+        if self.pacman is not None:
+            self.pacman.reset()
+        if self.ghosts is not None:
+            self.ghosts.reset()
+        self.fruit = None
+
     def check_pellet_events(self) -> None:
         """Update pellet state when Pacman eats a pellet."""
         if self.pellets is None or self.pacman is None or self.ghosts is None:
@@ -80,6 +96,15 @@ class GameController:
                     ghost.visible = False
                     self.pause.set_pause(pause_time=1, func=self.show_entities)
                     ghost.start_spawn()
+                elif ghost.mode.current is not GhostMode.SPAWN:
+                    if self.pacman.alive:
+                        self.lives -= 1
+                        self.pacman.die()
+                        self.ghosts.hide()
+                        if self.lives <= 0:
+                            self.pause.set_pause(pause_time=3, func=self.restart_game)
+                        else:
+                            self.pause.set_pause(pause_time=3, func=self.reset_level)
 
     def check_fruit_events(self) -> None:
         """Check for and handle fruit appearance and consumption based on pellets eaten."""
@@ -127,12 +152,13 @@ class GameController:
             if event.type == pygame.QUIT:
                 exit()
             elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_ESCAPE:
-                    self.pause.set_pause(player_paused=True)
-                    if not self.pause.paused:
-                        self.show_entities()
-                    else:
-                        self.hide_entities()
+                if event.key == pygame.K_SPACE:
+                    if self.pacman is not None and self.pacman.alive:
+                        self.pause.set_pause(player_paused=True)
+                        if not self.pause.paused:
+                            self.show_entities()
+                        else:
+                            self.hide_entities()
 
     def show_entities(self) -> None:
         """Make Pacman and all ghosts visible on the screen."""

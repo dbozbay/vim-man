@@ -20,6 +20,17 @@ class Pacman(Entity):
         self.color = YELLOW
         self.direction = Direction.LEFT
         self.set_between_nodes(Direction.LEFT)
+        self.alive = True
+
+    def reset(self) -> None:
+        super().reset()
+        self.direction = Direction.LEFT
+        self.set_between_nodes(Direction.LEFT)
+        self.alive = True
+
+    def die(self) -> None:
+        self.alive = False
+        self.direction = Direction.STOP
 
     def update(self, dt: float) -> None:
         """Process player input and update Pacman's position and target node."""
