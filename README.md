@@ -1,6 +1,7 @@
 # vim-man
 
-A Python implementation of the classic arcade game Pac-Man, controlled with Vim motions. Navigate the maze using `h`, `j`, `k`, and `l` — because arrow keys are for quitters.
+A Python implementation of the classic arcade game Pac-Man, controlled with Vim motions.
+Navigate the maze using `h`, `j`, `k`, and `l` — because arrow keys are for quitters.
 
 Built with [Pygame](https://www.pygame.org/) and [NumPy](https://numpy.org/). Managed with [uv](https://github.com/astral-sh/uv).
 
@@ -64,7 +65,7 @@ uv run vim-man
 
 ## Project Structure
 
-```
+```text
 vim-man/
 ├── src/vim_man/
 │   ├── data/
@@ -87,7 +88,8 @@ vim-man/
 
 ### Maze File Format
 
-Mazes are plain text files where each character represents a tile. The node parser uses this to build the navigation graph at startup.
+Mazes are plain text files where each character represents a tile.
+The node parser uses this to build the navigation graph at startup.
 
 | Symbol | Meaning                                      |
 |--------|----------------------------------------------|
@@ -105,7 +107,8 @@ Mazes are plain text files where each character represents a tile. The node pars
 
 ## Development
 
-This project uses [Ruff](https://docs.astral.sh/ruff/) for linting and formatting, [Pyrefly](https://github.com/facebook/pyrefly) for type checking, and [Pytest](https://pytest.org/) for tests. All are managed via `uv`.
+This project uses [Ruff](https://docs.astral.sh/ruff/) for linting and formatting, [Pyrefly](https://github.com/facebook/pyrefly) for type checking,
+and [Pytest](https://pytest.org/) for tests. All are managed via `uv`.
 
 ```bash
 # Lint
@@ -140,8 +143,7 @@ CI runs automatically on every push and pull request to `main` via GitHub Action
 - [x] Ghosts with their own individual targeting personalities (**Scatter**, **Chase**, **Freight**, and **Spawn** modes)
 - [x] Power pellet triggering Ghost Freight mode; eating ghost in Freight triggers Spawn
 - [x] Merging Ghost home into node graph
-- [x] Proper Pacman and Ghost start positions 
-
+- [x] Proper Pacman and Ghost start positions
 
 ### 🚧 In Progress / Planned
 
