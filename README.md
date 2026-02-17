@@ -14,6 +14,10 @@ Built with [Pygame](https://www.pygame.org/) and [NumPy](https://numpy.org/). Ma
 - **Portal (warp tunnel) support** — walk off one side of the screen and appear on the other
 - **Ghost AI** — ghosts alternate between Scatter, Chase, and Freight modes on a timer
 - **Power pellets** — eat a power pellet to send ghosts into Freight mode and earn bonus points
+- **Ghost–Pacman collision** — collision detection with death and respawn
+- **Lives system** — start with 3 lives, game over when depleted
+- **Fruits** — bonus items appear at 50 and 140 pellets eaten
+- **Pause** — press Space to pause/unpause the game
 
 ---
 
@@ -54,12 +58,13 @@ uv run vim-man
 
 ## Controls
 
-| Key | Action    |
-|-----|-----------|
-| `h` | Move left |
-| `j` | Move down |
-| `k` | Move up   |
-| `l` | Move right |
+| Key  | Action        |
+|------|---------------|
+| `h`  | Move left     |
+| `j`  | Move down     |
+| `k`  | Move up       |
+| `l`  | Move right    |
+| `SPACE` | Pause/Unpause |
 
 ---
 
@@ -81,9 +86,13 @@ vim-man/
 │   ├── ghosts.py             # Ghost entity; Chase, Scatter, Freight, and Spawn mode logic
 │   ├── modes.py              # Ghost mode state machine (MainMode + ModeController)
 │   ├── pellets.py            # Pellet and PowerPellet entities + group management
+│   ├── fruits.py             # Bonus fruit entity that appears temporarily
+│   ├── level.py              # Maze loading and data management
+│   ├── pauser.py             # Pause state management with timed pauses and callbacks
 │   └── types.py              # Type aliases (MazeArray, TilePos, PixelCoord)
 ├── tests/
-│   └── test_vector.py        # Unit tests for Vector2D
+│   ├── test_vector.py        # Unit tests for Vector2D
+│   └── test_level.py         # Unit tests for Maze loading
 ```
 
 ### Maze File Format
@@ -144,24 +153,24 @@ CI runs automatically on every push and pull request to `main` via GitHub Action
 - [x] Power pellet triggering Ghost Freight mode; eating ghost in Freight triggers Spawn
 - [x] Merging Ghost home into node graph
 - [x] Proper Pacman and Ghost start positions
+- [x] Ghost–Pacman collision detection
+- [x] Lives system — death animation, life counter, and game-over state
+- [x] Win condition — detect when all pellets are eaten and advance to the next level
+- [x] Pause and restart — keyboard shortcuts for pausing and resetting the game
 
 ### 🚧 In Progress / Planned
 
-- [ ] **Ghost–Pacman collision detection** - currently no collision detection.
 - [ ] **Scoring system** — points display, pellet scoring (10pts), power pellet scoring (50pts),
-ghost scoring (200/400/800/1600pts chain)jjj
-- [ ] **Lives system** — death animation, life counter, and game-over state
-- [ ] **Win condition** — detect when all pellets are eaten and advance to the next level
+  ghost scoring (200/400/800/1600pts chain)
 - [ ] **Sprite rendering** — replace placeholder circles with proper Pac-Man and ghost sprites,
-including directional and death animations
+  including directional and death animations
 - [ ] **Sound effects** — chomp, power pellet, ghost eaten, death, intro music
 - [ ] **HUD** — score display, high score, remaining lives, and level indicator
 - [ ] **Multiple levels** — level progression with increasing ghost speed and shorter Freight windows
-- [ ] **Pause and restart** — keyboard shortcuts for pausing and resetting the game
 - [ ] **Main menu / title screen**
 - [ ] **Packaged binary** — distribute as a standalone executable via `pyproject.toml` entry point (`vim-man`)
 - [ ] **Expanded test coverage** — unit tests for node graph construction, entity movement, ghost mode transitions,
-and pellet collision
+  and pellet collision
 
 ---
 
