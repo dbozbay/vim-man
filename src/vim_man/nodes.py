@@ -100,11 +100,13 @@ class NodeGroup:
         self.nodes_LUT: NodesLUT = {}
         self.node_symbols = ["+", "P", "n"]
         self.path_symbols = [".", "-", "|", "p"]
+
         data = self.maze.data
         self.create_node_table(data)
         self.connect_horizontally(data)
         self.connect_vertically(data)
-        self.homekey = None
+
+        self.homekey: tuple[float, float]
 
     def create_node_table(self, data: MazeArray, x_offset: float = 0, y_offset: float = 0) -> None:
         """Create Node instances for all node symbols in the maze data."""
@@ -230,12 +232,10 @@ class NodeGroup:
             self.deny_access(col, row, direction, entity)
 
     def allow_home_access(self, entity: Entity) -> None:
-        if self.homekey is not None:
-            self.nodes_LUT[self.homekey].allow_access(Direction.DOWN, entity)
+        self.nodes_LUT[self.homekey].allow_access(Direction.DOWN, entity)
 
     def deny_home_access(self, entity: Entity) -> None:
-        if self.homekey is not None:
-            self.nodes_LUT[self.homekey].deny_access(Direction.DOWN, entity)
+        self.nodes_LUT[self.homekey].deny_access(Direction.DOWN, entity)
 
     def allow_home_access_list(self, entities: list[Entity]) -> None:
         for entity in entities:
