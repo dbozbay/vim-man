@@ -54,9 +54,7 @@ class NodeGroup:
         self.connect_vertically(data)
         self.homekey = None
 
-    def create_node_table(
-        self, data: MazeArray, x_offset: float = 0, y_offset: float = 0
-    ) -> None:
+    def create_node_table(self, data: MazeArray, x_offset: float = 0, y_offset: float = 0) -> None:
         """Create Node instances for all node symbols in the maze data."""
         for row in range(data.shape[0]):
             for col in range(data.shape[1]):
@@ -64,9 +62,7 @@ class NodeGroup:
                     x, y = self.construct_key(col + x_offset, row + y_offset)
                     self.nodes_LUT[(x, y)] = Node(x, y)
 
-    def connect_horizontally(
-        self, data: MazeArray, x_offset: float = 0, y_offset: float = 0
-    ) -> None:
+    def connect_horizontally(self, data: MazeArray, x_offset: float = 0, y_offset: float = 0) -> None:
         """Establish left and right neighbor connections between nodes in the same row."""
         for row in range(data.shape[0]):
             key: tuple[float, float] | None = None
@@ -76,19 +72,13 @@ class NodeGroup:
                         key = self.construct_key(col + x_offset, row + y_offset)
                     else:
                         otherkey = self.construct_key(col + x_offset, row + y_offset)
-                        self.nodes_LUT[key].neighbors[Direction.RIGHT] = self.nodes_LUT[
-                            otherkey
-                        ]
-                        self.nodes_LUT[otherkey].neighbors[Direction.LEFT] = (
-                            self.nodes_LUT[key]
-                        )
+                        self.nodes_LUT[key].neighbors[Direction.RIGHT] = self.nodes_LUT[otherkey]
+                        self.nodes_LUT[otherkey].neighbors[Direction.LEFT] = self.nodes_LUT[key]
                         key = otherkey
                 elif data[row][col] not in self.path_symbols:
                     key = None
 
-    def connect_vertically(
-        self, data: MazeArray, x_offset: float = 0, y_offset: float = 0
-    ) -> None:
+    def connect_vertically(self, data: MazeArray, x_offset: float = 0, y_offset: float = 0) -> None:
         """Establish up and down neighbor connections between nodes in the same column."""
         dataT = data.transpose()
         for col in range(dataT.shape[0]):
@@ -99,12 +89,8 @@ class NodeGroup:
                         key = self.construct_key(col + x_offset, row + y_offset)
                     else:
                         otherkey = self.construct_key(col + x_offset, row + y_offset)
-                        self.nodes_LUT[key].neighbors[Direction.DOWN] = self.nodes_LUT[
-                            otherkey
-                        ]
-                        self.nodes_LUT[otherkey].neighbors[Direction.UP] = (
-                            self.nodes_LUT[key]
-                        )
+                        self.nodes_LUT[key].neighbors[Direction.DOWN] = self.nodes_LUT[otherkey]
+                        self.nodes_LUT[otherkey].neighbors[Direction.UP] = self.nodes_LUT[key]
                         key = otherkey
                 elif dataT[col][row] not in self.path_symbols:
                     key = None
@@ -113,9 +99,7 @@ class NodeGroup:
         """Convert tile coordinates to pixel coordinates used as lookup table keys."""
         return col * TILEWIDTH, row * TILEHEIGHT
 
-    def create_home_nodes(
-        self, x_offset: float, y_offset: float
-    ) -> tuple[float, float]:
+    def create_home_nodes(self, x_offset: float, y_offset: float) -> tuple[float, float]:
         """Create a specialized set of nodes for the ghosts' starting area."""
         homedata = np.array(
             [
@@ -141,9 +125,7 @@ class NodeGroup:
         """Establish a bi-directional connection between the ghost house and the main maze."""
         key = self.construct_key(*otherkey)
         self.nodes_LUT[homekey].neighbors[direction] = self.nodes_LUT[key]
-        self.nodes_LUT[key].neighbors[Direction(direction * -1)] = self.nodes_LUT[
-            homekey
-        ]
+        self.nodes_LUT[key].neighbors[Direction(direction * -1)] = self.nodes_LUT[homekey]
 
     def set_portal_pair(self, pair1: tuple[int, int], pair2: tuple[int, int]) -> None:
         """Link two nodes as portals to allow teleportation between distant maze points."""

@@ -24,9 +24,7 @@ from vim_man.vector import Vector2D
 class Ghost(Entity):
     """Ghost entity that moves like an Entity but chooses directions based on a goal position."""
 
-    def __init__(
-        self, node: Node, pacman: Pacman | None = None, blinky: Blinky | None = None
-    ) -> None:
+    def __init__(self, node: Node, pacman: Pacman | None = None, blinky: Blinky | None = None) -> None:
         """Initialize a ghost with its starting node, target, and behavior modes."""
         super().__init__(node)
         self.name = EntityID.GHOST
@@ -90,9 +88,7 @@ class Ghost(Entity):
 class Blinky(Ghost):
     """Red ghost that aggressively chases Pacman directly."""
 
-    def __init__(
-        self, node: Node, pacman: Pacman | None = None, blinky: Blinky | None = None
-    ) -> None:
+    def __init__(self, node: Node, pacman: Pacman | None = None, blinky: Blinky | None = None) -> None:
         """Initialize Blinky with its specific identity and color."""
         super().__init__(node, pacman, blinky)
         self.name = EntityID.BLINKY
@@ -102,9 +98,7 @@ class Blinky(Ghost):
 class Pinky(Ghost):
     """Pink ghost that attempts to ambush Pacman by targeting ahead of him."""
 
-    def __init__(
-        self, node: Node, pacman: Pacman | None = None, blinky: Blinky | None = None
-    ) -> None:
+    def __init__(self, node: Node, pacman: Pacman | None = None, blinky: Blinky | None = None) -> None:
         """Initialize Pinky with its specific identity and color."""
         super().__init__(node, pacman, blinky)
         self.name = EntityID.PINKY
@@ -117,18 +111,13 @@ class Pinky(Ghost):
     def chase(self) -> None:
         """Target a position four tiles ahead of Pacman's current direction."""
         if self.pacman is not None:
-            self.goal = (
-                self.pacman.position
-                + self.pacman.directions[self.pacman.direction] * TILEWIDTH * 4
-            )
+            self.goal = self.pacman.position + self.pacman.directions[self.pacman.direction] * TILEWIDTH * 4
 
 
 class Inky(Ghost):
     """Teal ghost that uses both Pacman's and Blinky's positions for its targeting logic."""
 
-    def __init__(
-        self, node: Node, pacman: Pacman | None = None, blinky: Blinky | None = None
-    ) -> None:
+    def __init__(self, node: Node, pacman: Pacman | None = None, blinky: Blinky | None = None) -> None:
         """Initialize Inky with its specific identity and color."""
         super().__init__(node, pacman, blinky)
         self.name = EntityID.INKY
@@ -141,10 +130,7 @@ class Inky(Ghost):
     def chase(self) -> None:
         """Target a position determined by a vector from Blinky through a point ahead of Pacman."""
         if self.pacman is not None and self.blinky is not None:
-            vec1 = (
-                self.pacman.position
-                + self.pacman.directions[self.pacman.direction] * TILEWIDTH * 2
-            )
+            vec1 = self.pacman.position + self.pacman.directions[self.pacman.direction] * TILEWIDTH * 2
             vec2 = (vec1 - self.blinky.position) * 2
             self.goal = self.blinky.position + vec2
 
@@ -170,10 +156,7 @@ class Clyde(Ghost):
             if d_squared <= (TILEWIDTH * 8) ** 2:
                 self.scatter()
             else:
-                self.goal = (
-                    self.pacman.position
-                    + self.pacman.directions[self.pacman.direction] * TILEWIDTH * 4
-                )
+                self.goal = self.pacman.position + self.pacman.directions[self.pacman.direction] * TILEWIDTH * 4
 
 
 class GhostGroup:

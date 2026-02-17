@@ -31,5 +31,6 @@ dev = [
 [tool.pyrefly]
 
 
-
+[tool.ruff]
+line-length = 120
 

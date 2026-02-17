@@ -36,9 +36,7 @@ class Vector2D(object):
         """Return True if the other vector is approximately equal within the configured threshold."""
         if not isinstance(other, Vector2D):
             return False
-        return (
-            abs(self.x - other.x) < self.thresh and abs(self.y - other.y) < self.thresh
-        )
+        return abs(self.x - other.x) < self.thresh and abs(self.y - other.y) < self.thresh
 
     def magnitude_squared(self) -> float:
         """Return the squared length of the vector (avoiding a square root)."""
