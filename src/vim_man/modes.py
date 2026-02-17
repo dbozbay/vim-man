@@ -14,19 +14,20 @@ class MainMode(object):
     def __init__(self) -> None:
         """Initialize the main mode state with scatter as the default behavioral mode."""
         self.timer: float = 0.0
-        self.time: float | None = None
-        self.mode: GhostMode | None = None
+
+        self.mode: GhostMode
+        self.time: float
+
         self.scatter()
 
     def update(self, dt: float) -> None:
         """Advance the behavioral timer and toggle between scatter and chase modes."""
         self.timer += dt
-        if self.time is not None:
-            if self.timer >= self.time:
-                if self.mode is GhostMode.SCATTER:
-                    self.chase()
-                elif self.mode is GhostMode.CHASE:
-                    self.scatter()
+        if self.timer >= self.time:
+            if self.mode is GhostMode.SCATTER:
+                self.chase()
+            elif self.mode is GhostMode.CHASE:
+                self.scatter()
 
     def scatter(self) -> None:
         """Set the current mode to scatter and reset the behavioral timer."""
@@ -46,11 +47,11 @@ class ModeController(object):
 
     def __init__(self, ghost: Ghost) -> None:
         """Initialize the controller with a reference to its ghost and the global main mode."""
-        self.timer: float = 0.0
+        self.timer = 0.0
+        self.mainmode = MainMode()
+        self.current = self.mainmode.mode
+        self.ghost = ghost
         self.time: float | None = None
-        self.mainmode: MainMode = MainMode()
-        self.current: GhostMode | None = self.mainmode.mode
-        self.ghost: Ghost = ghost
 
     def update(self, dt: float) -> None:
         """Update the ghost's behavioral state based on global mode and freight timers."""
