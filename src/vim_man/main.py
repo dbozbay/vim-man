@@ -21,14 +21,14 @@ class GameController:
         self.pause = Pause(True)
         self.level = 0
         self.lives = 3
-
-        self.background: pygame.Surface | None = None
-        self.maze: Maze | None = None
-        self.nodes: NodeGroup | None = None
-        self.pacman: Pacman | None = None
-        self.pellets: PelletGroup | None = None
-        self.ghosts: GhostGroup | None = None
         self.fruit: Fruit | None = None
+
+        self.background: pygame.Surface
+        self.maze: Maze
+        self.nodes: NodeGroup
+        self.pacman: Pacman
+        self.pellets: PelletGroup
+        self.ghosts: GhostGroup
 
     def set_background(self) -> None:
         """Create and fill the background surface for the game screen."""
@@ -78,25 +78,24 @@ class GameController:
 
     def reset_level(self) -> None:
         self.pause.paused = True
-        if self.pacman is not None:
-            self.pacman.reset()
-        if self.ghosts is not None:
-            self.ghosts.reset()
+        self.pacman.reset()
+        self.ghosts.reset()
         self.fruit = None
 
     def check_pellet_events(self) -> None:
         """Update pellet state when Pacman eats a pellet."""
-        if self.pellets is None or self.pacman is None or self.ghosts is None:
-            return
-
         pellet = self.pacman.eat_pellets(self.pellets.pellet_list)
         if pellet:
             self.pellets.num_eaten += 1
+
             if self.pellets.num_eaten == 30:
                 self.ghosts.inky.start_node.allow_access(Direction.RIGHT, self.ghosts.inky)
+
             if self.pellets.num_eaten == 70:
                 self.ghosts.clyde.start_node.allow_access(Direction.LEFT, self.ghosts.clyde)
+
             self.pellets.pellet_list.remove(pellet)
+
             if pellet.name == EntityID.POWERPELLET:
                 self.ghosts.start_freight()
 
@@ -106,9 +105,6 @@ class GameController:
 
     def check_ghost_events(self) -> None:
         """Check for and handle collisions between Pacman and the ghosts."""
-        if self.ghosts is None or self.pacman is None:
-            return
-
         for ghost in self.ghosts:
             if self.pacman.collide_check(ghost):
                 if ghost.mode.current is GhostMode.FREIGHT:
@@ -117,11 +113,13 @@ class GameController:
                     self.pause.set_pause(pause_time=1, func=self.show_entities)
                     ghost.start_spawn()
                     self.nodes.allow_home_access(ghost)
+
                 elif ghost.mode.current is not GhostMode.SPAWN:
                     if self.pacman.alive:
                         self.lives -= 1
                         self.pacman.die()
                         self.ghosts.hide()
+
                         if self.lives <= 0:
                             self.pause.set_pause(pause_time=3, func=self.restart_game)
                         else:
@@ -129,9 +127,6 @@ class GameController:
 
     def check_fruit_events(self) -> None:
         """Check for and handle fruit appearance and consumption based on pellets eaten."""
-        if self.pellets is None or self.pacman is None or self.nodes is None:
-            return
-
         if self.pellets.num_eaten == 50 or self.pellets.num_eaten == 140:
             if self.fruit is None:
                 self.fruit = Fruit(self.nodes.get_node(9, 20))
@@ -145,14 +140,11 @@ class GameController:
     def update(self) -> None:
         """Advance the game state by one frame, handling logic and rendering."""
         dt = self.clock.tick(30) / 1000.0
-
         if not self.pause.paused:
-            if self.pacman is not None:
-                self.pacman.update(dt)
-            if self.ghosts is not None:
-                self.ghosts.update(dt)
-            if self.pellets is not None:
-                self.pellets.update(dt)
+            self.pacman.update(dt)
+            self.ghosts.update(dt)
+            self.pellets.update(dt)
+
             if self.fruit is not None:
                 self.fruit.update(dt)
 
@@ -174,7 +166,7 @@ class GameController:
                 exit()
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
-                    if self.pacman is not None and self.pacman.alive:
+                    if self.pacman.alive:
                         self.pause.set_pause(player_paused=True)
                         if not self.pause.paused:
                             self.show_entities()
@@ -183,17 +175,13 @@ class GameController:
 
     def show_entities(self) -> None:
         """Make Pacman and all ghosts visible on the screen."""
-        if self.pacman is not None:
-            self.pacman.visible = True
-        if self.ghosts is not None:
-            self.ghosts.show()
+        self.pacman.visible = True
+        self.ghosts.show()
 
     def hide_entities(self) -> None:
         """Make Pacman and all ghosts invisible on the screen."""
-        if self.pacman is not None:
-            self.pacman.visible = False
-        if self.ghosts is not None:
-            self.ghosts.hide()
+        self.pacman.visible = False
+        self.ghosts.hide()
 
     def next_level(self) -> None:
         """Reset the game state and advance to the next level of the maze."""
@@ -204,18 +192,13 @@ class GameController:
 
     def render(self) -> None:
         """Draw the current game state (incl. maze, Pacman, Ghosts and pellets) to the screen."""
-        if self.background is not None:
-            self.screen.blit(self.background, (0, 0))
-        if self.nodes is not None:
-            self.nodes.render(self.screen)
-        if self.pellets is not None:
-            self.pellets.render(self.screen)
+        self.screen.blit(self.background, (0, 0))
+        self.nodes.render(self.screen)
+        self.pellets.render(self.screen)
         if self.fruit is not None:
             self.fruit.render(self.screen)
-        if self.pacman is not None:
-            self.pacman.render(self.screen)
-        if self.ghosts is not None:
-            self.ghosts.render(self.screen)
+        self.pacman.render(self.screen)
+        self.ghosts.render(self.screen)
 
         pygame.display.update()
 
