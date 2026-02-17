@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Iterable
 
 import numpy as np
 import pygame
@@ -223,11 +223,11 @@ class NodeGroup:
         node = self.get_node(col, row)
         node.deny_access(direction, entity)
 
-    def allow_access_list(self, col: float, row: float, direction: Direction, entities: list[Entity]) -> None:
+    def allow_access_list(self, col: float, row: float, direction: Direction, entities: Iterable[Entity]) -> None:
         for entity in entities:
             self.allow_access(col, row, direction, entity)
 
-    def deny_access_list(self, col: float, row: float, direction: Direction, entities: list[Entity]) -> None:
+    def deny_access_list(self, col: float, row: float, direction: Direction, entities: Iterable[Entity]) -> None:
         for entity in entities:
             self.deny_access(col, row, direction, entity)
 
@@ -237,11 +237,11 @@ class NodeGroup:
     def deny_home_access(self, entity: Entity) -> None:
         self.nodes_LUT[self.homekey].deny_access(Direction.DOWN, entity)
 
-    def allow_home_access_list(self, entities: list[Entity]) -> None:
+    def allow_home_access_list(self, entities: Iterable[Entity]) -> None:
         for entity in entities:
             self.allow_home_access(entity)
 
-    def deny_home_access_list(self, entities: list[Entity]) -> None:
+    def deny_home_access_list(self, entities: Iterable[Entity]) -> None:
         for entity in entities:
             self.deny_home_access(entity)
 
