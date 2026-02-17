@@ -23,12 +23,14 @@ class Pacman(Entity):
         self.alive = True
 
     def reset(self) -> None:
+        """Reset Pacman to the starting position with default direction and alive state."""
         super().reset()
         self.direction = Direction.LEFT
         self.set_between_nodes(Direction.LEFT)
         self.alive = True
 
     def die(self) -> None:
+        """Mark Pacman as dead and stop its movement."""
         self.alive = False
         self.direction = Direction.STOP
 

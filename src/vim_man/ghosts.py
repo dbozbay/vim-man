@@ -88,6 +88,7 @@ class Ghost(Entity):
             self.spawn()
 
     def reset(self) -> None:
+        """Reset the ghost to its initial state with default points and direction method."""
         super().reset()
         self.points = 200
         self.direction_method = self.goal_direction
@@ -217,6 +218,7 @@ class GhostGroup:
             ghost.visible = True
 
     def reset(self) -> None:
+        """Reset all ghosts in the group to their initial state."""
         for ghost in self:
             ghost.reset()
 

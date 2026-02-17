@@ -47,6 +47,7 @@ class Entity:
         self.set_speed(100)
 
     def reset(self) -> None:
+        """Reset the entity to its starting position and default movement state."""
         self.set_start_node(self.start_node)
         self.direction = Direction.STOP
         self.speed = 100

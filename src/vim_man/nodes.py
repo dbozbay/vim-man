@@ -72,11 +72,13 @@ class Node:
         }
 
     def deny_access(self, direction: Direction, entity: Entity) -> None:
+        """Remove the entity from the access list for the given direction."""
         name = entity.name
         if name is not None and name in self.access[direction]:
             self.access[direction].remove(name)
 
     def allow_access(self, direction: Direction, entity: Entity) -> None:
+        """Add the entity to the access list for the given direction."""
         name = entity.name
         if name is not None and name not in self.access[direction]:
             self.access[direction].append(name)
@@ -216,32 +218,40 @@ class NodeGroup:
         return nodes[-1]
 
     def allow_access(self, col: float, row: float, direction: Direction, entity: Entity) -> None:
+        """Grant the entity access to move in the given direction from the specified tile."""
         node = self.get_node(col, row)
         node.allow_access(direction, entity)
 
     def deny_access(self, col: float, row: float, direction: Direction, entity: Entity) -> None:
+        """Deny the entity access to move in the given direction from the specified tile."""
         node = self.get_node(col, row)
         node.deny_access(direction, entity)
 
     def allow_access_list(self, col: float, row: float, direction: Direction, entities: Iterable[Entity]) -> None:
+        """Grant all entities access to move in the given direction from the specified tile."""
         for entity in entities:
             self.allow_access(col, row, direction, entity)
 
     def deny_access_list(self, col: float, row: float, direction: Direction, entities: Iterable[Entity]) -> None:
+        """Deny all entities access to move in the given direction from the specified tile."""
         for entity in entities:
             self.deny_access(col, row, direction, entity)
 
     def allow_home_access(self, entity: Entity) -> None:
+        """Grant the entity access to move downward into the ghost house."""
         self.nodes_LUT[self.homekey].allow_access(Direction.DOWN, entity)
 
     def deny_home_access(self, entity: Entity) -> None:
+        """Deny the entity access to move downward into the ghost house."""
         self.nodes_LUT[self.homekey].deny_access(Direction.DOWN, entity)
 
     def allow_home_access_list(self, entities: Iterable[Entity]) -> None:
+        """Grant all entities access to move downward into the ghost house."""
         for entity in entities:
             self.allow_home_access(entity)
 
     def deny_home_access_list(self, entities: Iterable[Entity]) -> None:
+        """Deny all entities access to move downward into the ghost house."""
         for entity in entities:
             self.deny_home_access(entity)
 

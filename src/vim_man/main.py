@@ -70,6 +70,7 @@ class GameController:
         self.nodes.deny_access_list(15, 26, Direction.UP, self.ghosts)
 
     def restart_game(self) -> None:
+        """Reset the game to its initial state with full lives and level 1."""
         self.lives = 3
         self.level = 0
         self.pause.paused = True
@@ -77,6 +78,7 @@ class GameController:
         self.start_game()
 
     def reset_level(self) -> None:
+        """Reset the current level state while preserving lives and score."""
         self.pause.paused = True
         self.pacman.reset()
         self.ghosts.reset()
