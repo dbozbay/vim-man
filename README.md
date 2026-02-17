@@ -148,17 +148,20 @@ CI runs automatically on every push and pull request to `main` via GitHub Action
 ### 🚧 In Progress / Planned
 
 - [ ] **Ghost–Pacman collision detection** - currently no collision detection.
-- [ ] **Scoring system** — points display, pellet scoring (10pts), power pellet scoring (50pts), ghost scoring (200/400/800/1600pts chain)
+- [ ] **Scoring system** — points display, pellet scoring (10pts), power pellet scoring (50pts),
+ghost scoring (200/400/800/1600pts chain)jjj
 - [ ] **Lives system** — death animation, life counter, and game-over state
 - [ ] **Win condition** — detect when all pellets are eaten and advance to the next level
-- [ ] **Sprite rendering** — replace placeholder circles with proper Pac-Man and ghost sprites, including directional and death animations
+- [ ] **Sprite rendering** — replace placeholder circles with proper Pac-Man and ghost sprites,
+including directional and death animations
 - [ ] **Sound effects** — chomp, power pellet, ghost eaten, death, intro music
 - [ ] **HUD** — score display, high score, remaining lives, and level indicator
 - [ ] **Multiple levels** — level progression with increasing ghost speed and shorter Freight windows
 - [ ] **Pause and restart** — keyboard shortcuts for pausing and resetting the game
 - [ ] **Main menu / title screen**
 - [ ] **Packaged binary** — distribute as a standalone executable via `pyproject.toml` entry point (`vim-man`)
-- [ ] **Expanded test coverage** — unit tests for node graph construction, entity movement, ghost mode transitions, and pellet collision
+- [ ] **Expanded test coverage** — unit tests for node graph construction, entity movement, ghost mode transitions,
+and pellet collision
 
 ---
 
