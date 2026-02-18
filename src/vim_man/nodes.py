@@ -105,8 +105,8 @@ class NodeGroup:
 
         data = self.maze.data
         self.create_node_table(data)
-        self.connect_horizontally(data)
-        self.connect_vertically(data)
+        self.connect_all(data)
+        # See line 83
 
         self.homekey: tuple[float, float]
 
@@ -120,16 +120,60 @@ class NodeGroup:
 
     def connect_horizontally(self, data: MazeArray, x_offset: float = 0, y_offset: float = 0) -> None:
         """Establish left and right neighbor connections between nodes in the same row."""
+    def construct_key(self, col: int, row: int) -> tuple[int, int]:
+        """
+        Return the pixel coordinates of the top-left corner of the given tile (col, row).
+        This will be the node's key in the node lookup table.
+        """
+        return col * TILEWIDTH, row * TILEHEIGHT
+    
+    # it looks like you're doing similar things
+    # when connecting horizontally and vertically.
+    # is there a way to reduce the amount of times
+    # you are putting in this loop?
+
+    def connect_all(
+        self, data: MazeArray, x_offset: int = 0, y_offset: int = 0
+    ) -> None:
+        """Connect horizontally adjacent node tiles as left and right neighbors."""
+        # Walk each row from left to right, remembering the last node we saw.
+        vertical = (Direction.DOWN, Direction.UP)
+        horizontal = (Direction.RIGHT, Direction.LEFT)
+        stride = 1
+        for orientation in [horizontal, vertical]:
+            # Created a connect function which will take in an orientation
+            # and stride and perform the operations accordingly. 
+            self.connect(data, orientation, stride, x_offset, y_offset)
+            data = data.transpose()
+            stride -= 2 # This will turn the stride from 1 to -1, 
+            # equivalent to reading the relevant tile tuple forwards then backwards.
+            print("connected once")
+
+    def connect(self, data: MazeArray, orientation: tuple[Direction, Direction], stride: int, x_offset: int, y_offset: int):
         for row in range(data.shape[0]):
             key: tuple[float, float] | None = None
             for col in range(data.shape[1]):
                 if data[row][col] in self.node_symbols:
+                    relevant_tile = (col + x_offset, row + y_offset)
                     if key is None:
                         key = self.construct_key(col + x_offset, row + y_offset)
                     else:
                         otherkey = self.construct_key(col + x_offset, row + y_offset)
                         self.nodes_LUT[key].neighbors[Direction.RIGHT] = self.nodes_LUT[otherkey]
                         self.nodes_LUT[otherkey].neighbors[Direction.LEFT] = self.nodes_LUT[key]
+                        # First node in a new horizontal run; just record its key.
+                        key = self.construct_key(*relevant_tile[::stride])
+                        # The star here means that each element is inserted as an argument. 
+                    else:
+                        # We have a previous node in this run, so connect it to this one.
+                        otherkey = self.construct_key(*relevant_tile[::stride])
+                        self.nodes_LUT[key].neighbors[orientation[0]] = self.nodes_LUT[
+                            otherkey
+                        ]
+                        self.nodes_LUT[otherkey].neighbors[orientation[1]] = (
+                            self.nodes_LUT[key]
+                        )
+                        # This node becomes the new "previous" node for the run.
                         key = otherkey
                 elif data[row][col] not in self.path_symbols:
                     key = None
