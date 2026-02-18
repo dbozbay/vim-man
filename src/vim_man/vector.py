@@ -7,6 +7,7 @@ class Vector2D(object):
     """Vector2D represents a 2D vector with basic arithmetic and utility operations."""
 
     def __init__(self, x: float = 0, y: float = 0) -> None:
+        """Initialize a 2D vector with optional x and y components."""
         self.x = x
         self.y = y
         self.thresh = 0.000001
@@ -35,9 +36,7 @@ class Vector2D(object):
         """Return True if the other vector is approximately equal within the configured threshold."""
         if not isinstance(other, Vector2D):
             return False
-        return (
-            abs(self.x - other.x) < self.thresh and abs(self.y - other.y) < self.thresh
-        )
+        return abs(self.x - other.x) < self.thresh and abs(self.y - other.y) < self.thresh
 
     def magnitude_squared(self) -> float:
         """Return the squared length of the vector (avoiding a square root)."""

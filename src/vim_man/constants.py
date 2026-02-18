@@ -18,6 +18,7 @@ RED: Color = (255, 0, 0)
 PINK: Color = (255, 100, 150)
 TEAL: Color = (100, 255, 255)
 ORANGE: Color = (230, 190, 40)
+GREEN: Color = (0, 255, 0)
 
 
 SCATTER_TIME: float = 7.0
@@ -28,6 +29,8 @@ MAZE: str = "maze1.txt"
 
 
 class Direction(IntEnum):
+    """Enumeration of possible movement directions including portal transitions."""
+
     STOP = 0
     UP = 1
     DOWN = -1
@@ -39,6 +42,8 @@ VERTICAL = (Direction.DOWN, Direction.UP)
 HORIZONTAL = (Direction.RIGHT, Direction.LEFT)
 
 class EntityID(IntEnum):
+    """Enumeration of unique identifiers for all game entities and items."""
+
     PACMAN = 0
     PELLET = 1
     POWERPELLET = 2
@@ -47,9 +52,12 @@ class EntityID(IntEnum):
     PINKY = 5
     INKY = 6
     CLYDE = 7
+    FRUIT = 8
 
 
 class GhostMode(IntEnum):
+    """Enumeration of possible behavioral states for ghosts."""
+
     SCATTER = 0
     CHASE = 1
     FREIGHT = 2

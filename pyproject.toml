@@ -4,14 +4,10 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 authors = [
-    { name = "Danny Bozbay", email = "107803920+dbozbay@users.noreply.github.com" }
+  { name = "Danny Bozbay", email = "107803920+dbozbay@users.noreply.github.com" },
 ]
 requires-python = ">=3.13"
-dependencies = [
-    "numpy>=2.4.2",
-    "pygame>=2.6.1",
-]
-
+dependencies = ["numpy>=2.4.2", "pygame>=2.6.1"]
 
 [project.scripts]
 vim-man = "vim_man.main:main"
@@ -22,14 +18,29 @@ build-backend = "uv_build"
 
 [dependency-groups]
 dev = [
-    "pyrefly>=0.51.1",
-    "pytest>=9.0.2",
-    "pytest-mock>=3.15.1",
-    "ruff>=0.15.0",
+  "pyrefly>=0.51.1",
+  "pytest>=9.0.2",
+  "pytest-mock>=3.15.1",
+  "ruff>=0.15.0",
+  "rumdl>=0.1.22",
 ]
 
 [tool.pyrefly]
 
 
+[tool.ruff]
+line-length = 120
 
 
+[tool.rumdl]
+line-length = 120
+disable = []
+exclude = [
+    ".git",
+    ".github",
+    "node_modules",
+    "vendor",
+    "dist",
+    "build",
+]
+respect-gitignore = true

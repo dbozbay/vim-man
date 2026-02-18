@@ -5,10 +5,11 @@ import numpy as np
 from vim_man.types import MazeArray
 
 
-class MazeLevel:
-    """MazeLevel loads and holds the maze layout data."""
+class Maze:
+    """Maze loads and holds the maze layout data."""
 
     def __init__(self, level_file: str) -> None:
+        """Initialize the level with the name of the maze layout file."""
         self.level_file = level_file
         self._data: MazeArray | None = None
 

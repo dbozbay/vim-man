@@ -1,36 +1,48 @@
-from vim_man.constants import ORANGE
-from vim_man.constants import NROWS
-from vim_man.constants import RED
+from __future__ import annotations
+
+from typing import Iterator
+
 import pygame
-from vim_man.constants import NCOLS
-from vim_man.constants import TILEWIDTH, TILEHEIGHT
-from vim_man.constants import PINK
-from vim_man.constants import TEAL
-from vim_man.constants import EntityID, GhostMode
+
+from vim_man.constants import (
+    NCOLS,
+    NROWS,
+    ORANGE,
+    PINK,
+    RED,
+    TEAL,
+    TILEHEIGHT,
+    TILEWIDTH,
+    Direction,
+    EntityID,
+    GhostMode,
+)
 from vim_man.entity import Entity
 from vim_man.modes import ModeController
 from vim_man.nodes import Node
-from vim_man.vector import Vector2D
 from vim_man.pacman import Pacman
+from vim_man.vector import Vector2D
 
 
 class Ghost(Entity):
     """Ghost entity that moves like an Entity but chooses directions based on a goal position."""
 
-    # TODO: Write docstrings for class methods
-    def __init__(self, node: Node, pacman: Pacman | None = None) -> None:
-        """Initialize a ghost at the given starting node with scoring and goal-tracking behavior."""
+    def __init__(self, node: Node, pacman: Pacman, blinky: Blinky | None = None) -> None:
+        """Initialize a ghost with its starting node, target, and behavior modes."""
         super().__init__(node)
         self.name = EntityID.GHOST
         self.points = 200
-        self.goal = Vector2D(0, 0)
-        self.pacman = pacman
+        self.goal = Vector2D()
         # self.direction_method = self.goal_direction
+        self.pacman = pacman
         self.mode = ModeController(self)
-        self.spawn_node: Node | None = None
-        self.home_node = node
+        self.blinky = blinky
+        self.homenode = node
+
+        self.spawn_node: Node
 
     def update(self, dt: float) -> None:
+        """Update the ghost's behavior mode and position based on elapsed time."""
         self.mode.update(dt)
         if self.mode.current is GhostMode.SCATTER:
             self.scatter()
@@ -39,129 +51,178 @@ class Ghost(Entity):
         super().update(dt)
 
     def scatter(self) -> None:
-        self.goal = Vector2D(0, 0)
+        """Set the ghost's target goal to its default scatter position."""
+        self.goal = Vector2D()
 
     def chase(self) -> None:
-        if self.pacman is not None:
-            self.goal = self.pacman.position
-
-    def spawn(self) -> None:
-        if self.spawn_node is not None:
-            self.goal = self.spawn_node.position
-
-    def set_spawn_node(self, node: Node) -> None:
-        self.spawn_node = node
-
-    def start_spawn(self) -> None:
-        self.mode.set_spawn_mode()
-        if self.mode.current == GhostMode.SPAWN:
-            self.set_speed(150)
-            self.direction_method = self.goal_direction
-            self.spawn()
+        """Set the ghost's target goal based on Pacman's current position."""
+        self.goal = self.pacman.position
 
     def start_freight(self) -> None:
+        """Switch the ghost to freight mode, reducing its speed and making it move randomly."""
         self.mode.set_freight_mode()
         if self.mode.current == GhostMode.FREIGHT:
             self.set_speed(50)
             self.direction_method = self.random_direction
 
     def normal_mode(self) -> None:
+        """Reset the ghost to its standard speed and goal-seeking behavior."""
         self.set_speed(100)
+        self.direction_method = self.goal_direction
+        self.homenode.deny_access(Direction.DOWN, self)
+
+    def spawn(self) -> None:
+        """Set the ghost's goal to its spawn node position."""
+        self.goal = self.spawn_node.position
+
+    def set_spawn_node(self, node: Node) -> None:
+        """Assign the designated spawn node for the ghost."""
+        self.spawn_node = node
+
+    def start_spawn(self) -> None:
+        """Switch the ghost to spawn mode, increasing speed as it returns to the ghost house."""
+        self.mode.set_spawn_mode()
+        if self.mode.current == GhostMode.SPAWN:
+            self.set_speed(150)
+            self.direction_method = self.goal_direction
+            self.spawn()
+
+    def reset(self) -> None:
+        """Reset the ghost to its initial state with default points and direction method."""
+        super().reset()
+        self.points = 200
         self.direction_method = self.goal_direction
 
 
 class Blinky(Ghost):
-    def __init__(self, node: Node, pacman: Pacman | None = None) -> None:
+    """Red ghost that aggressively chases Pacman directly."""
+
+    def __init__(self, node: Node, pacman: Pacman) -> None:
+        """Initialize Blinky with its specific identity and color."""
         super().__init__(node, pacman)
         self.name = EntityID.BLINKY
         self.color = RED
 
 
 class Pinky(Ghost):
-    def __init__(self, node: Node, pacman: Pacman | None = None) -> None:
+    """Pink ghost that attempts to ambush Pacman by targeting ahead of him."""
+
+    def __init__(self, node: Node, pacman: Pacman) -> None:
+        """Initialize Pinky with its specific identity and color."""
         super().__init__(node, pacman)
         self.name = EntityID.PINKY
         self.color = PINK
 
     def scatter(self) -> None:
-        """Scatter to the upper right corner."""
+        """Set Pinky's goal to the upper right corner of the maze."""
         self.goal = Vector2D(TILEWIDTH * NCOLS, 0)
 
     def chase(self) -> None:
-        """Find out where Pacman is and target 4 tiles ahead of him."""
-        if self.pacman is not None:
-            self.goal = (
-                self.pacman.position
-                + self.pacman.directions[self.pacman.direction] * TILEWIDTH * 4
-            )
+        """Target a position four tiles ahead of Pacman's current direction."""
+        self.goal = self.pacman.position + self.pacman.directions[self.pacman.direction] * TILEWIDTH * 4
 
 
 class Inky(Ghost):
-    def __init__(self, node: Node, pacman: Pacman | None = None) -> None:
-        super().__init__(node, pacman)
+    """Teal ghost that uses both Pacman's and Blinky's positions for its targeting logic."""
+
+    def __init__(self, node: Node, pacman: Pacman, blinky: Blinky) -> None:
+        """Initialize Inky with its specific identity and color."""
+        super().__init__(node, pacman, blinky)
         self.name = EntityID.INKY
         self.color = TEAL
 
     def scatter(self) -> None:
-        """Scatter to the bottom left corner."""
-        self.goal = Vector2D(0, TILEHEIGHT * NROWS)
+        """Set Inky's goal to the bottom right corner of the maze."""
+        self.goal = Vector2D(TILEWIDTH * NCOLS, TILEHEIGHT * NROWS)
+
+    def chase(self) -> None:
+        """Target a position determined by a vector from Blinky through a point ahead of Pacman."""
+        if self.blinky is not None:
+            vec1 = self.pacman.position + self.pacman.directions[self.pacman.direction] * TILEWIDTH * 2
+            vec2 = (vec1 - self.blinky.position) * 2
+            self.goal = self.blinky.position + vec2
 
 
 class Clyde(Ghost):
-    def __init__(self, node: Node, pacman: Pacman | None = None) -> None:
+    """Orange ghost that chases Pacman when distant but retreats when close."""
+
+    def __init__(self, node: Node, pacman: Pacman) -> None:
+        """Initialize Clyde with its specific identity and color."""
         super().__init__(node, pacman)
         self.name = EntityID.CLYDE
         self.color = ORANGE
 
     def scatter(self) -> None:
-        """Scatter to the bottom left corner."""
-        self.goal = Vector2D(TILEWIDTH * NCOLS, TILEHEIGHT * NROWS)
+        """Set Clyde's goal to the bottom left corner of the maze."""
+        self.goal = Vector2D(0, TILEHEIGHT * NROWS)
+
+    def chase(self) -> None:
+        """Chase Pacman if distant, otherwise retreat to its scatter goal."""
+        d = self.pacman.position
+        d_squared = d.magnitude_squared()
+        if d_squared <= (TILEWIDTH * 8) ** 2:
+            self.scatter()
+        else:
+            self.goal = self.pacman.position + self.pacman.directions[self.pacman.direction] * TILEWIDTH * 4
 
 
 class GhostGroup:
-    def __init__(self, node: Node, pacman: Pacman | None = None) -> None:
+    """Manages the lifecycle and collective behaviors of the ghost entities."""
+
+    def __init__(self, node: Node, pacman: Pacman) -> None:
+        """Initialize the group by creating all four ghost instances."""
         self.blinky = Blinky(node, pacman)
         self.pinky = Pinky(node, pacman)
-        self.inky = Inky(node, pacman)
+        self.inky = Inky(node, pacman, self.blinky)
         self.clyde = Clyde(node, pacman)
         self.ghosts = [self.blinky, self.pinky, self.inky, self.clyde]
 
-    def __iter__(self):  # TODO: return type?
+    def __iter__(self) -> Iterator[Ghost]:
+        """Return an iterator over the individual ghosts in the group."""
         return iter(self.ghosts)
 
     def update(self, dt: float) -> None:
+        """Update the logic and position of all ghosts in the group."""
         for ghost in self:
             ghost.update(dt)
 
     def start_freight(self) -> None:
+        """Set all ghosts in the group to freight mode and reset their point values."""
         for ghost in self:
             ghost.start_freight()
         self.reset_points()
 
     def set_spawn_node(self, node: Node) -> None:
+        """Set the common spawn node for all ghosts in the group."""
         for ghost in self:
             ghost.set_spawn_node(node)
 
     def update_points(self) -> None:
+        """Double the point value awarded for eating ghosts during the current freight period."""
         for ghost in self:
             ghost.points *= 2
 
     def reset_points(self) -> None:
+        """Reset the point value for all ghosts to the base starting value."""
         for ghost in self:
             ghost.points = 200
 
-    # def reset(self) -> None:
-    #     for ghost in self:
-    #         ghost.reset()
-
     def hide(self) -> None:
+        """Make all ghosts in the group invisible on the screen."""
         for ghost in self:
             ghost.visible = False
 
     def show(self) -> None:
+        """Make all ghosts in the group visible on the screen."""
         for ghost in self:
             ghost.visible = True
 
+    def reset(self) -> None:
+        """Reset all ghosts in the group to their initial state."""
+        for ghost in self:
+            ghost.reset()
+
     def render(self, screen: pygame.Surface) -> None:
+        """Draw all ghosts in the group to the screen."""
         for ghost in self:
             ghost.render(screen)

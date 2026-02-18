@@ -11,15 +11,31 @@ from vim_man.pellets import Pellet
 
 
 class Pacman(Entity):
-    """Pacman controls the player character's movement and interaction with the maze graph."""
+    """Player-controlled character that moves through the maze eating pellets while avoiding ghosts."""
 
     def __init__(self, node: Node) -> None:
+        """Initialize Pacman at a starting node with its default color and direction."""
         super().__init__(node)
         self.name = EntityID.PACMAN
         self.color = YELLOW
+        self.direction = Direction.LEFT
+        self.set_between_nodes(Direction.LEFT)
+        self.alive = True
+
+    def reset(self) -> None:
+        """Reset Pacman to the starting position with default direction and alive state."""
+        super().reset()
+        self.direction = Direction.LEFT
+        self.set_between_nodes(Direction.LEFT)
+        self.alive = True
+
+    def die(self) -> None:
+        """Mark Pacman as dead and stop its movement."""
+        self.alive = False
+        self.direction = Direction.STOP
 
     def update(self, dt: float) -> None:
-        """Update Pacman's movement, direction, and target node based on input and elapsed time."""
+        """Process player input and update Pacman's position and target node."""
         # Move Pacman in the current direction according to speed and elapsed time.
         self.position += self.directions[self.direction] * self.speed * dt
         # Read the latest player input and translate it to a desired direction.
@@ -54,7 +70,7 @@ class Pacman(Entity):
                 self.reverse_direction()
 
     def get_valid_key(self) -> Direction:
-        """Read the keyboard and return the corresponding movement direction constant."""
+        """Read keyboard input and return the corresponding game movement direction."""
         key_pressed = pygame.key.get_pressed()
         if key_pressed[pygame.K_k]:
             return Direction.UP
@@ -68,7 +84,7 @@ class Pacman(Entity):
             return Direction.STOP
 
     def eat_pellets(self, pellet_list: list[Pellet]) -> Pellet | None:
-        """Return the first pellet colliding with Pacman, or `None` if no collision occurs."""
+        """Return the first pellet currently colliding with Pacman's position."""
         for pellet in pellet_list:
             if self.collide_check(pellet):
                 return pellet

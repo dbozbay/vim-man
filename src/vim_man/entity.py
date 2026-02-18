@@ -28,23 +28,48 @@ class Entity:
             Direction.LEFT: Vector2D(-1, 0),
             Direction.RIGHT: Vector2D(1, 0),
         }
-
         self.direction = Direction.STOP
-        self.set_speed(100)
         self.radius = 10
         self.collide_radius = 5
         self.color = WHITE
-        self.node = node
-        self.set_position()
-        self.target = node
         self.visible = True
         self.disable_portal = False
-        self.goal: Vector2D | None = None
+        self.position = node.position.copy()
         self.direction_method = self.goal_direction
+
+        self.node: Node
+        self.start_node: Node
+        self.target: Node
+        self.goal: Vector2D
+        self.speed: float
+
+        self.set_start_node(node)
+        self.set_speed(100)
+
+    def reset(self) -> None:
+        """Reset the entity to its starting position and default movement state."""
+        self.set_start_node(self.start_node)
+        self.direction = Direction.STOP
+        self.speed = 100
+        self.visible = True
+
+    def set_start_node(self, node: Node) -> None:
+        """Set the initial node and position for the entity."""
+        self.node = node
+        self.start_node = node
+        self.target = node
+        self.set_position()
 
     def set_position(self) -> None:
         """Align entity's position with the current node's position."""
         self.position = self.node.position.copy()
+
+    def set_between_nodes(self, direction: Direction) -> None:
+        """Position the entity halfway between its current node and a neighboring node."""
+        neighbor = self.node.neighbors[direction]
+        if neighbor is not None:
+            self.target = neighbor
+            self.position = (self.node.position + self.target.position) / 2.0
 
     def update(self, dt: float) -> None:
         """Advance the entity in its current direction by its speed*dt and handle node transitions (direction changes, portals)."""
@@ -79,10 +104,12 @@ class Entity:
             self.set_position()
 
     def valid_direction(self, direction: Direction) -> bool:
+        # TODO: Update docstring to account for access
         """Return True if entity has a neighboring node in the given direction."""
         if direction is not Direction.STOP:
-            if self.node.neighbors[direction] is not None:
-                return True
+            if self.name in self.node.access[direction]:
+                if self.node.neighbors[direction] is not None:
+                    return True
         return False
 
     def valid_directions(self) -> list[Direction]:
