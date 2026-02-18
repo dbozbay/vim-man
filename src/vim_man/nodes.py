@@ -59,7 +59,6 @@ class NodeGroup:
         data = self.level.data
         self.create_node_table(data)
         self.connect_all(data)
-        # See line 83
 
     def create_node_table(
         self, data: MazeArray, x_offset: int = 0, y_offset: int = 0
@@ -81,29 +80,30 @@ class NodeGroup:
         """
         return col * TILEWIDTH, row * TILEHEIGHT
     
-    # it looks like you're doing similar things
-    # when connecting horizontally and vertically.
-    # is there a way to reduce the amount of times
-    # you are putting in this loop?
-
     def connect_all(
         self, data: MazeArray, x_offset: int = 0, y_offset: int = 0
     ) -> None:
         """Connect horizontally adjacent node tiles as left and right neighbors."""
         # Walk each row from left to right, remembering the last node we saw.
-        vertical = (Direction.DOWN, Direction.UP)
-        horizontal = (Direction.RIGHT, Direction.LEFT)
-        stride = 1
-        for orientation in [horizontal, vertical]:
+        for orientation in [HORIZONTAL, VERTICAL]:
             # Created a connect function which will take in an orientation
             # and stride and perform the operations accordingly. 
-            self.connect(data, orientation, stride, x_offset, y_offset)
+            self.connect(data, orientation, x_offset, y_offset)
             data = data.transpose()
-            stride -= 2 # This will turn the stride from 1 to -1, 
             # equivalent to reading the relevant tile tuple forwards then backwards.
             print("connected once")
 
-    def connect(self, data: MazeArray, orientation: tuple[Direction, Direction], stride: int, x_offset: int, y_offset: int):
+    def connect(self, data: MazeArray, orientation: tuple[Direction, Direction], x_offset: int, y_offset: int):
+        if orientation == HORIZONTAL:
+            # Read backwards
+            stride = 1
+        elif orientation == VERTICAL:
+            # Read forwards
+            stride = -1
+        else:
+            # I don't think this should ever happen so will just return None
+            print("Invalid orientation may have been given.")
+            return
         for row in range(data.shape[0]):
             key: tuple[int, int] | None = None  # Start with no active node in this row.
             for col in range(data.shape[1]):
