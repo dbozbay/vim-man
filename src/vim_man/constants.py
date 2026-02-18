@@ -39,7 +39,7 @@ class Direction(IntEnum):
     PORTAL = 3
 
 VERTICAL = (Direction.DOWN, Direction.UP)
-HORIZONTAL = (Direction.LEFT, Direction.RIGHT)
+HORIZONTAL = (Direction.RIGHT, Direction.LEFT)
 
 class EntityID(IntEnum):
     """Enumeration of unique identifiers for all game entities and items."""
