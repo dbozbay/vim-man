@@ -60,3 +60,11 @@ class GhostMode(IntEnum):
     CHASE = 1
     FREIGHT = 2
     SPAWN = 3
+
+
+class TextID(IntEnum):
+    SCORETEXT = 0
+    LEVELTEXT = 1
+    READYTEXT = 2
+    PAUSETEXT = 3
+    GAMEOVERTEXT = 4
