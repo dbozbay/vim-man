@@ -7,12 +7,16 @@ from vim_man.constants import (
     TILEWIDTH,
     WHITE,
     Direction,
+    VERTICAL,
+    HORIZONTAL
 )
+
 from vim_man.level import MazeLevel
 from vim_man.types import MazeArray
 from vim_man.vector import Vector2D
 
 type NodesLUT = dict[tuple[int, int], "Node"]
+# LUT = lookup table
 
 
 class Node:
@@ -54,8 +58,8 @@ class NodeGroup:
         self.start_node: Node | None = None
         data = self.level.data
         self.create_node_table(data)
-        self.connect_horizontally(data)
-        self.connect_vertically(data)
+        self.connect_all(data)
+        # See line 83
 
     def create_node_table(
         self, data: MazeArray, x_offset: int = 0, y_offset: int = 0
@@ -76,61 +80,51 @@ class NodeGroup:
         This will be the node's key in the node lookup table.
         """
         return col * TILEWIDTH, row * TILEHEIGHT
+    
+    # it looks like you're doing similar things
+    # when connecting horizontally and vertically.
+    # is there a way to reduce the amount of times
+    # you are putting in this loop?
 
-    def connect_horizontally(
+    def connect_all(
         self, data: MazeArray, x_offset: int = 0, y_offset: int = 0
     ) -> None:
         """Connect horizontally adjacent node tiles as left and right neighbors."""
         # Walk each row from left to right, remembering the last node we saw.
+        vertical = (Direction.DOWN, Direction.UP)
+        horizontal = (Direction.RIGHT, Direction.LEFT)
+        stride = 1
+        for orientation in [horizontal, vertical]:
+            # Created a connect function which will take in an orientation
+            # and stride and perform the operations accordingly. 
+            self.connect(data, orientation, stride, x_offset, y_offset)
+            data = data.transpose()
+            stride -= 2 # This will turn the stride from 1 to -1, 
+            # equivalent to reading the relevant tile tuple forwards then backwards.
+            print("connected once")
+
+    def connect(self, data: MazeArray, orientation: tuple[Direction, Direction], stride: int, x_offset: int, y_offset: int):
         for row in range(data.shape[0]):
             key: tuple[int, int] | None = None  # Start with no active node in this row.
             for col in range(data.shape[1]):
                 if data[row][col] in self.node_symbols:
+                    relevant_tile = (col + x_offset, row + y_offset)
                     if key is None:
                         # First node in a new horizontal run; just record its key.
-                        key = self.construct_key(col + x_offset, row + y_offset)
+                        key = self.construct_key(*relevant_tile[::stride])
+                        # The star here means that each element is inserted as an argument. 
                     else:
                         # We have a previous node in this run, so connect it to this one.
-                        otherkey = self.construct_key(col + x_offset, row + y_offset)
-                        self.nodes_LUT[key].neighbors[Direction.RIGHT] = self.nodes_LUT[
+                        otherkey = self.construct_key(*relevant_tile[::stride])
+                        self.nodes_LUT[key].neighbors[orientation[0]] = self.nodes_LUT[
                             otherkey
                         ]
-                        self.nodes_LUT[otherkey].neighbors[Direction.LEFT] = (
+                        self.nodes_LUT[otherkey].neighbors[orientation[1]] = (
                             self.nodes_LUT[key]
                         )
                         # This node becomes the new "previous" node for the run.
                         key = otherkey
                 elif data[row][col] not in self.path_symbols:
-                    # Hitting a wall or non-path tile breaks the current run.
-                    key = None
-
-    def connect_vertically(
-        self, data: MazeArray, x_offset: int = 0, y_offset: int = 0
-    ) -> None:
-        """Connect vertically adjacent node tiles as up and down neighbors."""
-        # Transpose so we can reuse the same "scan along rows" logic for columns.
-        dataT = data.transpose()  # (row, col) -> (col, row)
-        for col in range(dataT.shape[0]):
-            key: tuple[int, int] | None = (
-                None  # Start with no active node in this column.
-            )
-            for row in range(dataT.shape[1]):
-                if dataT[col][row] in self.node_symbols:
-                    if key is None:
-                        # First node in a new vertical run; just record its key.
-                        key = self.construct_key(col + x_offset, row + y_offset)
-                    else:
-                        # We have a previous node in this column, so connect it to this one.
-                        otherkey = self.construct_key(col + x_offset, row + y_offset)
-                        self.nodes_LUT[key].neighbors[Direction.DOWN] = self.nodes_LUT[
-                            otherkey
-                        ]
-                        self.nodes_LUT[otherkey].neighbors[Direction.UP] = (
-                            self.nodes_LUT[key]
-                        )
-                        # This node becomes the new "previous" node for the run.
-                        key = otherkey
-                elif dataT[col][row] not in self.path_symbols:
                     # Hitting a wall or non-path tile breaks the current run.
                     key = None
 

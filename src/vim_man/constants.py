@@ -35,6 +35,8 @@ class Direction(IntEnum):
     RIGHT = -2
     PORTAL = 3
 
+VERTICAL = (Direction.DOWN, Direction.UP)
+HORIZONTAL = (Direction.LEFT, Direction.RIGHT)
 
 class EntityID(IntEnum):
     PACMAN = 0
