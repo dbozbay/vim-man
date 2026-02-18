@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from typing import TYPE_CHECKING, Iterable
-
 import numpy as np
 import pygame
 
@@ -12,6 +11,8 @@ from vim_man.constants import (
     WHITE,
     Direction,
     EntityID,
+    HORIZONTAL,
+    VERTICAL,
 )
 from vim_man.level import Maze
 from vim_man.types import MazeArray
@@ -125,29 +126,35 @@ class NodeGroup:
         This will be the node's key in the node lookup table.
         """
         return col * TILEWIDTH, row * TILEHEIGHT
-    
+
     def connect_all(
         self, data: MazeArray, x_offset: int = 0, y_offset: int = 0
     ) -> None:
         """Connect horizontally adjacent node tiles as left and right neighbors."""
         # Walk each row from left to right, remembering the last node we saw.
         for orientation in [HORIZONTAL, VERTICAL]:
-            # Created a connect function which will take in an orientation
-            # and stride and perform the operations accordingly. 
+            # Created a connect function which will take in an orientation
+            # and stride and perform the operations accordingly.
             self.connect(data, orientation, x_offset, y_offset)
             data = data.transpose()
-            # equivalent to reading the relevant tile tuple forwards then backwards.
+            # equivalent to reading the relevant tile tuple forwards then backwards.
             print("connected once")
 
-    def connect(self, data: MazeArray, orientation: tuple[Direction, Direction], x_offset: int, y_offset: int):
+    def connect(
+        self,
+        data: MazeArray,
+        orientation: tuple[Direction, Direction],
+        x_offset: int,
+        y_offset: int,
+    ):
         if orientation == HORIZONTAL:
-            # Read backwards
+            # Read backwards
             stride = 1
         elif orientation == VERTICAL:
             # Read forwards
             stride = -1
         else:
-            # I don't think this should ever happen so will just return None
+            # I don't think this should ever happen so will just return None
             print("Invalid orientation may have been given.")
             return
         for row in range(data.shape[0]):
@@ -163,7 +170,7 @@ class NodeGroup:
                         self.nodes_LUT[otherkey].neighbors[Direction.LEFT] = self.nodes_LUT[key]
                         # First node in a new horizontal run; just record its key.
                         key = self.construct_key(*relevant_tile[::stride])
-                        # The star here means that each element is inserted as an argument. 
+                        # The star here means that each element is inserted as an argument.
                     else:
                         # We have a previous node in this run, so connect it to this one.
                         otherkey = self.construct_key(*relevant_tile[::stride])
