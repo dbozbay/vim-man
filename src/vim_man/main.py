@@ -99,18 +99,13 @@ class GameController:
         if pellet:
             self.pellets.num_eaten += 1
             self.update_score(pellet.points)
-
             if self.pellets.num_eaten == 30:
                 self.ghosts.inky.start_node.allow_access(Direction.RIGHT, self.ghosts.inky)
-
             if self.pellets.num_eaten == 70:
                 self.ghosts.clyde.start_node.allow_access(Direction.LEFT, self.ghosts.clyde)
-
             self.pellets.pellet_list.remove(pellet)
-
             if pellet.name == EntityID.POWERPELLET:
                 self.ghosts.start_freight()
-
             if self.pellets.is_empty():
                 self.hide_entities()
                 self.pause.set_pause(pause_time=3, func=self.next_level)
@@ -136,7 +131,6 @@ class GameController:
                         self.lives -= 1
                         self.pacman.die()
                         self.ghosts.hide()
-
                         if self.lives <= 0:
                             self.text_group.show_text(TextID.GAMEOVERTEXT)
                             self.pause.set_pause(pause_time=3, func=self.restart_game)
@@ -148,7 +142,6 @@ class GameController:
         if self.pellets.num_eaten == 50 or self.pellets.num_eaten == 140:
             if self.fruit is None:
                 self.fruit = Fruit(self.nodes.get_node(9, 20))
-
         if self.fruit is not None:
             if self.pacman.collide_check(self.fruit):
                 self.update_score(self.fruit.points)
@@ -163,22 +156,18 @@ class GameController:
         """Advance the game state by one frame, handling logic and rendering."""
         dt = self.clock.tick(30) / 1000.0
         self.text_group.update(dt)
+        self.pellets.update(dt)
         if not self.pause.paused:
             self.pacman.update(dt)
             self.ghosts.update(dt)
-            self.pellets.update(dt)
-
             if self.fruit is not None:
                 self.fruit.update(dt)
-
             self.check_pellet_events()
             self.check_ghost_events()
             self.check_fruit_events()
-
         after_pause_method = self.pause.update(dt)
         if after_pause_method is not None:
             after_pause_method()
-
         self.check_events()
         self.render()
 
