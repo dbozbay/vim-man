@@ -157,11 +157,11 @@ CI runs automatically on every push and pull request to `main` via GitHub Action
 - [x] Lives system — death animation, life counter, and game-over state
 - [x] Win condition — detect when all pellets are eaten and advance to the next level
 - [x] Pause and restart — keyboard shortcuts for pausing and resetting the game
+- [x] Scoring system — points display, pellet scoring (10pts), power pellet scoring (50pts),
+ghost scoring (200/400/800/1600pts chain)
 
 ### 🚧 In Progress / Planned
 
-- [ ] **Scoring system** — points display, pellet scoring (10pts), power pellet scoring (50pts),
-  ghost scoring (200/400/800/1600pts chain)
 - [ ] **Sprite rendering** — replace placeholder circles with proper Pac-Man and ghost sprites,
   including directional and death animations
 - [ ] **Sound effects** — chomp, power pellet, ghost eaten, death, intro music
