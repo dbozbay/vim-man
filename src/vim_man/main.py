@@ -1,3 +1,4 @@
+from vim_man.constants import TextID, WHITE
 import pygame
 
 from vim_man.constants import BLACK, MAZE, SCREENSIZE, Direction, EntityID, GhostMode
@@ -8,6 +9,7 @@ from vim_man.nodes import NodeGroup
 from vim_man.pacman import Pacman
 from vim_man.pauser import Pause
 from vim_man.pellets import PelletGroup
+from vim_man.text import TextGroup
 
 
 class GameController:
@@ -21,7 +23,9 @@ class GameController:
         self.pause = Pause(True)
         self.level = 0
         self.lives = 3
+        self.score = 0
         self.fruit: Fruit | None = None
+        self.text_group = TextGroup()
 
         self.background: pygame.Surface
         self.maze: Maze
@@ -73,9 +77,13 @@ class GameController:
         """Reset the game to its initial state with full lives and level 1."""
         self.lives = 3
         self.level = 0
+        self.score = 0
         self.pause.paused = True
         self.fruit = None
         self.start_game()
+        self.text_group.update_score(self.score)
+        self.text_group.update_level(self.level)
+        self.text_group.show_text(TextID.READYTEXT)
 
     def reset_level(self) -> None:
         """Reset the current level state while preserving lives and score."""
@@ -83,12 +91,14 @@ class GameController:
         self.pacman.reset()
         self.ghosts.reset()
         self.fruit = None
+        self.text_group.show_text(TextID.READYTEXT)
 
     def check_pellet_events(self) -> None:
         """Update pellet state when Pacman eats a pellet."""
         pellet = self.pacman.eat_pellets(self.pellets.pellet_list)
         if pellet:
             self.pellets.num_eaten += 1
+            self.update_score(pellet.points)
 
             if self.pellets.num_eaten == 30:
                 self.ghosts.inky.start_node.allow_access(Direction.RIGHT, self.ghosts.inky)
@@ -112,6 +122,11 @@ class GameController:
                 if ghost.mode.current is GhostMode.FREIGHT:
                     self.pacman.visible = False
                     ghost.visible = False
+                    self.update_score(ghost.points)
+                    self.text_group.add_text(
+                        str(ghost.points), WHITE, ghost.position.x, ghost.position.y, 8, lifespan=1
+                    )
+                    self.ghosts.update_points()
                     self.pause.set_pause(pause_time=1, func=self.show_entities)
                     ghost.start_spawn()
                     self.nodes.allow_home_access(ghost)
@@ -123,6 +138,7 @@ class GameController:
                         self.ghosts.hide()
 
                         if self.lives <= 0:
+                            self.text_group.show_text(TextID.GAMEOVERTEXT)
                             self.pause.set_pause(pause_time=3, func=self.restart_game)
                         else:
                             self.pause.set_pause(pause_time=3, func=self.reset_level)
@@ -135,6 +151,10 @@ class GameController:
 
         if self.fruit is not None:
             if self.pacman.collide_check(self.fruit):
+                self.update_score(self.fruit.points)
+                self.text_group.add_text(
+                    str(self.fruit.points), WHITE, self.fruit.position.x, self.fruit.position.y, 8, lifespan=1
+                )
                 self.fruit = None
             elif self.fruit.destroy:
                 self.fruit = None
@@ -142,6 +162,7 @@ class GameController:
     def update(self) -> None:
         """Advance the game state by one frame, handling logic and rendering."""
         dt = self.clock.tick(30) / 1000.0
+        self.text_group.update(dt)
         if not self.pause.paused:
             self.pacman.update(dt)
             self.ghosts.update(dt)
@@ -171,9 +192,15 @@ class GameController:
                     if self.pacman.alive:
                         self.pause.set_pause(player_paused=True)
                         if not self.pause.paused:
+                            self.text_group.hide_text()
                             self.show_entities()
                         else:
+                            self.text_group.show_text(TextID.PAUSETEXT)
                             self.hide_entities()
+
+    def update_score(self, points: int) -> None:
+        self.score += points
+        self.text_group.update_score(self.score)
 
     def show_entities(self) -> None:
         """Make Pacman and all ghosts visible on the screen."""
@@ -191,6 +218,7 @@ class GameController:
         self.level += 1
         self.pause.paused = True
         self.start_game()
+        self.text_group.update_level(self.level)
 
     def render(self) -> None:
         """Draw the current game state (incl. maze, Pacman, Ghosts and pellets) to the screen."""
@@ -201,6 +229,7 @@ class GameController:
             self.fruit.render(self.screen)
         self.pacman.render(self.screen)
         self.ghosts.render(self.screen)
+        self.text_group.render(self.screen)
 
         pygame.display.update()
 

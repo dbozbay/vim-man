@@ -65,7 +65,7 @@ class Text:
 class TextGroup:
     def __init__(self) -> None:
         self.next_id = 10
-        self.all_text = {}
+        self.all_text: dict[int, Text] = {}
         self.setup_text()
         self.show_text(TextID.READYTEXT)
 
@@ -117,11 +117,9 @@ class TextGroup:
         self.update_text(TextID.LEVELTEXT, str(level + 1).zfill(3))
 
     def update_text(self, id: int, value: str) -> None:
-        self.all_text.update({id: value})
+        if id in self.all_text.keys():
+            self.all_text[id].set_text(value)
 
     def render(self, screen: Surface) -> None:
         for text in self.all_text.values():
             text.render(screen)
-
-
-
