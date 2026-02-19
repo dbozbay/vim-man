@@ -58,7 +58,7 @@ class Text:
 
     def render(self, screen: Surface) -> None:
         if self.visible:
-            x, y = self.position.as_int()
+            x, y = self.position.as_tuple()
             screen.blit(self.label, (x, y))
 
 
@@ -97,18 +97,20 @@ class TextGroup:
         self.add_text("LEVEL", WHITE, 23 * TILEWIDTH, 0, size)
 
     def update(self, dt: float) -> None:
-        for key, text in self.all_text.items():
-            text.update(dt)
-            if text.destroy:
-                self.remove_text(key)
+        # TODO: Can we simplify?
+        for tkey in list(self.all_text.keys()):
+            self.all_text[tkey].update(dt)
+            if self.all_text[tkey].destroy:
+                self.remove_text(tkey)
 
     def show_text(self, id: int) -> None:
         self.hide_text()
         self.all_text[id].visible = True
 
     def hide_text(self) -> None:
-        for id in (TextID.READYTEXT, TextID.PAUSETEXT, TextID.GAMEOVERTEXT):
-            self.all_text[id].visible = True
+        self.all_text[TextID.READYTEXT].visible = False
+        self.all_text[TextID.PAUSETEXT].visible = False
+        self.all_text[TextID.GAMEOVERTEXT].visible = False
 
     def update_score(self, score: int) -> None:
         self.update_text(TextID.SCORETEXT, str(score).zfill(8))
@@ -121,5 +123,5 @@ class TextGroup:
             self.all_text[id].set_text(value)
 
     def render(self, screen: Surface) -> None:
-        for text in self.all_text.values():
-            text.render(screen)
+        for tkey in self.all_text.keys():
+            self.all_text[tkey].render(screen)
