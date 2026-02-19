@@ -14,7 +14,7 @@ from vim_man.constants import (
     HORIZONTAL,
     VERTICAL,
 )
-from vim_man.level import Maze
+
 from vim_man.types import MazeArray
 from vim_man.vector import Vector2D
 
@@ -97,7 +97,7 @@ class Node:
 class NodeGroup:
     """Manages the creation and organization of the network of maze nodes."""
 
-    def __init__(self, maze: Maze) -> None:
+    def __init__(self, maze: MazeArray) -> None:
         """Initialize the node group by parsing the maze data and creating links."""
         self.maze = maze
         self.nodes_LUT: NodesLUT = {}
@@ -127,9 +127,7 @@ class NodeGroup:
         """
         return col * TILEWIDTH, row * TILEHEIGHT
 
-    def connect_all(
-        self, data: MazeArray, x_offset: int = 0, y_offset: int = 0
-    ) -> None:
+    def connect_all(self, data: MazeArray, x_offset: int = 0, y_offset: int = 0) -> None:
         """Connect horizontally adjacent node tiles as left and right neighbors."""
         # Walk each row from left to right, remembering the last node we saw.
         for orientation in [HORIZONTAL, VERTICAL]:
@@ -174,12 +172,8 @@ class NodeGroup:
                     else:
                         # We have a previous node in this run, so connect it to this one.
                         otherkey = self.construct_key(*relevant_tile[::stride])
-                        self.nodes_LUT[key].neighbors[orientation[0]] = self.nodes_LUT[
-                            otherkey
-                        ]
-                        self.nodes_LUT[otherkey].neighbors[orientation[1]] = (
-                            self.nodes_LUT[key]
-                        )
+                        self.nodes_LUT[key].neighbors[orientation[0]] = self.nodes_LUT[otherkey]
+                        self.nodes_LUT[otherkey].neighbors[orientation[1]] = self.nodes_LUT[key]
                         # This node becomes the new "previous" node for the run.
                         key = otherkey
                 elif data[row][col] not in self.path_symbols:
