@@ -1,5 +1,3 @@
-import os
-
 from vim_man.constants import EntityID
 import pygame
 from pygame import Surface
