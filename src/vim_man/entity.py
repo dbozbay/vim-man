@@ -36,6 +36,7 @@ class Entity:
         self.disable_portal = False
         self.position = node.position.copy()
         self.direction_method = self.goal_direction
+        self.image = None
 
         self.node: Node
         self.start_node: Node
@@ -192,8 +193,11 @@ class Entity:
     def render(self, screen: pygame.Surface) -> None:
         """Draw entity as a filled circle at his current position on the screen."""
         if self.visible:
-            pos = self.position.as_int()
-            pygame.draw.circle(screen, self.color, pos, self.radius)
+            if self.image is not None:
+                screen.blit(self.image, self.position.as_tuple())
+            else:
+                pos = self.position.as_int()
+                pygame.draw.circle(screen, self.color, pos, self.radius)
 
     def collide_check(self, other: Entity | Pellet) -> bool:
         """Return True if this entity collides with another entity."""

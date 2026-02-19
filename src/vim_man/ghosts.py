@@ -22,6 +22,7 @@ from vim_man.modes import ModeController
 from vim_man.nodes import Node
 from vim_man.pacman import Pacman
 from vim_man.vector import Vector2D
+from vim_man.sprites import GhostSprites
 
 
 class Ghost(Entity):
@@ -102,6 +103,7 @@ class Blinky(Ghost):
         super().__init__(node, pacman)
         self.name = EntityID.BLINKY
         self.color = RED
+        self.sprites = GhostSprites(self)
 
 
 class Pinky(Ghost):
@@ -112,6 +114,7 @@ class Pinky(Ghost):
         super().__init__(node, pacman)
         self.name = EntityID.PINKY
         self.color = PINK
+        self.sprites = GhostSprites(self)
 
     def scatter(self) -> None:
         """Set Pinky's goal to the upper right corner of the maze."""
@@ -130,6 +133,7 @@ class Inky(Ghost):
         super().__init__(node, pacman, blinky)
         self.name = EntityID.INKY
         self.color = TEAL
+        self.sprites = GhostSprites(self)
 
     def scatter(self) -> None:
         """Set Inky's goal to the bottom right corner of the maze."""
@@ -151,6 +155,7 @@ class Clyde(Ghost):
         super().__init__(node, pacman)
         self.name = EntityID.CLYDE
         self.color = ORANGE
+        self.sprites = GhostSprites(self)
 
     def scatter(self) -> None:
         """Set Clyde's goal to the bottom left corner of the maze."""

@@ -1,3 +1,4 @@
+from vim_man.sprites import FruitSprites
 from vim_man.constants import GREEN, Direction, EntityID
 from vim_man.entity import Entity
 from vim_man.nodes import Node
@@ -16,6 +17,7 @@ class Fruit(Entity):
         self.destroy = False
         self.points = 100
         self.set_between_nodes(Direction.RIGHT)
+        self.sprites = FruitSprites(self)
 
     def update(self, dt: float) -> None:
         """Update the fruit's timer and mark it for destruction when its lifespan expires."""

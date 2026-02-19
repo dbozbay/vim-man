@@ -8,6 +8,7 @@ from vim_man.constants import (
 from vim_man.entity import Entity
 from vim_man.nodes import Node
 from vim_man.pellets import Pellet
+from vim_man.sprites import PacmanSprites
 
 
 class Pacman(Entity):
@@ -21,6 +22,7 @@ class Pacman(Entity):
         self.direction = Direction.LEFT
         self.set_between_nodes(Direction.LEFT)
         self.alive = True
+        self.sprites = PacmanSprites(self)
 
     def reset(self) -> None:
         """Reset Pacman to the starting position with default direction and alive state."""
