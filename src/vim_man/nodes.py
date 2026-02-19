@@ -118,16 +118,7 @@ class NodeGroup:
                     x, y = self.construct_key(col + x_offset, row + y_offset)
                     self.nodes_LUT[(x, y)] = Node(x, y)
 
-    def connect_horizontally(self, data: MazeArray, x_offset: float = 0, y_offset: float = 0) -> None:
-        """Establish left and right neighbor connections between nodes in the same row."""
-    def construct_key(self, col: int, row: int) -> tuple[int, int]:
-        """
-        Return the pixel coordinates of the top-left corner of the given tile (col, row).
-        This will be the node's key in the node lookup table.
-        """
-        return col * TILEWIDTH, row * TILEHEIGHT
-
-    def connect_all(self, data: MazeArray, x_offset: int = 0, y_offset: int = 0) -> None:
+    def connect_all(self, data: MazeArray, x_offset: float = 0.0, y_offset: float = 0.0) -> None:
         """Connect horizontally adjacent node tiles as left and right neighbors."""
         # Walk each row from left to right, remembering the last node we saw.
         for orientation in [HORIZONTAL, VERTICAL]:
@@ -142,15 +133,17 @@ class NodeGroup:
         self,
         data: MazeArray,
         orientation: tuple[Direction, Direction],
-        x_offset: int,
-        y_offset: int,
+        x_offset: float,
+        y_offset: float,
     ):
         if orientation == HORIZONTAL:
             # Read backwards
             stride = 1
+            offset0, offset1 = x_offset, y_offset
         elif orientation == VERTICAL:
             # Read forwards
             stride = -1
+            offset0, offset1 = y_offset, x_offset
         else:
             # I don't think this should ever happen so will just return None
             print("Invalid orientation may have been given.")
@@ -159,41 +152,17 @@ class NodeGroup:
             key: tuple[float, float] | None = None
             for col in range(data.shape[1]):
                 if data[row][col] in self.node_symbols:
-                    relevant_tile = (col + x_offset, row + y_offset)
+                    relevant_tile = (col + offset0, row + offset1)
                     if key is None:
-                        key = self.construct_key(col + x_offset, row + y_offset)
-                    else:
-                        otherkey = self.construct_key(col + x_offset, row + y_offset)
-                        self.nodes_LUT[key].neighbors[Direction.RIGHT] = self.nodes_LUT[otherkey]
-                        self.nodes_LUT[otherkey].neighbors[Direction.LEFT] = self.nodes_LUT[key]
-                        # First node in a new horizontal run; just record its key.
                         key = self.construct_key(*relevant_tile[::stride])
-                        # The star here means that each element is inserted as an argument.
                     else:
-                        # We have a previous node in this run, so connect it to this one.
                         otherkey = self.construct_key(*relevant_tile[::stride])
                         self.nodes_LUT[key].neighbors[orientation[0]] = self.nodes_LUT[otherkey]
                         self.nodes_LUT[otherkey].neighbors[orientation[1]] = self.nodes_LUT[key]
-                        # This node becomes the new "previous" node for the run.
+                        # First node in a new horizontal run; just record its key.
                         key = otherkey
+                        # The star here means that each element is inserted as an argument.
                 elif data[row][col] not in self.path_symbols:
-                    key = None
-
-    def connect_vertically(self, data: MazeArray, x_offset: float = 0, y_offset: float = 0) -> None:
-        """Establish up and down neighbor connections between nodes in the same column."""
-        dataT = data.transpose()
-        for col in range(dataT.shape[0]):
-            key: tuple[float, float] | None = None
-            for row in range(dataT.shape[1]):
-                if dataT[col][row] in self.node_symbols:
-                    if key is None:
-                        key = self.construct_key(col + x_offset, row + y_offset)
-                    else:
-                        otherkey = self.construct_key(col + x_offset, row + y_offset)
-                        self.nodes_LUT[key].neighbors[Direction.DOWN] = self.nodes_LUT[otherkey]
-                        self.nodes_LUT[otherkey].neighbors[Direction.UP] = self.nodes_LUT[key]
-                        key = otherkey
-                elif dataT[col][row] not in self.path_symbols:
                     key = None
 
     def construct_key(self, col: float, row: float) -> tuple[float, float]:
@@ -212,8 +181,7 @@ class NodeGroup:
             ]
         )
         self.create_node_table(homedata, x_offset, y_offset)
-        self.connect_horizontally(homedata, x_offset, y_offset)
-        self.connect_vertically(homedata, x_offset, y_offset)
+        self.connect_all(homedata, x_offset, y_offset)
         self.homekey = self.construct_key(x_offset + 2, y_offset)
         return self.homekey
 

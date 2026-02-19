@@ -43,7 +43,7 @@ class GameController:
         self.maze = Maze(MAZE)
         self.nodes = NodeGroup(self.maze)
         self.nodes.set_portal_pair((0, 17), (27, 17))
-        homekey = self.nodes.create_home_nodes(11.5, 14)
+        homekey = self.nodes.create_home_nodes(11.5, 14.0)
         self.nodes.connect_home_nodes(homekey, (12, 14), Direction.LEFT)
         self.nodes.connect_home_nodes(homekey, (15, 14), Direction.RIGHT)
 
