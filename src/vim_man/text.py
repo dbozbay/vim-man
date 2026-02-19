@@ -7,6 +7,7 @@ from pygame.font import Font
 import pygame
 from vim_man.vector import Vector2D
 from vim_man.constants import Color, TextID
+from vim_man.utils import get_font_path
 
 
 class Text:
@@ -35,7 +36,7 @@ class Text:
         self.font: Font
         self.label: Surface
 
-        self.setup_font("PressStart2P-Regular.ttf")
+        self.setup_font(get_font_path("PressStart2P-Regular.ttf"))
         self.create_label()
 
     def setup_font(self, font_path: str) -> None:
