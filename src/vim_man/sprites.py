@@ -30,8 +30,8 @@ class PacmanSprites(Spritesheet):
     def get_start_image(self) -> Surface:
         return self.get_image(8, 0)
 
-    def get_image(self, x: float, y: float) -> Surface:
-        return super().get_image(x, y, 2 * TILEWIDTH, 2 * TILEHEIGHT)
+    def get_image(self, x: float, y: float, width: float = 2 * TILEWIDTH, height: float = 2 * TILEHEIGHT) -> Surface:
+        return super().get_image(x, y, width, height)
 
 
 class GhostSprites(Spritesheet):
@@ -51,8 +51,8 @@ class GhostSprites(Spritesheet):
         if name is not None:
             return self.get_image(self.x[name], 4)
 
-    def get_image(self, x: float, y: float) -> Surface:
-        return super().get_image(x, y, 2 * TILEWIDTH, 2 * TILEHEIGHT)
+    def get_image(self, x: float, y: float, width: float = 2 * TILEWIDTH, height: float = 2 * TILEHEIGHT) -> Surface:
+        return super().get_image(x, y, width, height)
 
 
 class FruitSprites(Spritesheet):
@@ -64,5 +64,5 @@ class FruitSprites(Spritesheet):
     def get_start_image(self) -> Surface:
         return self.get_image(16, 8)
 
-    def get_image(self, x: float, y: float) -> Surface:
-        return super().get_image(x, y, 2 * TILEWIDTH, 2 * TILEHEIGHT)
+    def get_image(self, x: float, y: float, width: float = 2 * TILEWIDTH, height: float = 2 * TILEHEIGHT) -> Surface:
+        return super().get_image(x, y, width, height)
