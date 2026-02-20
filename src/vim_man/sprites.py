@@ -1,11 +1,17 @@
-from vim_man.constants import SCREENHEIGHT
-from vim_man.constants import EntityID
 import pygame
 from pygame import Surface
-from vim_man.constants import BASETILEHEIGHT, BASETILEWIDTH, TILEHEIGHT, TILEWIDTH
+
+from vim_man.constants import (
+    BASETILEHEIGHT,
+    BASETILEWIDTH,
+    EntityID,
+    SCREENHEIGHT,
+    TILEHEIGHT,
+    TILEWIDTH,
+)
 from vim_man.entity import Entity
-from vim_man.utils import get_image_path
 from vim_man.level import MazeArray
+from vim_man.utils import get_image_path
 
 
 class Spritesheet:

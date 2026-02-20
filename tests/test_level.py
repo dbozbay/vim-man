@@ -1,6 +1,5 @@
-from unittest.mock import patch
-
 import numpy as np
+from unittest.mock import patch
 
 from vim_man.level import Maze
 

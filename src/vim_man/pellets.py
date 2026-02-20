@@ -1,7 +1,7 @@
 import pygame
 
-from vim_man.constants import TILEHEIGHT, TILEWIDTH, WHITE, EntityID
-from vim_man.level import MazeArray, Maze
+from vim_man.constants import EntityID, TILEHEIGHT, TILEWIDTH, WHITE
+from vim_man.level import Maze, MazeArray
 from vim_man.vector import Vector2D
 
 

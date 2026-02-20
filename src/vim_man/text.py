@@ -1,13 +1,10 @@
-from vim_man.constants import YELLOW
-from vim_man.constants import TILEWIDTH
-from vim_man.constants import WHITE
-from vim_man.constants import TILEHEIGHT
-from pygame import Surface
-from pygame.font import Font
+from pygame.font import FontType
 import pygame
-from vim_man.vector import Vector2D
-from vim_man.constants import Color, TextID
+from pygame import Surface
+
+from vim_man.constants import Color, TILEHEIGHT, TILEWIDTH, TextID, WHITE, YELLOW
 from vim_man.utils import get_font_path
+from vim_man.vector import Vector2D
 
 
 class Text:
@@ -33,7 +30,7 @@ class Text:
         self.timer = 0.0
         self.destroy = False
 
-        self.font: Font
+        self.font: FontType
         self.label: Surface
 
         self.setup_font(get_font_path("PressStart2P-Regular.ttf"))

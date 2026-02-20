@@ -1,7 +1,15 @@
-from vim_man.constants import TextID, WHITE
 import pygame
 
-from vim_man.constants import BLACK, MAZE, SCREENSIZE, Direction, EntityID, GhostMode
+from vim_man.constants import (
+    BLACK,
+    Direction,
+    EntityID,
+    GhostMode,
+    MAZE,
+    SCREENSIZE,
+    TextID,
+    WHITE,
+)
 from vim_man.fruits import Fruit
 from vim_man.ghosts import GhostGroup
 from vim_man.level import Maze
@@ -9,8 +17,8 @@ from vim_man.nodes import NodeGroup
 from vim_man.pacman import Pacman
 from vim_man.pauser import Pause
 from vim_man.pellets import PelletGroup
-from vim_man.text import TextGroup
 from vim_man.sprites import LifeSprites, MazeSprites
+from vim_man.text import TextGroup
 
 
 class GameController:
