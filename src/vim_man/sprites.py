@@ -5,6 +5,7 @@ from pygame import Surface
 from vim_man.constants import BASETILEHEIGHT, BASETILEWIDTH, TILEHEIGHT, TILEWIDTH
 from vim_man.entity import Entity
 from vim_man.utils import get_image_path
+from vim_man.level import MazeArray
 
 
 class Spritesheet:
@@ -94,3 +95,25 @@ class LifeSprites(Spritesheet):
             x = image.get_width() * i
             y = SCREENHEIGHT - image.get_height()
             screen.blit(image, (x, y))
+
+
+class MazeSprites(Spritesheet):
+    def __init__(self, data: MazeArray) -> None:
+        super().__init__()
+        self.data = data
+
+    def get_image(self, x: float, y: float, width: float = TILEWIDTH, height: float = TILEHEIGHT) -> Surface:
+        return super().get_image(x, y, width, height)
+
+    def construct_background(self, backgroud: Surface, y: float) -> Surface:
+        for row in range(self.data.shape[0]):
+            for col in range(self.data.shape[1]):
+                element = self.data[row][col]
+                if element.isdigit():
+                    x = int(self.data[row][col]) + 12
+                    sprite = self.get_image(x, y)
+                    backgroud.blit(sprite, (col * TILEWIDTH, row * TILEHEIGHT))
+                elif element == "=":
+                    sprite = self.get_image(10, 8)
+                    backgroud.blit(sprite, (col * TILEWIDTH, row * TILEHEIGHT))
+        return backgroud

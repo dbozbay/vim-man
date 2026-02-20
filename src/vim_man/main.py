@@ -10,7 +10,7 @@ from vim_man.pacman import Pacman
 from vim_man.pauser import Pause
 from vim_man.pellets import PelletGroup
 from vim_man.text import TextGroup
-from vim_man.sprites import LifeSprites
+from vim_man.sprites import LifeSprites, MazeSprites
 
 
 class GameController:
@@ -43,10 +43,15 @@ class GameController:
 
     def start_game(self) -> None:
         """Initialize the maze, Pacman, pellets, and prepare the game to start."""
-        self.set_background()
-
-        # Initialize maze / nodes
+        # Load in maze data
         self.maze = Maze(MAZE)
+
+        # Initialize background
+        self.set_background()
+        self.maze_sprites = MazeSprites(self.maze.data)
+        self.background = self.maze_sprites.construct_background(self.background, self.level % 5)
+
+        # Initalize the nodes
         self.nodes = NodeGroup(self.maze)
         self.nodes.set_portal_pair((0, 17), (27, 17))
         homekey = self.nodes.create_home_nodes(11.5, 14)
