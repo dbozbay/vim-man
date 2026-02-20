@@ -10,6 +10,7 @@ from vim_man.pacman import Pacman
 from vim_man.pauser import Pause
 from vim_man.pellets import PelletGroup
 from vim_man.text import TextGroup
+from vim_man.sprites import LifeSprites
 
 
 class GameController:
@@ -26,6 +27,7 @@ class GameController:
         self.score = 0
         self.fruit: Fruit | None = None
         self.text_group = TextGroup()
+        self.lifesprites = LifeSprites(self.lives)
 
         self.background: pygame.Surface
         self.maze: Maze
@@ -84,6 +86,7 @@ class GameController:
         self.text_group.update_score(self.score)
         self.text_group.update_level(self.level)
         self.text_group.show_text(TextID.READYTEXT)
+        self.lifesprites.reset_lives(self.lives)
 
     def reset_level(self) -> None:
         """Reset the current level state while preserving lives and score."""
@@ -129,6 +132,7 @@ class GameController:
                 elif ghost.mode.current is not GhostMode.SPAWN:
                     if self.pacman.alive:
                         self.lives -= 1
+                        self.lifesprites.remove_image()
                         self.pacman.die()
                         self.ghosts.hide()
                         if self.lives <= 0:
@@ -219,6 +223,7 @@ class GameController:
         self.pacman.render(self.screen)
         self.ghosts.render(self.screen)
         self.text_group.render(self.screen)
+        self.lifesprites.render(self.screen)
 
         pygame.display.update()
 

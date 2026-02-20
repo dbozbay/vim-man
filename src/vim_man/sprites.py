@@ -1,3 +1,4 @@
+from vim_man.constants import SCREENHEIGHT
 from vim_man.constants import EntityID
 import pygame
 from pygame import Surface
@@ -67,3 +68,29 @@ class FruitSprites(Spritesheet):
 
     def get_image(self, x: float, y: float, width: float = 2 * TILEWIDTH, height: float = 2 * TILEHEIGHT) -> Surface:
         return super().get_image(x, y, width, height)
+
+
+class LifeSprites(Spritesheet):
+    def __init__(self, num_lives: int) -> None:
+        super().__init__()
+        self.reset_lives(num_lives)
+
+        self.images: list[Surface]
+
+    def remove_image(self) -> None:
+        if len(self.images) > 0:
+            self.images.pop(0)
+
+    def reset_lives(self, num_lives: int) -> None:
+        self.images = []
+        for i in range(num_lives):
+            self.images.append(self.get_image(0, 0))
+
+    def get_image(self, x: float, y: float, width: float = 2 * TILEWIDTH, height: float = 2 * TILEHEIGHT) -> Surface:
+        return super().get_image(x, y, width, height)
+
+    def render(self, screen: Surface) -> None:
+        for i, image in enumerate(self.images):
+            x = image.get_width() * i
+            y = SCREENHEIGHT - image.get_height()
+            screen.blit(image, (x, y))
