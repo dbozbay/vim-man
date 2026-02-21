@@ -71,6 +71,8 @@ ORANGE: Color = (230, 190, 40)
 GREEN: Color = (0, 255, 0)
 
 
+STARTING_LIVES: int = 3
+
 SCATTER_TIME: float = 7.0
 CHASE_TIME: float = 20.0
 FREIGHT_TIME: float = 7.0

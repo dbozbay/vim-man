@@ -24,6 +24,7 @@ from vim_man.constants import (
     PORTAL_LEFT,
     PORTAL_RIGHT,
     SCREENSIZE,
+    STARTING_LIVES,
     TextID,
     WHITE,
 )
@@ -49,7 +50,7 @@ class GameController:
         self.pause = Pause(True)
         self.running = True
         self.level = 0
-        self.lives = 3
+        self.lives = STARTING_LIVES
         self.score = 0
         self.fruit: Fruit | None = None
         self.text_group = TextGroup()
@@ -108,7 +109,7 @@ class GameController:
 
     def restart_game(self) -> None:
         """Reset the game to its initial state with full lives and level 1."""
-        self.lives = 3
+        self.lives = STARTING_LIVES
         self.level = 0
         self.score = 0
         self.pause.paused = True
