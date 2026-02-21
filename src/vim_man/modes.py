@@ -15,10 +15,12 @@ class MainMode(object):
         """Initialize the main mode state with scatter as the default behavioral mode."""
         self.timer: float = 0.0
 
-        self.mode: GhostMode
-        self.time: float
+        self.mode: GhostMode | None = None
+        self.time: float = 0.0
 
         self.scatter()
+
+        assert self.mode is not None
 
     def update(self, dt: float) -> None:
         """Advance the behavioral timer and toggle between scatter and chase modes."""

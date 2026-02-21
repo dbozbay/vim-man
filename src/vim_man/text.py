@@ -30,16 +30,20 @@ class Text:
         self.timer = 0.0
         self.destroy = False
 
-        self.font: FontType
-        self.label: Surface
+        self.font: FontType | None = None
+        self.label: Surface | None = None
 
         self.setup_font(get_font_path("PressStart2P-Regular.ttf"))
         self.create_label()
+
+        assert self.font is not None
+        assert self.label is not None
 
     def setup_font(self, font_path: str) -> None:
         self.font = pygame.font.Font(font_path, self.size)
 
     def create_label(self) -> None:
+        assert self.font is not None
         self.label = self.font.render(self.text, 1, self.color)
 
     def set_text(self, new_text: str) -> None:
@@ -56,6 +60,7 @@ class Text:
 
     def render(self, screen: Surface) -> None:
         if self.visible:
+            assert self.label is not None
             x, y = self.position.as_tuple()
             screen.blit(self.label, (x, y))
 
