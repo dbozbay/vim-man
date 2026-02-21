@@ -48,6 +48,7 @@ class Pacman(Entity):
             self.node = self.target
 
             # Check if the node has a portal neighbor and move to it if it does.
+            assert self.node is not None
             portal_node = self.node.neighbors[Direction.PORTAL]
             if portal_node is not None:
                 self.node = portal_node

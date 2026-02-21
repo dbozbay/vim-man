@@ -38,18 +38,26 @@ class Entity:
         self.direction_method = self.goal_direction
         self.image = None
 
-        self.node: Node
-        self.start_node: Node
-        self.target: Node
-        self.goal: Vector2D
-        self.speed: float
+        self.node: Node | None = None
+        self.start_node: Node | None = None
+        self.target: Node | None = None
+        self.goal: Vector2D | None = None
+        self.speed: float = 0.0
+        self.alive = True
 
         self.set_start_node(node)
         self.set_speed(100)
 
+        assert self.node is not None
+        assert self.start_node is not None
+        assert self.target is not None
+
     def reset(self) -> None:
         """Reset the entity to its starting position and default movement state."""
-        self.set_start_node(self.start_node)
+        assert self.start_node is not None
+        self.node = self.start_node
+        self.target = self.start_node
+        self.set_position()
         self.direction = Direction.STOP
         self.speed = 100
         self.visible = True
@@ -63,10 +71,12 @@ class Entity:
 
     def set_position(self) -> None:
         """Align entity's position with the current node's position."""
+        assert self.node is not None
         self.position = self.node.position.copy()
 
     def set_between_nodes(self, direction: Direction) -> None:
         """Position the entity halfway between its current node and a neighboring node."""
+        assert self.node is not None
         neighbor = self.node.neighbors[direction]
         if neighbor is not None:
             self.target = neighbor
@@ -78,7 +88,8 @@ class Entity:
 
         # Once we have reached or passed the center of the target node....
         if self.overshot_target():
-            # Update the current node to the target we’ve just reached.
+            # Update the current node to the target we've just reached.
+            assert self.target is not None
             self.node = self.target
 
             # Choose a direction from the available valid directions based on the entity's direction method.
@@ -87,6 +98,7 @@ class Entity:
 
             # If portals are enabled and this node has a portal neighbor, teleport to that portal node.
             if not self.disable_portal:
+                assert self.node is not None
                 portal_node = self.node.neighbors[Direction.PORTAL]
                 if portal_node is not None:
                     self.node = portal_node
@@ -101,13 +113,14 @@ class Entity:
             else:
                 self.target = self.get_new_target(self.direction)
 
-            # After choosing a new target (and handling portals), snap position to the new node’s center.
+            # After choosing a new target (and handling portals), snap position to the new node's center.
             self.set_position()
 
     def valid_direction(self, direction: Direction) -> bool:
         # TODO: Update docstring to account for access
         """Return True if entity has a neighboring node in the given direction."""
         if direction is not Direction.STOP:
+            assert self.node is not None
             if self.name in self.node.access[direction]:
                 if self.node.neighbors[direction] is not None:
                     return True
@@ -130,8 +143,9 @@ class Entity:
         return choice(directions)
 
     # TODO: we are checking is None twice
-    def get_new_target(self, direction: Direction) -> Node:
+    def get_new_target(self, direction: Direction) -> Node | None:
         """Return the neighboring node for the given direction, or the current node if movement is not possible."""
+        assert self.node is not None
         if self.valid_direction(direction):
             neighbor = self.node.neighbors[direction]
             if neighbor is not None:
@@ -141,6 +155,7 @@ class Entity:
     def overshot_target(self) -> bool:
         """Return True if entity has moved past the center of the target node."""
         if self.target is not None:
+            assert self.node is not None
             vec1 = self.target.position - self.node.position
             vec2 = self.position - self.node.position
             node2target = vec1.magnitude_squared()
@@ -150,6 +165,8 @@ class Entity:
 
     def reverse_direction(self) -> None:
         """Reverse entity's movement direction and swap the current node with the target node."""
+        assert self.node is not None
+        assert self.target is not None
         self.direction = Direction(self.direction * -1)
         temp = self.node
         self.node = self.target
@@ -182,13 +199,16 @@ class Entity:
         #   3. Compute the squared magnitude of that vector as a distance
         #      metric and choose the direction with the smallest value.
 
-        # TODO: How things would change with “nearest node in every direction”?
-        return min(
-            directions,
-            key=lambda direction: (
-                self.node.position + self.directions[direction] * TILEWIDTH - self.goal
-            ).magnitude_squared(),
-        )
+        # TODO: How things would change with "nearest node in every direction"?
+        assert self.node is not None
+        assert self.goal is not None
+
+        def distance_to_goal(direction: Direction) -> float:
+            assert self.node is not None
+            assert self.goal is not None
+            return (self.node.position + self.directions[direction] * TILEWIDTH - self.goal).magnitude_squared()
+
+        return min(directions, key=distance_to_goal)
 
     def render(self, screen: pygame.Surface) -> None:
         """Draw entity as a filled circle at his current position on the screen."""
