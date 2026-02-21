@@ -2,10 +2,27 @@ import pygame
 
 from vim_man.constants import (
     BLACK,
+    BLINKY_START,
+    CLYDE_START,
     Direction,
     EntityID,
+    FRUIT_APPEAR_PELLET_COUNT,
+    GHOST_DOOR_LEFT,
+    GHOST_DOOR_RIGHT,
+    GHOST_ACCESS_POSITIONS,
+    GHOST_HOUSE_DOOR_UP_POSITIONS,
+    GHOST_HOUSE_X_OFFSET,
+    GHOST_HOUSE_Y_OFFSET,
+    GHOST_SPAWN,
     GhostMode,
+    INKY_START,
     MAZE,
+    PACMAN_START,
+    PELLET_UNLOCK_CLYDE,
+    PELLET_UNLOCK_INKY,
+    PINKY_START,
+    PORTAL_LEFT,
+    PORTAL_RIGHT,
     SCREENSIZE,
     TextID,
     WHITE,
@@ -30,6 +47,7 @@ class GameController:
         self.screen = pygame.display.set_mode(SCREENSIZE, 0, 32)
         self.clock = pygame.time.Clock()
         self.pause = Pause(True)
+        self.running = True
         self.level = 0
         self.lives = 3
         self.score = 0
@@ -61,32 +79,32 @@ class GameController:
 
         # Initalize the nodes
         self.nodes = NodeGroup(self.maze)
-        self.nodes.set_portal_pair((0, 17), (27, 17))
-        homekey = self.nodes.create_home_nodes(11.5, 14)
-        self.nodes.connect_home_nodes(homekey, (12, 14), Direction.LEFT)
-        self.nodes.connect_home_nodes(homekey, (15, 14), Direction.RIGHT)
+        self.nodes.set_portal_pair(PORTAL_LEFT, PORTAL_RIGHT)
+        homekey = self.nodes.create_home_nodes(GHOST_HOUSE_X_OFFSET, GHOST_HOUSE_Y_OFFSET)
+        self.nodes.connect_home_nodes(homekey, (GHOST_DOOR_LEFT[0], GHOST_DOOR_LEFT[1]), Direction.LEFT)
+        self.nodes.connect_home_nodes(homekey, (GHOST_DOOR_RIGHT[0], GHOST_DOOR_RIGHT[1]), Direction.RIGHT)
 
         # Initialize Entities (Pacman, Ghosts, Pellets)
-        self.pacman = Pacman(self.nodes.get_node(15, 26))
+        self.pacman = Pacman(self.nodes.get_node(*PACMAN_START))
         self.pellets = PelletGroup(self.maze)
         self.ghosts = GhostGroup(self.nodes.get_start_temp_node(), self.pacman)
-        self.ghosts.blinky.set_start_node(self.nodes.get_node(2 + 11.5, 0 + 14))
-        self.ghosts.pinky.set_start_node(self.nodes.get_node(2 + 11.5, 3 + 14))
-        self.ghosts.inky.set_start_node(self.nodes.get_node(0 + 11.5, 3 + 14))
-        self.ghosts.clyde.set_start_node(self.nodes.get_node(4 + 11.5, 3 + 14))
-        self.ghosts.set_spawn_node(self.nodes.get_node(2 + 11.5, 3 + 14))
+        self.ghosts.blinky.set_start_node(self.nodes.get_node(*BLINKY_START))
+        self.ghosts.pinky.set_start_node(self.nodes.get_node(*PINKY_START))
+        self.ghosts.inky.set_start_node(self.nodes.get_node(*INKY_START))
+        self.ghosts.clyde.set_start_node(self.nodes.get_node(*CLYDE_START))
+        self.ghosts.set_spawn_node(self.nodes.get_node(*GHOST_SPAWN))
 
         # Initialize access rights to nodes
         self.nodes.deny_home_access(self.pacman)
         self.nodes.deny_home_access_list(self.ghosts)
-        self.nodes.deny_access_list(2 + 11.5, 3 + 14, Direction.LEFT, self.ghosts)
-        self.nodes.deny_access_list(2 + 11.5, 3 + 14, Direction.RIGHT, self.ghosts)
+        for x, y, direction in GHOST_ACCESS_POSITIONS:
+            self.nodes.deny_access_list(x, y, direction, self.ghosts)
+        assert self.ghosts.inky.start_node is not None
+        assert self.ghosts.clyde.start_node is not None
         self.ghosts.inky.start_node.deny_access(Direction.RIGHT, self.ghosts.inky)
         self.ghosts.clyde.start_node.deny_access(Direction.LEFT, self.ghosts.clyde)
-        self.nodes.deny_access_list(12, 14, Direction.UP, self.ghosts)
-        self.nodes.deny_access_list(15, 14, Direction.UP, self.ghosts)
-        self.nodes.deny_access_list(12, 26, Direction.UP, self.ghosts)
-        self.nodes.deny_access_list(15, 26, Direction.UP, self.ghosts)
+        for x, y in GHOST_HOUSE_DOOR_UP_POSITIONS:
+            self.nodes.deny_access_list(x, y, Direction.UP, self.ghosts)
 
     def restart_game(self) -> None:
         """Reset the game to its initial state with full lives and level 1."""
@@ -115,9 +133,11 @@ class GameController:
         if pellet:
             self.pellets.num_eaten += 1
             self.update_score(pellet.points)
-            if self.pellets.num_eaten == 30:
+            if self.pellets.num_eaten == PELLET_UNLOCK_INKY:
+                assert self.ghosts.inky.start_node is not None
                 self.ghosts.inky.start_node.allow_access(Direction.RIGHT, self.ghosts.inky)
-            if self.pellets.num_eaten == 70:
+            if self.pellets.num_eaten == PELLET_UNLOCK_CLYDE:
+                assert self.ghosts.clyde.start_node is not None
                 self.ghosts.clyde.start_node.allow_access(Direction.LEFT, self.ghosts.clyde)
             self.pellets.pellet_list.remove(pellet)
             if pellet.name == EntityID.POWERPELLET:
@@ -156,7 +176,7 @@ class GameController:
 
     def check_fruit_events(self) -> None:
         """Check for and handle fruit appearance and consumption based on pellets eaten."""
-        if self.pellets.num_eaten == 50 or self.pellets.num_eaten == 140:
+        if self.pellets.num_eaten in FRUIT_APPEAR_PELLET_COUNT:
             if self.fruit is None:
                 self.fruit = Fruit(self.nodes.get_node(9, 20))
         if self.fruit is not None:
@@ -192,7 +212,7 @@ class GameController:
         """Process incoming Pygame events and exit on a quit event."""
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                exit()
+                self.running = False
             elif event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     if self.pacman.alive:
@@ -245,8 +265,9 @@ def main() -> None:
     """Initialize the game controller and start the primary game loop."""
     game = GameController()
     game.start_game()
-    while True:
+    while game.running:
         game.update()
+    pygame.quit()
 
 
 if __name__ == "__main__":
