@@ -6,6 +6,7 @@ import pygame
 
 from vim_man.constants import (
     TILEWIDTH,
+    TILEHEIGHT,
     WHITE,
     Direction,
     EntityID,
@@ -214,7 +215,9 @@ class Entity:
         """Draw entity as a filled circle at his current position on the screen."""
         if self.visible:
             if self.image is not None:
-                screen.blit(self.image, self.position.as_tuple())
+                delta = Vector2D(TILEWIDTH, TILEHEIGHT) / 2
+                pos = self.position - delta
+                screen.blit(self.image, pos.as_tuple())
             else:
                 pos = self.position.as_int()
                 pygame.draw.circle(screen, self.color, pos, self.radius)

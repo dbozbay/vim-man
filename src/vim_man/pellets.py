@@ -13,16 +13,17 @@ class Pellet:
         self.name = EntityID.PELLET
         self.position = Vector2D(column * TILEWIDTH, row * TILEHEIGHT)
         self.color = WHITE
-        self.radius = int(4 * TILEWIDTH / 16)
-        self.collide_radius = int(4 * TILEWIDTH / 16)
+        self.radius = int(2 * TILEWIDTH / 16)
+        self.collide_radius = int(2 * TILEWIDTH / 16)
         self.points = 10
         self.visible = True
 
     def render(self, screen: pygame.Surface) -> None:
         """Draw the pellet as a colored circle on the screen if it is visible."""
         if self.visible:
-            pos = self.position.as_int()
-            pygame.draw.circle(screen, self.color, pos, self.radius)
+            delta = Vector2D(TILEWIDTH, TILEHEIGHT) / 2
+            pos = self.position + delta
+            pygame.draw.circle(screen, self.color, pos.as_int(), self.radius)
 
 
 class PowerPellet(Pellet):
