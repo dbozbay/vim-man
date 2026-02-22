@@ -80,6 +80,8 @@ FREIGHT_TIME: float = 7.0
 MAZEFILE: str = "maze1.txt"
 MAZEROTFILE: str = "maze1_rotation.txt"
 
+SPRITEFILE: str = "spritesheet_nopink.png"
+
 
 class EntityID(IntEnum):
     """Enumeration of unique identifiers for all game entities and items."""

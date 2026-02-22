@@ -1,14 +1,7 @@
 import pygame
 from pygame import Surface
 
-from vim_man.constants import (
-    BASETILEHEIGHT,
-    BASETILEWIDTH,
-    EntityID,
-    SCREENHEIGHT,
-    TILEHEIGHT,
-    TILEWIDTH,
-)
+from vim_man.constants import BASETILEHEIGHT, BASETILEWIDTH, EntityID, SCREENHEIGHT, TILEHEIGHT, TILEWIDTH, SPRITEFILE
 from vim_man.entity import Entity
 from vim_man.level import MazeArray
 from vim_man.utils import get_image_path
@@ -16,7 +9,7 @@ from vim_man.utils import get_image_path
 
 class Spritesheet:
     def __init__(self) -> None:
-        self.sheet = pygame.image.load(get_image_path("spritesheet.png")).convert()
+        self.sheet = pygame.image.load(get_image_path(SPRITEFILE)).convert()
         transparent_color = self.sheet.get_at((0, 0))
         self.sheet.set_colorkey(transparent_color)
         width = int(self.sheet.get_width() / BASETILEWIDTH * TILEWIDTH)
