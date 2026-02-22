@@ -77,7 +77,8 @@ SCATTER_TIME: float = 7.0
 CHASE_TIME: float = 20.0
 FREIGHT_TIME: float = 7.0
 
-MAZE: str = "maze1.txt"
+MAZEFILE: str = "maze1.txt"
+MAZEROTFILE: str = "maze1_rotation.txt"
 
 
 class EntityID(IntEnum):

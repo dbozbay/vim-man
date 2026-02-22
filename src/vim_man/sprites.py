@@ -104,9 +104,10 @@ class LifeSprites(Spritesheet):
 
 
 class MazeSprites(Spritesheet):
-    def __init__(self, data: MazeArray) -> None:
+    def __init__(self, data: MazeArray, rot_data: MazeArray | None = None) -> None:
         super().__init__()
         self.data = data
+        self.rot_data = rot_data
 
     def get_image(self, x: float, y: float, width: float = TILEWIDTH, height: float = TILEHEIGHT) -> Surface:
         return super().get_image(x, y, width, height)
@@ -118,8 +119,15 @@ class MazeSprites(Spritesheet):
                 if element.isdigit():
                     x = int(self.data[row][col]) + 12
                     sprite = self.get_image(x, y)
+                    if self.rot_data is not None:
+                        rotation = self.rot_data[row][col]
+                        if rotation.isdigit():
+                            sprite = self.rotate(sprite, int(rotation))
                     backgroud.blit(sprite, (col * TILEWIDTH, row * TILEHEIGHT))
                 elif element == "=":
                     sprite = self.get_image(10, 8)
                     backgroud.blit(sprite, (col * TILEWIDTH, row * TILEHEIGHT))
         return backgroud
+
+    def rotate(self, sprite: Surface, value: int) -> Surface:
+        return pygame.transform.rotate(sprite, value * 90)

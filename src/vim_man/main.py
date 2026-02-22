@@ -16,7 +16,8 @@ from vim_man.constants import (
     GHOST_SPAWN,
     GhostMode,
     INKY_START,
-    MAZE,
+    MAZEFILE,
+    MAZEROTFILE,
     PACMAN_START,
     PELLET_UNLOCK_CLYDE,
     PELLET_UNLOCK_INKY,
@@ -71,11 +72,11 @@ class GameController:
     def start_game(self) -> None:
         """Initialize the maze, Pacman, pellets, and prepare the game to start."""
         # Load in maze data
-        self.maze = Maze(MAZE)
+        self.maze = Maze(MAZEFILE, MAZEROTFILE)
 
         # Initialize background
         self.set_background()
-        self.maze_sprites = MazeSprites(self.maze.data)
+        self.maze_sprites = MazeSprites(self.maze.data, self.maze.rot_data)
         self.background = self.maze_sprites.construct_background(self.background, self.level % 5)
 
         # Initalize the nodes
@@ -250,7 +251,7 @@ class GameController:
     def render(self) -> None:
         """Draw the current game state (incl. maze, Pacman, Ghosts and pellets) to the screen."""
         self.screen.blit(self.background, (0, 0))
-        self.nodes.render(self.screen)
+        # self.nodes.render(self.screen)
         self.pellets.render(self.screen)
         if self.fruit is not None:
             self.fruit.render(self.screen)

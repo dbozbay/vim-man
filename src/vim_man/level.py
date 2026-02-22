@@ -8,10 +8,12 @@ from vim_man.types import MazeArray
 class Maze:
     """Maze loads and holds the maze layout data."""
 
-    def __init__(self, level_file: str) -> None:
+    def __init__(self, level_file: str, rotation_file: str | None = None) -> None:
         """Initialize the level with the name of the maze layout file."""
         self.level_file = level_file
+        self.rotation_file = rotation_file
         self._data: MazeArray | None = None
+        self._rot_data: MazeArray | None = None
 
     @property
     def data(self) -> MazeArray:
@@ -19,6 +21,14 @@ class Maze:
         if self._data is None:
             self._data = self.read_maze_file(self.level_file)
         return self._data
+
+    @property
+    def rot_data(self) -> MazeArray | None:
+        if self.rotation_file is None:
+            return None
+        if self._rot_data is None:
+            self._rot_data = self.read_maze_file(self.rotation_file)
+        return self._rot_data
 
     def get_maze_path(self, filename: str) -> str:
         """Return the absolute path to a maze data file bundled with the package."""
