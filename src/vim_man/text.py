@@ -1,10 +1,14 @@
-from pygame.font import FontType
+from typing import TYPE_CHECKING
+
 import pygame
 from pygame import Surface
 
-from vim_man.constants import Color, TILEHEIGHT, TILEWIDTH, TextID, WHITE, YELLOW
+from vim_man.constants import TILEHEIGHT, TILEWIDTH, WHITE, YELLOW, Color, TextID
 from vim_man.utils import get_font_path
 from vim_man.vector import Vector2D
+
+if TYPE_CHECKING:
+    from pygame.font import FontType
 
 
 class Text:
@@ -122,9 +126,9 @@ class TextGroup:
         self.update_text(TextID.LEVELTEXT, str(level + 1).zfill(3))
 
     def update_text(self, id: int, value: str) -> None:
-        if id in self.all_text.keys():
+        if id in self.all_text:
             self.all_text[id].set_text(value)
 
     def render(self, screen: Surface) -> None:
-        for tkey in self.all_text.keys():
+        for tkey in self.all_text:
             self.all_text[tkey].render(screen)
