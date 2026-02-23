@@ -55,7 +55,7 @@ class TestVector2D:
     def test_inequality(self) -> None:
         v1 = Vector2D(2, 3)
         v2 = Vector2D(4, 5)
-        assert not v1 == v2
+        assert v1 != v2
 
     def test_magnitude_sq(self) -> None:
         v = Vector2D(10, 5)
