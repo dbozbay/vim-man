@@ -4,17 +4,14 @@ from vim_man.constants import (
     BLACK,
     BLINKY_START,
     CLYDE_START,
-    Direction,
-    EntityID,
     FRUIT_APPEAR_PELLET_COUNT,
+    GHOST_ACCESS_POSITIONS,
     GHOST_DOOR_LEFT,
     GHOST_DOOR_RIGHT,
-    GHOST_ACCESS_POSITIONS,
     GHOST_HOUSE_DOOR_UP_POSITIONS,
     GHOST_HOUSE_X_OFFSET,
     GHOST_HOUSE_Y_OFFSET,
     GHOST_SPAWN,
-    GhostMode,
     INKY_START,
     MAZEFILE,
     MAZEROTFILE,
@@ -26,8 +23,11 @@ from vim_man.constants import (
     PORTAL_RIGHT,
     SCREENSIZE,
     STARTING_LIVES,
-    TextID,
     WHITE,
+    Direction,
+    EntityID,
+    GhostMode,
+    TextID,
 )
 from vim_man.fruits import Fruit
 from vim_man.ghosts import GhostGroup
@@ -157,7 +157,12 @@ class GameController:
                     ghost.visible = False
                     self.update_score(ghost.points)
                     self.text_group.add_text(
-                        str(ghost.points), WHITE, ghost.position.x, ghost.position.y, 8, lifespan=1
+                        str(ghost.points),
+                        WHITE,
+                        ghost.position.x,
+                        ghost.position.y,
+                        8,
+                        lifespan=1,
                     )
                     self.ghosts.update_points()
                     self.pause.set_pause(pause_time=1, func=self.show_entities)
@@ -178,14 +183,18 @@ class GameController:
 
     def check_fruit_events(self) -> None:
         """Check for and handle fruit appearance and consumption based on pellets eaten."""
-        if self.pellets.num_eaten in FRUIT_APPEAR_PELLET_COUNT:
-            if self.fruit is None:
-                self.fruit = Fruit(self.nodes.get_node(9, 20))
+        if self.pellets.num_eaten in FRUIT_APPEAR_PELLET_COUNT and self.fruit is None:
+            self.fruit = Fruit(self.nodes.get_node(9, 20))
         if self.fruit is not None:
             if self.pacman.collide_check(self.fruit):
                 self.update_score(self.fruit.points)
                 self.text_group.add_text(
-                    str(self.fruit.points), WHITE, self.fruit.position.x, self.fruit.position.y, 8, lifespan=1
+                    str(self.fruit.points),
+                    WHITE,
+                    self.fruit.position.x,
+                    self.fruit.position.y,
+                    8,
+                    lifespan=1,
                 )
                 self.fruit = None
             elif self.fruit.destroy:
@@ -215,16 +224,14 @@ class GameController:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
-            elif event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_SPACE:
-                    if self.pacman.alive:
-                        self.pause.set_pause(player_paused=True)
-                        if not self.pause.paused:
-                            self.text_group.hide_text()
-                            self.show_entities()
-                        else:
-                            self.text_group.show_text(TextID.PAUSETEXT)
-                            self.hide_entities()
+            elif event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE and self.pacman.alive:
+                self.pause.set_pause(player_paused=True)
+                if not self.pause.paused:
+                    self.text_group.hide_text()
+                    self.show_entities()
+                else:
+                    self.text_group.show_text(TextID.PAUSETEXT)
+                    self.hide_entities()
 
     def update_score(self, points: int) -> None:
         self.score += points
