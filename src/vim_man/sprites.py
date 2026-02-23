@@ -1,7 +1,7 @@
 import pygame
 from pygame import Surface
 
-from vim_man.constants import BASETILEHEIGHT, BASETILEWIDTH, EntityID, SCREENHEIGHT, TILEHEIGHT, TILEWIDTH, SPRITEFILE
+from vim_man.constants import BASETILEHEIGHT, BASETILEWIDTH, SCREENHEIGHT, SPRITEFILE, TILEHEIGHT, TILEWIDTH, EntityID
 from vim_man.entity import Entity
 from vim_man.level import MazeArray
 from vim_man.utils import get_image_path
@@ -52,6 +52,7 @@ class GhostSprites(Spritesheet):
         name = self.entity.name
         if name is not None:
             return self.get_image(self.x[name], 4)
+        return None
 
     def get_image(self, x: float, y: float, width: float = 2 * TILEWIDTH, height: float = 2 * TILEHEIGHT) -> Surface:
         return super().get_image(x, y, width, height)
@@ -83,7 +84,7 @@ class LifeSprites(Spritesheet):
 
     def reset_lives(self, num_lives: int) -> None:
         self.images = []
-        for i in range(num_lives):
+        for _ in range(num_lives):
             self.images.append(self.get_image(0, 0))
 
     def get_image(self, x: float, y: float, width: float = 2 * TILEWIDTH, height: float = 2 * TILEHEIGHT) -> Surface:
