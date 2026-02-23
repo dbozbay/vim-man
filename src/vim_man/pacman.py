@@ -67,24 +67,22 @@ class Pacman(Entity):
                 self.direction = Direction.STOP
             # Reset position exactly on the current node center to avoid drift.
             self.set_position()
-        else:
-            if self.opposite_direction(direction):
-                # If the player requests the opposite direction mid-tile, flip direction.
-                self.reverse_direction()
+        elif self.opposite_direction(direction):
+            # If the player requests the opposite direction mid-tile, flip direction.
+            self.reverse_direction()
 
     def get_valid_key(self) -> Direction:
         """Read keyboard input and return the corresponding game movement direction."""
         key_pressed = pygame.key.get_pressed()
         if key_pressed[pygame.K_k]:
             return Direction.UP
-        elif key_pressed[pygame.K_j]:
+        if key_pressed[pygame.K_j]:
             return Direction.DOWN
-        elif key_pressed[pygame.K_h]:
+        if key_pressed[pygame.K_h]:
             return Direction.LEFT
-        elif key_pressed[pygame.K_l]:
+        if key_pressed[pygame.K_l]:
             return Direction.RIGHT
-        else:
-            return Direction.STOP
+        return Direction.STOP
 
     def eat_pellets(self, pellet_list: list[Pellet]) -> Pellet | None:
         """Return the first pellet currently colliding with Pacman's position."""
