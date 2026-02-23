@@ -1,4 +1,4 @@
-from vim_man.constants import Direction, EntityID, GREEN
+from vim_man.constants import GREEN, Direction, EntityID
 from vim_man.entity import Entity
 from vim_man.nodes import Node
 from vim_man.sprites import FruitSprites
