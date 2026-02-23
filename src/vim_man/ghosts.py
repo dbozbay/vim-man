@@ -1,8 +1,6 @@
 from __future__ import annotations
 
-from typing import Iterator
-
-import pygame
+from typing import TYPE_CHECKING
 
 from vim_man.constants import (
     NCOLS,
@@ -19,10 +17,16 @@ from vim_man.constants import (
 )
 from vim_man.entity import Entity
 from vim_man.modes import ModeController
-from vim_man.nodes import Node
-from vim_man.pacman import Pacman
-from vim_man.vector import Vector2D
 from vim_man.sprites import GhostSprites
+from vim_man.vector import Vector2D
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
+
+    import pygame
+
+    from vim_man.nodes import Node
+    from vim_man.pacman import Pacman
 
 
 class Ghost(Entity):
