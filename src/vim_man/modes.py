@@ -8,7 +8,7 @@ if TYPE_CHECKING:
     from vim_man.ghosts import Ghost
 
 
-class MainMode(object):
+class MainMode:
     """Controller for the global ghost behaviors of scattering and chasing."""
 
     def __init__(self) -> None:
@@ -44,7 +44,7 @@ class MainMode(object):
         self.timer = 0.0
 
 
-class ModeController(object):
+class ModeController:
     """Manages the behavior state transitions for an individual ghost entity."""
 
     def __init__(self, ghost: Ghost) -> None:
@@ -60,19 +60,17 @@ class ModeController(object):
         self.mainmode.update(dt)
         if self.current is GhostMode.FREIGHT:
             self.timer += dt
-            if self.time is not None:
-                if self.timer >= self.time:
-                    self.time = None
-                    self.ghost.normal_mode()
-                    self.current = self.mainmode.mode
+            if self.time is not None and self.timer >= self.time:
+                self.time = None
+                self.ghost.normal_mode()
+                self.current = self.mainmode.mode
 
         elif self.current in [GhostMode.SCATTER, GhostMode.CHASE]:
             self.current = self.mainmode.mode
 
-        if self.current is GhostMode.SPAWN:
-            if self.ghost.node == self.ghost.spawn_node:
-                self.ghost.normal_mode()
-                self.current = self.mainmode.mode
+        if self.current is GhostMode.SPAWN and self.ghost.node == self.ghost.spawn_node:
+            self.ghost.normal_mode()
+            self.current = self.mainmode.mode
 
     def set_spawn_mode(self) -> None:
         """Transition the ghost to spawn mode if it is currently in freight mode."""
