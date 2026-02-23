@@ -31,6 +31,11 @@ dev = [
 [tool.ruff]
 line-length = 120
 
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = ["S101", "D102"]
+fixable = ["ALL"]
+
 
 [tool.rumdl]
 line-length = 120
