@@ -3,7 +3,7 @@ from __future__ import annotations
 import math
 
 
-class Vector2D(object):
+class Vector2D:
     """Vector2D represents a 2D vector with basic arithmetic and utility operations."""
 
     def __init__(self, x: float = 0, y: float = 0) -> None:
@@ -60,4 +60,4 @@ class Vector2D(object):
 
     def __str__(self) -> str:
         """Return a string representation of the vector in angle-bracket form."""
-        return f"<{str(self.x)},{str(self.y)}>"
+        return f"<{self.x!s},{self.y!s}>"
