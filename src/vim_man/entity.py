@@ -1,19 +1,22 @@
 from __future__ import annotations
 
 from random import choice
+from typing import TYPE_CHECKING
 
 import pygame
 
 from vim_man.constants import (
-    TILEWIDTH,
     TILEHEIGHT,
+    TILEWIDTH,
     WHITE,
     Direction,
     EntityID,
 )
-from vim_man.nodes import Node
-from vim_man.pellets import Pellet
 from vim_man.vector import Vector2D
+
+if TYPE_CHECKING:
+    from vim_man.nodes import Node
+    from vim_man.pellets import Pellet
 
 
 class Entity:
@@ -122,9 +125,8 @@ class Entity:
         """Return True if entity has a neighboring node in the given direction."""
         if direction is not Direction.STOP:
             assert self.node is not None
-            if self.name in self.node.access[direction]:
-                if self.node.neighbors[direction] is not None:
-                    return True
+            if self.name in self.node.access[direction] and self.node.neighbors[direction] is not None:
+                return True
         return False
 
     def valid_directions(self) -> list[Direction]:
@@ -132,9 +134,8 @@ class Entity:
         # We only only want to move in the opposite direction if there are no other valid directions.
         directions = []
         for d in [Direction.UP, Direction.DOWN, Direction.LEFT, Direction.RIGHT]:
-            if self.valid_direction(d):
-                if d != Direction(self.direction * -1):
-                    directions.append(d)
+            if self.valid_direction(d) and d != Direction(self.direction * -1):
+                directions.append(d)
         if len(directions) == 0:
             directions.append(Direction(self.direction * -1))
         return directions
@@ -175,10 +176,7 @@ class Entity:
 
     def opposite_direction(self, direction: Direction) -> bool:
         """Return True if the given direction is opposite to entity's current direction."""
-        if direction is not Direction.STOP:
-            if direction == Direction(self.direction * -1):
-                return True
-        return False
+        return bool(direction is not Direction.STOP and direction == Direction(self.direction * -1))
 
     def set_speed(self, speed: int) -> None:
         """Set the entity's movement speed in pixels per second based on a tile-relative value."""
