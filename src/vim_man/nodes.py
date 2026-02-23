@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Iterable
+from typing import TYPE_CHECKING
 
 import numpy as np
 import pygame
@@ -13,12 +13,14 @@ from vim_man.constants import (
     Direction,
     EntityID,
 )
-from vim_man.level import Maze
-from vim_man.types import MazeArray
 from vim_man.vector import Vector2D
 
 if TYPE_CHECKING:
+    from collections.abc import Iterable
+
     from vim_man.entity import Entity
+    from vim_man.level import Maze
+    from vim_man.types import MazeArray
 
 type NodesLUT = dict[tuple[float, float], "Node"]
 
@@ -85,7 +87,7 @@ class Node:
 
     def render(self, screen: pygame.Surface) -> None:
         """Draw the node and its connections to neighbors on the screen."""
-        for neighbor, node in self.neighbors.items():
+        for node in self.neighbors.values():
             if node is not None:
                 line_start = self.position.as_tuple()
                 line_end = node.position.as_tuple()
@@ -164,7 +166,7 @@ class NodeGroup:
                 ["+", "X", ".", "X", "+"],
                 ["+", ".", "+", ".", "+"],
                 ["+", "X", "X", "X", "+"],
-            ]
+            ],
         )
         self.create_node_table(homedata, x_offset, y_offset)
         self.connect_horizontally(homedata, x_offset, y_offset)
@@ -195,7 +197,8 @@ class NodeGroup:
         """Return the node at the given tile coordinates or raise common errors if missing."""
         node = self.get_node_from_tiles(col, row)
         if node is None:
-            raise ValueError(f"No node found at tile coordinates ({col}, {row})")
+            msg = f"No node found at tile coordinates ({col}, {row})"
+            raise ValueError(msg)
         return node
 
     def get_node_from_tiles(self, col: float, row: float) -> Node | None:
