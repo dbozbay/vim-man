@@ -174,6 +174,8 @@ ghost scoring (200/400/800/1600pts chain)
 
 ---
 
+TODO: initialize all class attributes inside the init
+
 ## License
 
 MIT
